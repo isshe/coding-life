@@ -62,7 +62,6 @@ struct rbtree_s {
     rbsame_t same_flag;
 };
 
-
 int is_red(rbtree_node_t *node);
 
 rbtree_t *rbtree_create(rbtree_insert_func insert_func, rbtree_compare_func compare_func);

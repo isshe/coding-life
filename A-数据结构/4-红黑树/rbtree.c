@@ -191,7 +191,11 @@ int rbtree_insert(rbtree_t *tree, rbtree_node_t *node)
 
     // 这里是自定义的插入，node 为 RED
     rbnode_red(node);
-    rc = tree->insert_func(tree, node, sentinel);
+    if (tree->insert_func) {
+        rc = tree->insert_func(tree, node, sentinel);
+    } else {
+        rc = binary_tree_insert(tree, node, sentinel);
+    }
     if (rc != RBTREE_OK)
     {
         return rc;
@@ -248,4 +252,196 @@ int rbtree_insert(rbtree_t *tree, rbtree_node_t *node)
     rbnode_black(tree->root);
     rbtree_increace(tree);
     return RBTREE_OK;
+}
+
+rbtree_node_t *rbtree_min(rbtree_node_t *node, rbtree_node_t *sentinel)
+{
+    while (node->left != sentinel) {
+        node = node->left;
+    }
+
+    return node;
+}
+
+rbtree_node_t *rbtree_max(rbtree_node_t *node, rbtree_node_t *sentinel)
+{
+    while (node->right != sentinel) {
+        node = node->right;
+    }
+
+    return node;
+}
+
+void rbtree_delete(rbtree_t *tree, rbtree_node_t *node)
+{
+    rbcolor_t red;
+    rbtree_node_t   **root;
+    rbtree_node_t   *sentinel;
+    rbtree_node_t   *subst;             // 保存将被删除的节点
+    rbtree_node_t   *temp;
+    rbtree_node_t   *w;
+
+    /* a binary tree delete */
+    sentinel = RBTREE_NIL;
+
+    //root = (ngx_rbtree_node_t **) &tree->root;
+
+    // 要删除的节点只有一个右子节点或者没有子节点
+    if (node->left == sentinel) {
+        temp = node->right;
+        subst = node;
+    // 要删除的节点只有一个左子节点
+    } else if (node->right == sentinel) {
+        temp = node->left;
+        subst = node;
+    // 要删除的节点有两个子节点
+    } else {
+        // 找到右子树中最小的一个节点，用来代替将被删除的节点
+        // 也可以找左子树中最大的节点
+        subst = rbtree_min(node->right, sentinel);
+
+        // 这个不可能成立了吧？多余？
+        if (subst->left != sentinel) {
+            temp = subst->left;
+        } else {
+            temp = subst->right;
+        }
+    }
+
+    // 如果要删除的节点是根节点，把下一个节点替换上来即可
+    if (subst == tree->root) {
+        tree->root = temp;
+        rbnode_black(temp);
+
+        /* DEBUG stuff */
+        node->left = NULL;
+        node->right = NULL;
+        node->parent = NULL;
+
+        return;
+    }
+
+    // 被删除的节点是否是红节点
+    red = rbnode_is_red(subst);
+
+    if (subst == subst->parent->left) {
+        subst->parent->left = temp;
+
+    } else {
+        subst->parent->right = temp;
+    }
+
+    if (subst == node) {
+
+        temp->parent = subst->parent;
+
+    } else {
+
+        if (subst->parent == node) {
+            temp->parent = subst;
+
+        } else {
+            temp->parent = subst->parent;
+        }
+
+        subst->left = node->left;
+        subst->right = node->right;
+        subst->parent = node->parent;
+        ngx_rbt_copy_color(subst, node);
+
+        if (node == *root) {
+            *root = subst;
+
+        } else {
+            if (node == node->parent->left) {
+                node->parent->left = subst;
+            } else {
+                node->parent->right = subst;
+            }
+        }
+
+        if (subst->left != sentinel) {
+            subst->left->parent = subst;
+        }
+
+        if (subst->right != sentinel) {
+            subst->right->parent = subst;
+        }
+    }
+
+    /* DEBUG stuff */
+    node->left = NULL;
+    node->right = NULL;
+    node->parent = NULL;
+    node->key = 0;
+
+    if (red) {
+        return;
+    }
+
+    /* a delete fixup */
+
+    while (temp != *root && ngx_rbt_is_black(temp)) {
+
+        if (temp == temp->parent->left) {
+            w = temp->parent->right;
+
+            if (ngx_rbt_is_red(w)) {
+                ngx_rbt_black(w);
+                ngx_rbt_red(temp->parent);
+                ngx_rbtree_left_rotate(root, sentinel, temp->parent);
+                w = temp->parent->right;
+            }
+
+            if (ngx_rbt_is_black(w->left) && ngx_rbt_is_black(w->right)) {
+                ngx_rbt_red(w);
+                temp = temp->parent;
+
+            } else {
+                if (ngx_rbt_is_black(w->right)) {
+                    ngx_rbt_black(w->left);
+                    ngx_rbt_red(w);
+                    ngx_rbtree_right_rotate(root, sentinel, w);
+                    w = temp->parent->right;
+                }
+
+                ngx_rbt_copy_color(w, temp->parent);
+                ngx_rbt_black(temp->parent);
+                ngx_rbt_black(w->right);
+                ngx_rbtree_left_rotate(root, sentinel, temp->parent);
+                temp = *root;
+            }
+
+        } else {
+            w = temp->parent->left;
+
+            if (ngx_rbt_is_red(w)) {
+                ngx_rbt_black(w);
+                ngx_rbt_red(temp->parent);
+                ngx_rbtree_right_rotate(root, sentinel, temp->parent);
+                w = temp->parent->left;
+            }
+
+            if (ngx_rbt_is_black(w->left) && ngx_rbt_is_black(w->right)) {
+                ngx_rbt_red(w);
+                temp = temp->parent;
+
+            } else {
+                if (ngx_rbt_is_black(w->left)) {
+                    ngx_rbt_black(w->right);
+                    ngx_rbt_red(w);
+                    ngx_rbtree_left_rotate(root, sentinel, w);
+                    w = temp->parent->left;
+                }
+
+                ngx_rbt_copy_color(w, temp->parent);
+                ngx_rbt_black(temp->parent);
+                ngx_rbt_black(w->left);
+                ngx_rbtree_right_rotate(root, sentinel, temp->parent);
+                temp = *root;
+            }
+        }
+    }
+
+    ngx_rbt_black(temp);
 }
