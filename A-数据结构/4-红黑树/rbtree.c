@@ -277,7 +277,7 @@ void rbtree_delete(rbtree_t *tree, rbtree_node_t *node)
     rbcolor_t red;
     rbtree_node_t   **root;
     rbtree_node_t   *sentinel;
-    rbtree_node_t   *subst;             // 保存将被删除的节点
+    rbtree_node_t   *subst;             // 将来要替换被删除节点的节点
     rbtree_node_t   *temp;
     rbtree_node_t   *w;
 
@@ -308,10 +308,14 @@ void rbtree_delete(rbtree_t *tree, rbtree_node_t *node)
         }
     }
 
-    // 如果要删除的节点是根节点，把下一个节点替换上来即可
+    // 条件成立的话 subst == node
+    // 被删除的节点是根节点且只有至多一个儿子，把下一个节点替换上来即可
     if (subst == tree->root) {
         tree->root = temp;
-        rbnode_black(temp);
+        if (temp != sentinel)
+        {
+            rbnode_black(temp);
+        }
 
         /* DEBUG stuff */
         node->left = NULL;
@@ -321,33 +325,39 @@ void rbtree_delete(rbtree_t *tree, rbtree_node_t *node)
         return;
     }
 
-    // 被删除的节点是否是红节点
+    // 下面是 subst 和 node 都不是 根节点的情况
+    // 代替节点是否是红节点
     red = rbnode_is_red(subst);
 
+    // temp有可能是被删除节点的子节点，
+    // 也可能是左子树的最右(大)节点的左节点、或者右子树最左(小)节点的右节点
+    // 将temp替换到将被删除的节点的位置
     if (subst == subst->parent->left) {
         subst->parent->left = temp;
-
     } else {
         subst->parent->right = temp;
     }
 
+    // 被删的节点至多有一个儿子
     if (subst == node) {
+        temp->parent = subst->parent;       // 这里temp有可能是sentinel?! node没有儿子节点时
 
-        temp->parent = subst->parent;
-
+    // 被删的节点有两个儿子
     } else {
 
+        // node是根节点
         if (subst->parent == node) {
-            temp->parent = subst;
+            temp->parent = subst;           // 这里temp有可能是sentinel?! subst没有节点时
 
         } else {
-            temp->parent = subst->parent;
+            temp->parent = subst->parent;   // 这里temp有可能是sentinel?! subst没有节点时
         }
 
+        // 用subst代替node
         subst->left = node->left;
         subst->right = node->right;
         subst->parent = node->parent;
-        ngx_rbt_copy_color(subst, node);
+        rbnode_copy_color(subst, node);
 
         if (node == *root) {
             *root = subst;
