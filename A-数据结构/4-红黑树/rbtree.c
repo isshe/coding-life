@@ -1,5 +1,6 @@
 
 #include <assert.h>
+#include <stdlib.h>
 
 #include "rbtree.h"
 
@@ -120,12 +121,6 @@ void rbtree_right_rotate(rbtree_t *tree, rbtree_node_t *node)
     node->parent = temp;
 }
 
-
-int temp_compare(rbtree_node_t *node1, rbtree_node_t *node2)
-{
-
-}
-
 int binary_tree_insert(rbtree_t *tree, rbtree_node_t *node, rbtree_node_t *sentinel)
 {
     rbtree_node_t *temp, *parent;
@@ -136,6 +131,7 @@ int binary_tree_insert(rbtree_t *tree, rbtree_node_t *node, rbtree_node_t *senti
     parent = NULL;
     while (temp != sentinel) {
         cmp = tree->compare_func(temp, node);
+        printf("cmp result = %d\n", cmp);
         parent = temp;
         if (cmp == 0) {                         // 这里需要再考虑一下怎么处理，相同的值
             //return RBTREE_ERROR;                // same value
@@ -186,14 +182,18 @@ int rbtree_insert(rbtree_t *tree, rbtree_node_t *node)
         rbnode_black(node);
         tree->root = node;
 
+        printf("insert root...\n");
+        rbtree_increace(tree);
         return RBTREE_OK;
     }
 
     // 这里是自定义的插入，node 为 RED
     rbnode_red(node);
     if (tree->insert_func) {
+        printf("using user insert function...\n");
         rc = tree->insert_func(tree, node, sentinel);
     } else {
+        printf("using user default function...\n");
         rc = binary_tree_insert(tree, node, sentinel);
     }
     if (rc != RBTREE_OK)
@@ -322,6 +322,7 @@ void rbtree_delete(rbtree_t *tree, rbtree_node_t *node)
         node->right = NULL;
         node->parent = NULL;
 
+        rbtree_decreace(tree);
         return;
     }
 
@@ -359,8 +360,8 @@ void rbtree_delete(rbtree_t *tree, rbtree_node_t *node)
         subst->parent = node->parent;
         rbnode_copy_color(subst, node);
 
-        if (node == *root) {
-            *root = subst;
+        if (node == tree->root) {
+            tree->root = subst;
 
         } else {
             if (node == node->parent->left) {
@@ -383,7 +384,7 @@ void rbtree_delete(rbtree_t *tree, rbtree_node_t *node)
     node->left = NULL;
     node->right = NULL;
     node->parent = NULL;
-    node->key = 0;
+    rbtree_decreace(tree);
 
     if (red) {
         return;
@@ -391,67 +392,75 @@ void rbtree_delete(rbtree_t *tree, rbtree_node_t *node)
 
     /* a delete fixup */
 
-    while (temp != *root && ngx_rbt_is_black(temp)) {
+    while (temp != tree->root && rbnode_is_black(temp)) {
 
         if (temp == temp->parent->left) {
             w = temp->parent->right;
 
-            if (ngx_rbt_is_red(w)) {
-                ngx_rbt_black(w);
-                ngx_rbt_red(temp->parent);
-                ngx_rbtree_left_rotate(root, sentinel, temp->parent);
+            if (rbnode_is_red(w)) {
+                rbnode_black(w);
+                rbnode_red(temp->parent);
+                rbtree_left_rotate(tree, temp->parent);
                 w = temp->parent->right;
             }
 
-            if (ngx_rbt_is_black(w->left) && ngx_rbt_is_black(w->right)) {
-                ngx_rbt_red(w);
+            if (rbnode_is_black(w->left) && rbnode_is_black(w->right)) {
+                rbnode_red(w);
                 temp = temp->parent;
 
             } else {
-                if (ngx_rbt_is_black(w->right)) {
-                    ngx_rbt_black(w->left);
-                    ngx_rbt_red(w);
-                    ngx_rbtree_right_rotate(root, sentinel, w);
+                if (rbnode_is_black(w->right)) {
+                    rbnode_black(w->left);
+                    rbnode_red(w);
+                    rbtree_right_rotate(tree, w);
                     w = temp->parent->right;
                 }
 
-                ngx_rbt_copy_color(w, temp->parent);
-                ngx_rbt_black(temp->parent);
-                ngx_rbt_black(w->right);
-                ngx_rbtree_left_rotate(root, sentinel, temp->parent);
+                rbnode_copy_color(w, temp->parent);
+                rbnode_black(temp->parent);
+                rbnode_black(w->right);
+                rbtree_left_rotate(tree, temp->parent);
                 temp = *root;
             }
 
         } else {
             w = temp->parent->left;
 
-            if (ngx_rbt_is_red(w)) {
-                ngx_rbt_black(w);
-                ngx_rbt_red(temp->parent);
-                ngx_rbtree_right_rotate(root, sentinel, temp->parent);
+            if (rbnode_is_red(w)) {
+                rbnode_black(w);
+                rbnode_red(temp->parent);
+                rbtree_right_rotate(tree, temp->parent);
                 w = temp->parent->left;
             }
 
-            if (ngx_rbt_is_black(w->left) && ngx_rbt_is_black(w->right)) {
-                ngx_rbt_red(w);
+            if (rbnode_is_black(w->left) && rbnode_is_black(w->right)) {
+                rbnode_red(w);
                 temp = temp->parent;
 
             } else {
-                if (ngx_rbt_is_black(w->left)) {
-                    ngx_rbt_black(w->right);
-                    ngx_rbt_red(w);
-                    ngx_rbtree_left_rotate(root, sentinel, w);
+                if (rbnode_is_black(w->left)) {
+                    rbnode_black(w->right);
+                    rbnode_red(w);
+                    rbtree_left_rotate(tree, w);
                     w = temp->parent->left;
                 }
 
-                ngx_rbt_copy_color(w, temp->parent);
-                ngx_rbt_black(temp->parent);
-                ngx_rbt_black(w->left);
-                ngx_rbtree_right_rotate(root, sentinel, temp->parent);
+                rbnode_copy_color(w, temp->parent);
+                rbnode_black(temp->parent);
+                rbnode_black(w->left);
+                rbtree_right_rotate(tree, temp->parent);
                 temp = *root;
             }
         }
     }
 
-    ngx_rbt_black(temp);
+    rbnode_black(temp);
 }
+
+void rbtree_inorder_traversal(rbtree_node_t *root, traversal_func func)
+{
+    if (root->left && root->left != RBTREE_NIL) rbtree_inorder_traversal(root->left, func);
+    func(root);
+    if (root->right && root->right != RBTREE_NIL) rbtree_inorder_traversal(root->right, func);
+}
+

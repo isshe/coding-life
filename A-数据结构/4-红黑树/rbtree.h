@@ -29,9 +29,9 @@ enum rbcolor_e
 typedef enum rbcolor_e rbcolor_t;
 
 #define rbnode_red(node)               ((node)->color = RBTREE_RED)
-#define rbnode_black(node)             ((node)->color = RBTREE_RED)
+#define rbnode_black(node)             ((node)->color = RBTREE_BLACK)
 #define rbnode_is_red(node)            ((node)->color)
-#define rbnode_is_black(node)          (!ngx_rbt_is_red(node))
+#define rbnode_is_black(node)          (!rbnode_is_red(node))
 #define rbnode_copy_color(n1, n2)      (n1->color = n2->color)
 
 typedef struct rbtree_node_s  rbtree_node_t;
@@ -50,10 +50,12 @@ enum rbsame_e
 };
 typedef enum rbsame_e rbsame_t;
 
+typedef struct rbtree_s rbtree_t;
+
 typedef int (*rbtree_compare_func) (rbtree_node_t *node1, rbtree_node_t *node2);
 typedef int (*rbtree_insert_func) (rbtree_t *tree, rbtree_node_t *node, rbtree_node_t *sentinel);
+typedef int (*traversal_func)(rbtree_node_t *node);
 
-typedef struct rbtree_s  rbtree_t;
 struct rbtree_s {
     size_t size;                        // 记录树的大小
     rbtree_node_t     *root;            // 树的根
@@ -64,7 +66,13 @@ struct rbtree_s {
 
 int is_red(rbtree_node_t *node);
 
+rbtree_node_t *rbtree_min(rbtree_node_t *node, rbtree_node_t *sentinel);
+rbtree_node_t *rbtree_max(rbtree_node_t *node, rbtree_node_t *sentinel);
 rbtree_t *rbtree_create(rbtree_insert_func insert_func, rbtree_compare_func compare_func);
+int rbtree_insert(rbtree_t *tree, rbtree_node_t *node);
+void rbtree_delete(rbtree_t *tree, rbtree_node_t *node);
+
+void rbtree_inorder_traversal(rbtree_node_t *root, traversal_func func);
 
 
 #endif
