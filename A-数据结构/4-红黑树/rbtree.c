@@ -4,34 +4,33 @@
 
 #include "rbtree.h"
 
-#define RBTREE_NIL &_sentinel /* all leafs are sentinels */
-static rbtree_node_t _sentinel = {RBTREE_NIL, RBTREE_NIL, NULL, RBTREE_BLACK};
-
-int is_red(rbtree_node_t *node)
+static void
+rbtree_init_sentinel(rbtree_node_t *sentinel)
 {
-    if (!node) {
-        return RBTREE_BLACK;
-    }
-
-    return node->color;
+    sentinel->parent = NULL;
+    sentinel->left = NULL;
+    sentinel->right = NULL;
+    rbnode_black(sentinel);
 }
 
-rbtree_t *rbtree_create(rbtree_insert_func insert_func, rbtree_compare_func compare_func)
+static rbtree_node_t *
+rbtree_min(rbtree_node_t *node, rbtree_node_t *sentinel)
 {
-    rbtree_t *tree = NULL;
-
-    tree = (rbtree_t *)malloc(sizeof(rbtree_t));
-    if (!tree) {
-        return NULL;
+    while (node->left != sentinel) {
+        node = node->left;
     }
 
-    tree->size = 0;
-    tree->root = RBTREE_NIL;
-    tree->compare_func = compare_func;
-    tree->insert_func = insert_func;
-    tree->same_flag = RBSAME_RETURN;
+    return node;
+}
 
-    return tree;
+static rbtree_node_t *
+rbtree_max(rbtree_node_t *node, rbtree_node_t *sentinel)
+{
+    while (node->right != sentinel) {
+        node = node->right;
+    }
+
+    return node;
 }
 
 /**
@@ -43,7 +42,8 @@ rbtree_t *rbtree_create(rbtree_insert_func insert_func, rbtree_compare_func comp
  *       / \                      / \
  *      [2][3]                   [1][2]
  */
-void rbtree_left_rotate(rbtree_t *tree, rbtree_node_t *node)
+static void
+rbtree_left_rotate(rbtree_t *tree, rbtree_node_t *node)
 {
     rbtree_node_t *temp = NULL;
 
@@ -54,7 +54,7 @@ void rbtree_left_rotate(rbtree_t *tree, rbtree_node_t *node)
 
     // 更新x的right，和y->left的parent
     node->right = temp->left;
-    if (temp->left != RBTREE_NIL) {
+    if (temp->left != tree->sentinel) {
         temp->left->parent = node;
     }
 
@@ -88,7 +88,8 @@ void rbtree_left_rotate(rbtree_t *tree, rbtree_node_t *node)
  *    / \                                                 / \
  *   [2][3]                                              [3][1]
  */
-void rbtree_right_rotate(rbtree_t *tree, rbtree_node_t *node)
+static void
+rbtree_right_rotate(rbtree_t *tree, rbtree_node_t *node)
 {
     rbtree_node_t *temp = NULL;
 
@@ -99,7 +100,7 @@ void rbtree_right_rotate(rbtree_t *tree, rbtree_node_t *node)
 
     // 更新node->left
     node->left = temp->right;
-    if (temp->right != RBTREE_NIL) {
+    if (temp->right != tree->sentinel) {
         temp->right->parent = node;
     }
 
@@ -121,7 +122,34 @@ void rbtree_right_rotate(rbtree_t *tree, rbtree_node_t *node)
     node->parent = temp;
 }
 
-int binary_tree_insert(rbtree_t *tree, rbtree_node_t *node, rbtree_node_t *sentinel)
+rbtree_t *
+rbtree_create(rbtree_insert_func insert_func, rbtree_compare_func compare_func)
+{
+    rbtree_t *tree = NULL;
+
+
+    tree = (rbtree_t *)malloc(sizeof(rbtree_t));
+    if (!tree) {
+        return NULL;
+    }
+
+    tree->sentinel = (rbtree_node_t *)malloc(sizeof(rbtree_node_t));
+    if (!tree->sentinel) {
+        return NULL;
+    }
+
+    rbtree_init_sentinel(tree->sentinel);
+    tree->size = 0;
+    tree->root = tree->sentinel;
+    tree->compare_func = compare_func;
+    tree->insert_func = insert_func;
+    tree->same_flag = RBSAME_RETURN;
+
+    return tree;
+}
+
+static int
+binary_tree_insert(rbtree_t *tree, rbtree_node_t *node, rbtree_node_t *sentinel)
 {
     rbtree_node_t *temp, *parent;
     int cmp = 0;
@@ -131,7 +159,7 @@ int binary_tree_insert(rbtree_t *tree, rbtree_node_t *node, rbtree_node_t *senti
     parent = NULL;
     while (temp != sentinel) {
         cmp = tree->compare_func(temp, node);
-        printf("cmp result = %d\n", cmp);
+        //printf("cmp result = %d\n", cmp);
         parent = temp;
         if (cmp == 0) {                         // 这里需要再考虑一下怎么处理，相同的值
             //return RBTREE_ERROR;                // same value
@@ -167,14 +195,15 @@ int binary_tree_insert(rbtree_t *tree, rbtree_node_t *node, rbtree_node_t *senti
     return RBTREE_OK;
 }
 
-int rbtree_insert(rbtree_t *tree, rbtree_node_t *node)
+int
+rbtree_insert(rbtree_t *tree, rbtree_node_t *node)
 {
     rbtree_node_t *temp, *sentinel;
     int cmp = 0;
     int rc = 0;
 
     /* a binary tree insert */
-    sentinel = RBTREE_NIL;
+    sentinel = tree->sentinel;
     if (tree->root == sentinel) {
         node->parent = NULL;
         node->left = sentinel;
@@ -190,10 +219,10 @@ int rbtree_insert(rbtree_t *tree, rbtree_node_t *node)
     // 这里是自定义的插入，node 为 RED
     rbnode_red(node);
     if (tree->insert_func) {
-        printf("using user insert function...\n");
+        //printf("using user insert function...\n");
         rc = tree->insert_func(tree, node, sentinel);
     } else {
-        printf("using user default function...\n");
+        //printf("using user default function...\n");
         rc = binary_tree_insert(tree, node, sentinel);
     }
     if (rc != RBTREE_OK)
@@ -254,35 +283,18 @@ int rbtree_insert(rbtree_t *tree, rbtree_node_t *node)
     return RBTREE_OK;
 }
 
-rbtree_node_t *rbtree_min(rbtree_node_t *node, rbtree_node_t *sentinel)
-{
-    while (node->left != sentinel) {
-        node = node->left;
-    }
-
-    return node;
-}
-
-rbtree_node_t *rbtree_max(rbtree_node_t *node, rbtree_node_t *sentinel)
-{
-    while (node->right != sentinel) {
-        node = node->right;
-    }
-
-    return node;
-}
-
-void rbtree_delete(rbtree_t *tree, rbtree_node_t *node)
+void
+rbtree_delete(rbtree_t *tree, rbtree_node_t *node)
 {
     rbcolor_t red;
     rbtree_node_t   **root;
     rbtree_node_t   *sentinel;
-    rbtree_node_t   *subst;             // 将来要替换被删除节点的节点
+    rbtree_node_t   *subst;             // substitute: 替换
     rbtree_node_t   *temp;
     rbtree_node_t   *w;
 
     /* a binary tree delete */
-    sentinel = RBTREE_NIL;
+    sentinel = tree->sentinel;
 
     //root = (ngx_rbtree_node_t **) &tree->root;
 
@@ -326,8 +338,6 @@ void rbtree_delete(rbtree_t *tree, rbtree_node_t *node)
         return;
     }
 
-    // 下面是 subst 和 node 都不是 根节点的情况
-    // 代替节点是否是红节点
     red = rbnode_is_red(subst);
 
     // temp有可能是被删除节点的子节点，
@@ -339,19 +349,27 @@ void rbtree_delete(rbtree_t *tree, rbtree_node_t *node)
         subst->parent->right = temp;
     }
 
-    // 被删的节点至多有一个儿子
-    if (subst == node) {
-        temp->parent = subst->parent;       // 这里temp有可能是sentinel?! node没有儿子节点时
+    if (temp == sentinel){
+        printf("temp == sentinel!!!!!!!!!!!!!!!\n");
+    }
 
-    // 被删的节点有两个儿子
+    // 被删的节点至多有一个儿子, subst=node被删除（位置被temp替换）
+    if (subst == node) {
+        if (temp != sentinel) {
+            temp->parent = subst->parent;
+        }
+
+    // node有两个儿子，用subst代替node
     } else {
 
-        // node是根节点
-        if (subst->parent == node) {
-            temp->parent = subst;           // 这里temp有可能是sentinel?! subst没有节点时
+        // 此时node的一个儿子已经是temp了
+        if (temp != sentinel) {
+            if (subst->parent == node) {
+                temp->parent = subst;
 
-        } else {
-            temp->parent = subst->parent;   // 这里temp有可能是sentinel?! subst没有节点时
+            } else {
+                temp->parent = subst->parent;
+            }
         }
 
         // 用subst代替node
@@ -360,9 +378,12 @@ void rbtree_delete(rbtree_t *tree, rbtree_node_t *node)
         subst->parent = node->parent;
         rbnode_copy_color(subst, node);
 
+        // subst已经替换了node，现在让周围的节点指向subst
+        // node是根节点
         if (node == tree->root) {
             tree->root = subst;
 
+        // node不是根节点，那它就有父节点
         } else {
             if (node == node->parent->left) {
                 node->parent->left = subst;
@@ -387,11 +408,12 @@ void rbtree_delete(rbtree_t *tree, rbtree_node_t *node)
     rbtree_decreace(tree);
 
     if (red) {
+        printf("node is red, quick return....\n");
+        rbtree_init_sentinel(sentinel);
         return;
     }
 
     /* a delete fixup */
-
     while (temp != tree->root && rbnode_is_black(temp)) {
 
         if (temp == temp->parent->left) {
@@ -420,7 +442,7 @@ void rbtree_delete(rbtree_t *tree, rbtree_node_t *node)
                 rbnode_black(temp->parent);
                 rbnode_black(w->right);
                 rbtree_left_rotate(tree, temp->parent);
-                temp = *root;
+                temp = tree->root;
             }
 
         } else {
@@ -449,18 +471,242 @@ void rbtree_delete(rbtree_t *tree, rbtree_node_t *node)
                 rbnode_black(temp->parent);
                 rbnode_black(w->left);
                 rbtree_right_rotate(tree, temp->parent);
-                temp = *root;
+                temp = tree->root;
             }
         }
     }
 
     rbnode_black(temp);
+    rbtree_init_sentinel(sentinel);
 }
 
-void rbtree_inorder_traversal(rbtree_node_t *root, traversal_func func)
+int
+rbtree_delete2(rbtree_t *tree, rbtree_node_t *node)
 {
-    if (root->left && root->left != RBTREE_NIL) rbtree_inorder_traversal(root->left, func);
-    func(root);
-    if (root->right && root->right != RBTREE_NIL) rbtree_inorder_traversal(root->right, func);
+    rbtree_node_t *subst = NULL;
+    rbtree_node_t *temp = NULL;
+    rbtree_node_t *sentinel = tree->sentinel;
+    rbtree_node_t *w = NULL;
+    rbcolor_t red;
+
+    if (node == NULL || node == sentinel) {
+        return RBTREE_ERROR;
+    }
+    
+    // node至多只有一个儿子
+    if (node->left == sentinel || node->right == sentinel) {
+        /* subst has a NIL node as a child */
+        subst = node;
+    } else {
+        // node 有两个儿子，找子树里面只有至多一个儿子的节点
+        subst = rbtree_min(node->right, sentinel);
+    }
+
+    // subst 现在最多只有一个儿子
+    if (subst->left != sentinel) {
+        temp = subst->left;
+    } else {
+        temp = subst->right;
+    }
+
+    // 接下来要用subst替换到node，因此这里重新给temp找父节点
+    // 注意：temp 有可能是 sentinel
+    temp->parent = subst->parent;
+
+    // 不是根节点
+    if (subst->parent) {
+        // 用x代替y的位置
+        if (subst == subst->parent->left) {
+            subst->parent->left = temp;
+        } else {
+            subst->parent->right = temp;
+        }
+    } else {
+        // 是根节点，且subst == node，且node只有最多一个儿子
+        tree->root = temp;
+    }
+
+    // 保存y的颜色，因为后面可能会改
+    red = rbnode_is_red(subst);
+    // 如果y不是我们要删除的节点，则将其拼接以代替该节点。
+    // 条件成立说明：node有两个儿子
+    if (subst != node) {
+        // 指回来，否二temp会丢失父节点
+        if (subst->parent == node) {
+            temp->parent = subst;
+        } 
+
+        /* Update subst */
+        subst->parent = node->parent;
+        subst->left = node->left;
+        subst->right = node->right;
+        rbnode_copy_color(subst, node); // 这里会改变y的颜色，所以上面要保存
+
+        // subst已经替换了node，接下来把原来指向node的节点指向subst
+        if (subst->left != sentinel) {
+            subst->left->parent = subst;
+        }
+        if (subst->right != sentinel) {
+            subst->right->parent = subst;
+        }
+
+        // subst 已经替换了 node，因此有可能成为根节点，这里要判断
+        if (subst->parent) {
+            if (node == subst->parent->left) {
+                subst->parent->left = subst;
+            } else {
+                subst->parent->right = subst;
+            }
+        } else {
+            tree->root = subst;
+        }
+    }
+
+    // 把树的大小 -1
+    rbtree_decreace(tree);
+
+    if (red)
+    {
+        printf("subst is red, quick return....\n");
+        return RBTREE_OK;
+    }
+
+    if (temp == sentinel) {
+        printf("warning: temp == sentinel!!!!!!!!!\n");
+    }
+
+    // temp 和 subst 都是黑色，那就删除了一个黑色节点，因此要进行下列调整
+    while (temp != tree->root && rbnode_is_black(temp)) {
+
+        // 这里left和right是镜像的
+        if (temp == temp->parent->left) {
+            w = temp->parent->right;        // w是temp的兄弟节点
+
+            // 兄弟节点是红色，意味着父节点是黑色
+            // 对应中文wiki的情形2
+            if (rbnode_is_red(w)) {
+                rbnode_black(w);
+                rbnode_red(temp->parent);
+                rbtree_left_rotate(tree, temp->parent);
+                w = temp->parent->right;
+            }
+
+            // 对应中文wiki的情形3/4，重绘 w 为红色
+            if (rbnode_is_black(w->left) && rbnode_is_black(w->right)) {
+                rbnode_red(w);
+                temp = temp->parent;
+            } else {
+                // 对应中文wiki的情形5
+                if (rbnode_is_black(w->right)) {
+                    rbnode_black(w->left);
+                    rbnode_red(w);
+                    rbtree_right_rotate(tree, w);
+                    w = temp->parent->right;
+                }
+
+                // 对应中文wiki的情形6
+                rbnode_copy_color(w, temp->parent);
+                rbnode_black(temp->parent);
+                rbnode_black(w->right);
+                rbtree_left_rotate(tree, temp->parent);
+                temp = tree->root;
+            }
+        } else {
+            w = temp->parent->left;
+
+            if (rbnode_is_red(w)) {
+                rbnode_black(w);
+                rbnode_red(temp->parent);
+                rbtree_right_rotate(tree, temp->parent);
+                w = temp->parent->left;
+            }
+
+            if (rbnode_is_black(w->right) && rbnode_is_black(w->left)) {
+                rbnode_red(w);
+                temp = temp->parent;
+            } else {
+                if (rbnode_is_black(w->left)) {
+                    rbnode_black(w->right);
+                    rbnode_red(w);
+                    rbtree_left_rotate(tree, w);
+                    w = temp->parent->left;
+                }
+                
+                rbnode_copy_color(w, temp->parent);
+                rbnode_black(temp->parent);
+                rbnode_black(w->left);
+                rbtree_right_rotate(tree, temp->parent);
+                temp = tree->root;
+            }
+        }
+    }
+
+    if (rbnode_is_red(temp)) {
+        rbnode_black(temp);
+    }
+
+    // 有可能修改了sentinel，这里恢复一下
+    rbtree_init_sentinel(sentinel);
+    
+    return RBTREE_OK;
+}
+
+
+static void
+do_rbtree_inorder_traversal(rbtree_node_t *root, 
+                            traversal_func func, 
+                            rbtree_node_t *sentinel)
+{
+    if (root->left) do_rbtree_inorder_traversal(root->left, func, sentinel);
+    func(root, sentinel);
+    if (root->right) do_rbtree_inorder_traversal(root->right, func, sentinel);
+}
+
+void
+rbtree_inorder_traversal(rbtree_t *tree, traversal_func func)
+{
+    do_rbtree_inorder_traversal(tree->root, func, tree->sentinel);
+}
+
+
+void
+rbtree_layer_traversal(rbtree_t *tree, traversal_func func)
+{
+    int queue_size = tree->size >> 1;
+    rbtree_node_t **queue1 = (rbtree_node_t **)malloc(sizeof(rbtree_node_t*) * queue_size);
+    rbtree_node_t **queue2 = (rbtree_node_t **)malloc(sizeof(rbtree_node_t*) * queue_size);
+    if (!queue1 || !queue2) {
+        printf("malloc queue failed!\n");
+        return;
+    }
+
+    rbtree_node_t **temp = NULL;
+    int queue1_cur_size = 0;
+    int queue2_cur_size = 0;
+    rbtree_node_t *node = tree->root;
+    queue1[queue1_cur_size++] = node;
+
+    while(queue1_cur_size > 0)
+    {
+        for (int i = 0; i < queue1_cur_size; i++)
+        {
+            func(queue1[i], tree->sentinel);
+            if (queue1[i]->left != NULL) {
+                queue2[queue2_cur_size++] = queue1[i]->left;
+            }
+
+            if (queue1[i]->right != NULL) {
+                queue2[queue2_cur_size++] = queue1[i]->right;
+            }
+        }
+
+        printf("\n");
+
+        queue1_cur_size = queue2_cur_size;
+        queue2_cur_size = 0;
+        temp = queue1;
+        queue1 = queue2;
+        queue2 = temp;
+    }
 }
 

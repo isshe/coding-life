@@ -54,11 +54,12 @@ typedef struct rbtree_s rbtree_t;
 
 typedef int (*rbtree_compare_func) (rbtree_node_t *node1, rbtree_node_t *node2);
 typedef int (*rbtree_insert_func) (rbtree_t *tree, rbtree_node_t *node, rbtree_node_t *sentinel);
-typedef int (*traversal_func)(rbtree_node_t *node);
+typedef int (*traversal_func)(rbtree_node_t *node, rbtree_node_t *sentinel);
 
 struct rbtree_s {
     size_t size;                        // 记录树的大小
-    rbtree_node_t     *root;            // 树的根
+    rbtree_node_t       *root;          // 树的根
+    rbtree_node_t       *sentinel;      // 哨兵
     rbtree_compare_func compare_func;   // 比较函数
     rbtree_insert_func insert_func;     // 插入函数
     rbsame_t same_flag;
@@ -66,13 +67,12 @@ struct rbtree_s {
 
 int is_red(rbtree_node_t *node);
 
-rbtree_node_t *rbtree_min(rbtree_node_t *node, rbtree_node_t *sentinel);
-rbtree_node_t *rbtree_max(rbtree_node_t *node, rbtree_node_t *sentinel);
 rbtree_t *rbtree_create(rbtree_insert_func insert_func, rbtree_compare_func compare_func);
 int rbtree_insert(rbtree_t *tree, rbtree_node_t *node);
 void rbtree_delete(rbtree_t *tree, rbtree_node_t *node);
+int rbtree_delete2(rbtree_t *tree, rbtree_node_t *node);
 
-void rbtree_inorder_traversal(rbtree_node_t *root, traversal_func func);
-
+void rbtree_inorder_traversal(rbtree_t *tree, traversal_func func);
+void rbtree_layer_traversal(rbtree_t *tree, traversal_func func);
 
 #endif
