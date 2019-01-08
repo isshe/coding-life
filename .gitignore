@@ -54,3 +54,4 @@ dkms.conf
 .hg/
 .vscode/
 .idea/
+*.class
