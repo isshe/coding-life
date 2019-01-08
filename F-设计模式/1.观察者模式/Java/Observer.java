@@ -1,3 +1,5 @@
+package Java;
+
 public interface Observer {
-    // do something
+    public void update(float temperature, float humidity, float pressure);
 }

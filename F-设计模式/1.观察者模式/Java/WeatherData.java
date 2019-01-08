@@ -1,4 +1,4 @@
-package ObserverMode;
+package Java;
 import java.util.*;
 
 public class WeatherData implements Subject {

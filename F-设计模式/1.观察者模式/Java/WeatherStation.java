@@ -1,4 +1,4 @@
-package ObserverMode;
+package Java;
 
 public class WeatherStation {
     public static void main(String[] args) {
