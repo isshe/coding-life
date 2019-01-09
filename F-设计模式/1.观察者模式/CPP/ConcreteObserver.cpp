@@ -11,10 +11,10 @@ ConcreteObserver::ConcreteObserver(Subject *subject)
 ConcreteObserver::~ConcreteObserver()
 {
     _subject->removeObserver(this);
-    //_subject = null;
+    _subject = NULL;
 }
 
 void ConcreteObserver::update()
 {
-    std::cout << "update---1---" << std::endl;
+    std::cout << "update status: " << _subject->getStatus() << std::endl;
 }

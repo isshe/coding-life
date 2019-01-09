@@ -7,12 +7,16 @@
 
 class ConcreteSubject : public Subject {
 public:
+    ConcreteSubject();
     void registerObserver(Observer *o);
     void removeObserver(Observer *o);
     void notifyObservers();
+    void statusChanged()
+    int getStatus();
 
 private:
     std::list<Observer *> _observers;
+    int _status;
 };
 
 

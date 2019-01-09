@@ -6,8 +6,8 @@ int main()
     ConcreteSubject *cs = new ConcreteSubject();
     ConcreteObserver *co = new ConcreteObserver(cs);
 
-    cs->notifyObservers();
-    cs->notifyObservers();
+    cs->statusChanged();
+    cs->statusChanged();
 
     return 0;
 }
