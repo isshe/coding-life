@@ -1726,9 +1726,9 @@
 							"font": "Arial;13;0",
 							"left": 592,
 							"top": 528,
-							"width": 150.78076171875,
+							"width": 153.66259765625,
 							"height": 40,
-							"text": "Decorator::operation();\nAddedBehavior();"
+							"text": "Decorator::Operation();\nAddedBehavior();"
 						},
 						{
 							"_type": "UMLNoteLinkView",
