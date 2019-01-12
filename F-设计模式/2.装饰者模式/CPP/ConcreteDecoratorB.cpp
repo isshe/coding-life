@@ -2,15 +2,17 @@
 
 ConcreteDecoratorB::ConcreteDecoratorB(Component *component)
 {
-    _pcomponent = component;
+    _component = component;
 }
 
-string ConcreteDecoratorB::Operation()
+std::string ConcreteDecoratorB::Operation()
 {
-    return "ConcreteDecoratorB::Operation()"
+    return _component->Operation() + ", "
+    + "ConcreteDecoratorB::Operation()" + ": "
+    + addOperation();
 }
 
-string ConcreteDecoratorB::addOperation()
+std::string ConcreteDecoratorB::addOperation()
 {
-    _pcomponent->Operation() + ", " + this->Operation();
+    return "2";
 }

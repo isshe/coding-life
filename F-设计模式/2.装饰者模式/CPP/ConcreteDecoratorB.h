@@ -1,11 +1,12 @@
 #include "Decorator.h"
 #include "Component.h"
+#include <iostream>
 
 class ConcreteDecoratorB : public Decorator {
 public:
     ConcreteDecoratorB(Component *component);
-    string Operation();
-    string addOperation();
+    std::string Operation();
+    std::string addOperation();
 private:
-    Component *_pcomponent;
-}
+    Component *_component;
+};

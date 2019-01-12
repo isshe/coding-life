@@ -1,6 +1,6 @@
 #include "ConcreteComponentB.h"
 
-string ConcreteComponentB::Operation()
+std::string ConcreteComponentB::Operation()
 {
     return "ConcreteComponentB::Operation()";
 }

@@ -1,16 +1,18 @@
 #include "ConcreteDecoratorA.h"
 
- ConcreteDecoratorA::ConcreteDecoratorA(Component *component)
- {
-     _pcomponent = component;
- }
+ConcreteDecoratorA::ConcreteDecoratorA(Component *component)
+{
+    _component = component;
+}
 
- string ConcreteDecoratorA::Operation()
- {
-     return "ConcreteDecoratorA::Operation()"
- }
+std::string ConcreteDecoratorA::Operation()
+{
+    return _component->Operation() + ", "
+    + "ConcreteDecoratorA::Operation()" + ": "
+    + addOperation();
+}
 
- string ConcreteDecoratorA::addOperation()
- {
-     _pcomponent->Operation() + ", " + this->Operation();
- }
+std::string ConcreteDecoratorA::addOperation()
+{
+    return "1";
+}

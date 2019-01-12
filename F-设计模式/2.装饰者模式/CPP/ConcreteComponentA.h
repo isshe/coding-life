@@ -1,7 +1,8 @@
 
 #include "Component.h"
+#include <iostream>
 
 class ConcreteComponentA : public Component {
 public:
-    string Operation();
-}
+    std::string Operation();
+};
