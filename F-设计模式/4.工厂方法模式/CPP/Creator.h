@@ -9,5 +9,4 @@ public:
     virtual Product *createProduct(int type) = 0;
 };
 
-
 #endif
