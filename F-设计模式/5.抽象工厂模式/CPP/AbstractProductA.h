@@ -3,7 +3,6 @@
 
 class AbstractProductA {
 public:
-    //void say() = 0;
 
     virtual ~AbstractProductA() {};
 };
