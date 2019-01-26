@@ -4,7 +4,7 @@
 ## 1. 基础概念
 * 定义/意图：
 * 类图：
-![类图](./classdiagram.png)
+![类图](./ClassDiagram.png)
 * 出场嘉宾
     * 
 
