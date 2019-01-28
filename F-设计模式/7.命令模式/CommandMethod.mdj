@@ -415,7 +415,7 @@
 											"top": 255,
 											"width": 80.57080078125,
 											"height": 13,
-											"text": "Conmand"
+											"text": "Command"
 										},
 										{
 											"_type": "LabelView",
@@ -2080,7 +2080,7 @@
 					"_parent": {
 						"$ref": "AAAAAAFF+qBWK6M3Z8Y="
 					},
-					"name": "Conmand",
+					"name": "Command",
 					"ownedElements": [
 						{
 							"_type": "UMLAssociation",
@@ -4467,7 +4467,8 @@
 					"_parent": {
 						"$ref": "AAAAAAFoibW68GpQoBI="
 					},
-					"name": "Role1"
+					"name": "Role1",
+					"type": ""
 				},
 				{
 					"_type": "UMLAttribute",
@@ -4475,7 +4476,8 @@
 					"_parent": {
 						"$ref": "AAAAAAFoibW68GpQoBI="
 					},
-					"name": "Role2"
+					"name": "Role2",
+					"type": ""
 				},
 				{
 					"_type": "UMLAttribute",
@@ -4483,7 +4485,8 @@
 					"_parent": {
 						"$ref": "AAAAAAFoibW68GpQoBI="
 					},
-					"name": "Role3"
+					"name": "Role3",
+					"type": ""
 				},
 				{
 					"_type": "UMLAttribute",
@@ -4491,7 +4494,8 @@
 					"_parent": {
 						"$ref": "AAAAAAFoibW68GpQoBI="
 					},
-					"name": "Role4"
+					"name": "Role4",
+					"type": ""
 				}
 			]
 		}
