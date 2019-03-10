@@ -1,11 +1,10 @@
-#ifndef _LIST_ITERATOR_H_
-#define _LIST_ITERATOR_H_
-
 #include "ListIterator.h"
 
 template <class Item>
-ListIterator<Item>::ListIterator(const List<Item>* aList) : _list(aList), _current(0)
+ListIterator<Item>::ListIterator(const List<Item>* aList)
 {
+    _list = aList;
+    _current = 0;
 }
 
 template <class Item>
@@ -29,7 +28,5 @@ Item ListIterator<Item>::CurrentItem() const {
         throw -1;
     }
 
-    return _list->Get(_current)
+    return _list->Get(_current);
 }
-
-#endif

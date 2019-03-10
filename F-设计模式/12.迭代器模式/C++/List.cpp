@@ -2,7 +2,9 @@
 #include "List.h"
 
 template <class Item>
-List<Item>::List(long size) : _size(size), _count(0), _items(0) {
+List<Item>::List(long size) {
+    _size = size;
+    _count = 0;
     _items = new Item[size];
 }
 
