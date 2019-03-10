@@ -16,6 +16,8 @@ public:
     void Append(const Item&);
     void RemoveLast();
 
+    // createListIterator();
+
 private:
     Item *_items; // 数组
     long _count;
