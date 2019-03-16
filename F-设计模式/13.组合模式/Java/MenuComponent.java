@@ -1,6 +1,5 @@
 package Java;
 
-
 import java.lang.*;
 
 public abstract class MenuComponent {
