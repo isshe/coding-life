@@ -5,7 +5,7 @@
 
 using namespace std;
 
-TCPState* TCPState::_instance = 0;
+TCPClosed* TCPClosed::_instance = 0;
 
 TCPState* TCPClosed::Instance() {
     if (_instance == 0) {

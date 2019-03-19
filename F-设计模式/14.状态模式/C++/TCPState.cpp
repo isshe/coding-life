@@ -8,7 +8,7 @@
 
 using namespace std;
 
-void TCPState::Transimit(TCPConnection *c) {}
+void TCPState::Transmit(TCPConnection *c) {}
 void TCPState::ActiveOpen(TCPConnection *c) {}
 void TCPState::PassiveOpen(TCPConnection *c) {}
 void TCPState::Close(TCPConnection *c) {}

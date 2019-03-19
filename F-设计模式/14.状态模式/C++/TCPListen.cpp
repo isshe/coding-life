@@ -1,3 +1,5 @@
+// 这个类没用上
+
 #include "TCPListen.h"
 #include <iostream>
 #include "TCPEstablished.h"
@@ -6,7 +8,7 @@ using namespace std;
 
 TCPListen* TCPListen::_instance = 0;
 
-TCPListen* TCPListen::Instance() {
+TCPState* TCPListen::Instance() {
     if (_instance == 0) {
         _instance = new TCPListen();
     }

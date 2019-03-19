@@ -6,7 +6,7 @@ using namespace std;
 
 TCPEstablished* TCPEstablished::_instance = 0;
 
-TCPEstablished* TCPEstablished::Instance() {
+TCPState* TCPEstablished::Instance() {
     if (_instance == 0) {
         _instance = new TCPEstablished();
     }

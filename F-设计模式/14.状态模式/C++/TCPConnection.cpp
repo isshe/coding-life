@@ -1,5 +1,7 @@
 
 #include "TCPConnection.h"
+#include "TCPClosed.h"
+
 TCPConnection::TCPConnection() {
     _state = TCPClosed::Instance();
 }
