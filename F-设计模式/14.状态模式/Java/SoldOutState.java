@@ -1,6 +1,6 @@
 package Java;
 
-// 有硬币状态
+// 售完
 public class SoldOutState implements State {
     private GumballMachine gumballMachine;
 
