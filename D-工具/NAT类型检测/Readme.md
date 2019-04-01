@@ -4,10 +4,11 @@
 # NAT类型检测工具
 
 ## 1.前置依赖
+
 假设环境为ubuntu环境：
-* sudo apt-get install lua luarocks
-* sudo luasocket: luarocks install luasocket
-* sudo lua-cjson: luarocks install lua-cjson
+* lua: `sudo apt-get install lua luarocks`
+* luasocket: `sudo luarocks install luasocket`
+* lua-cjson: `sudo luarocks install lua-cjson`
 
 ## 2. 拓扑图
 ```
