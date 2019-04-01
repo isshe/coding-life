@@ -44,11 +44,11 @@
 ```shell
 lua ./stun_server.lua 192.168.2.B 192.168.2.C
 ```
-* 开第二个服务器
+* 开第二个服务器：
 ```shell
 lua ./stun_server.lua 192.168.2.C 192.168.2.B
 ```
-* 运行客户端进行测试
+* 运行客户端进行测试：
 ```shell
 lua ./stun_client.lua 172.16.0.X 192.168.2.B 192.168.2.C
 ```
