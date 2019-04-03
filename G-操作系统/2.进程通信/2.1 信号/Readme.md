@@ -40,7 +40,7 @@ sighandler_t signal(int signum, sighandler_t handler);
 **教训：不可以用信号来对其他进程中发生的时间计数**
 
 ## A.拓展
-* 进程组。【见`1.进程`】
+* 进程组。【见[1.进程](../../1.进程)】
 * Linux信号
   ![Linux信号](./Linux_signal.png)
 * 回收子进程的方式：用SIGCHLD信号。子进程终止时，会发送SIGCHLD信号给其父进程。【详见[ex_SIGCHILD.c](./Examples/ex_SIGCHLD.c)】
