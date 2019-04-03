@@ -42,7 +42,7 @@ sighandler_t signal(int signum, sighandler_t handler);
 ## A.拓展
 * 进程组。【见`1.进程`】
 * Linux信号
-![Linux信号](./Linux_signal.png)
+  ![Linux信号](./Linux_signal.png)
 * 回收子进程的方式：用SIGCHLD信号。子进程终止时，会发送SIGCHLD信号给其父进程。【详见[ex_SIGCHILD.c](./Examples/ex_SIGCHLD.c)】
 * 可移植的signal函数。【详见[isshe_signal.h](../../A.lib/isshe_signal.h)和[isshe_signal.c](../../A.lib/isshe_signal.c)】
 
