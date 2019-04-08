@@ -22,11 +22,15 @@
   * 3）将控制传递给这个新恢复的进程；
 
 ## 1.进程地址空间
-![进程地址空间](./process_address_map.png)
+### 1.1 典型进程地址空间1
+![典型进程地址空间1](./process_address_map.png)
 * 代码段起始地址：
   * 32位：0x08048000
   * 64位：0x00400000
 * 进程从用户模式变为内核模式的方法是：中断、故障、陷入系统调用。
+
+### 1.2 典型进程地址空间2
+![典型进程地址空间2](./process_address_map2.png)
 
 ## 2. 进程状态 
 ### 2.1 状态转换图
@@ -52,10 +56,34 @@
     * 3）用户请求创建一个新进程；
     * 4）一个批处理作业的初始化；
 * 导致`进程终止`的主要事件：
-    * 1）正常退出（自愿的）；
-    * 2）出错退出（自愿的）；
-    * 3）严重错误（非自愿）；
-    * 4）被其他进程杀死（非自愿）；
+    * 1）正常退出（自愿的）
+      * A.从main返回；
+      * B.调用exit；
+      * C.调用_exit或_Exit;
+      * D.最后一个线程从其启动例程返回；
+      * E.从最后一个线程调用pthread_exit()；
+    * 2）出错退出（自愿的）
+      * 调用abort
+    * 3）严重错误/被其他进程杀死（非自愿）
+      * 接到终止信号；
+      * 最后一个线程对取消(cancellation)请求做出响应；
+* 相关函数
+```c
+#include <stdlib.h>
+#include <unistd.h>
+
+// 进程创建
+pid_t fork(void);
+// 进程退出
+// 进行一些清理（关闭文件描述符之类的）,然后返回内核
+void exit(int status);
+// 下面两个直接返回内核
+void _Exit(int status);
+void _exit(int status);
+```
+* fork失败的主要原因：
+    * 系统中已经有太多进程。
+    * 该实际用户ID的进程数超过了系统限制。
 
 ## 4. 守护进程
 
@@ -81,7 +109,7 @@
 
 
 ## A.拓展
-* 回收子进程的方式：用SIGCHLD信号。子进程终止时，会发送SIGCHLD信号给其父进程。【详见`2.1信号/Examples/ex_SIGCHLD.c`】
+### A.1 进程组
 * 进程组：在类UNIX系统中，进程和它的所有子进程以及后裔进程共同组成一个进程组。
 * 进程组相关函数:
 ```
@@ -103,13 +131,22 @@ int setpgid(pid_t pid, pid_t pgid);
 #include <unistd.h>
 #include <sys/wait.h>
 
-void exit(int status);
-pid_t fork(void);
 pid_t waitpid(pid_t pid, int *status, int options);
 pid_t wait(int *status);
 unsigned int sleep(unsigned int secs);
 int pause(void);
 ```
+### A.2 子进程回收方式
+* 回收子进程的方式：用SIGCHLD信号。子进程终止时，会发送SIGCHLD信号给其父进程。
+【详见[ex_SIGCHLD.c](../2.进程通信/1.信号/Examples/ex_SIGCHLD.c)】
+
+
+### A.3 C程序的启动和终止
+![C程序的启动和终止](./c_program_start_end.png)
+* **内核使程序执行的唯一方法：exec !**
+
+### A.4 进程资源限制
+* 见《Unix环境高级编程》p175
 
 ## B.参考
 * https://blog.csdn.net/i_scream_/article/details/51569355
