@@ -143,10 +143,13 @@ int pause(void);
 
 ### A.3 C程序的启动和终止
 ![C程序的启动和终止](./c_program_start_end.png)
-* **内核使程序执行的唯一方法：exec !**
+* **内核使程序执行的唯一方法：exec!**
 
 ### A.4 进程资源限制
 * 见《Unix环境高级编程》p175
+
+### A.5 7个exec的关系
+![7个exec的关系](./7_exec_relationship.png)
 
 ## B.参考
 * https://blog.csdn.net/i_scream_/article/details/51569355

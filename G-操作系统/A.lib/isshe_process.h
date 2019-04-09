@@ -4,6 +4,6 @@
 #include <unistd.h>
 
 pid_t isshe_fork(void);
-void print_exit_status(int status);
+void isshe_print_exit_status(int status);
 
 #endif

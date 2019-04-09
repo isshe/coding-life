@@ -18,7 +18,7 @@ pid_t isshe_fork(void)
     return pid;
 }
 
-void print_exit_status(int status)
+void isshe_print_exit_status(int status)
 {
     if (WIFEXITED(status)) {
         printf("normal termination, exit status = %d\n", WEXITSTATUS(status));
