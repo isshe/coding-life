@@ -6,7 +6,7 @@
 
 #include "isshe_common.h"
 
-void isshe_error(char *msg)
+void isshe_error(const char *msg)
 {
     fprintf(stderr, "%s: %s\n", msg, strerror(errno));
     exit(ISSHE_FAILED);

@@ -4,6 +4,6 @@
 #define ISSHE_SUCCEED 0
 #define ISSHE_FAILED  (-1)
 
-void isshe_error(char *msg);
+void isshe_error(const char *msg);
 
 #endif

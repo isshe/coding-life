@@ -86,6 +86,24 @@ void _exit(int status);
     * 该实际用户ID的进程数超过了系统限制。
 
 ## 4. 守护进程
+* 守护进程：
+    * 一种生存期长的进程。
+    * 后台运行；
+    * 没有控制终端；
+### 4.1 编程规则
+* 1）调用umask将文件模式创建屏蔽字设置为一个已知的值（通常是0）；【疑问？！】
+* 2）调用fork，然后使父进程exit；
+* 3）调用setsid创建一个新会话；
+    * a）进程成为新会话的首进程；
+    * b）成为一个新进程组的组长进程；
+    * c）没有控制终端；
+* 4）将当前工作目录更改为根目录；
+* 5）关闭不再需要的文件描述符；
+* 6）[选]打开/dev/null使进程具有文件描述符0/1/2。
+    * 使所有读标准输入，写标准输出/错误输出的库例程都不会产生效果。
+### 4.2 示例
+* 见[守护进程示例](./Examples/1_daemonize.c)
+
 
 ## 5. 进程实现
 * 进程表：操作系统维护的一张表格——一个结构数组。
@@ -140,7 +158,6 @@ int pause(void);
 * 回收子进程的方式：用SIGCHLD信号。子进程终止时，会发送SIGCHLD信号给其父进程。
 【详见[ex_SIGCHLD.c](../2.进程通信/1.信号/Examples/ex_SIGCHLD.c)】
 
-
 ### A.3 C程序的启动和终止
 ![C程序的启动和终止](./c_program_start_end.png)
 * **内核使程序执行的唯一方法：exec!**
@@ -151,7 +168,19 @@ int pause(void);
 ### A.5 7个exec的关系
 ![7个exec的关系](./7_exec_relationship.png)
 
-## B.参考
+### A.6 ps命令中进程状态
+* `R`: TASK_RUNNING，可执行状态。
+* `S`: TASK_INTERRUPTIBLE，可中断的睡眠状态。
+* `D`: TASK_UNINTERRUPTIBLE，不可中断的睡眠状态。
+* `T`: TASK_STOPPED/TASK_TRACED，暂停状态或跟踪状态。
+* `Z`: TASK_DEAD – EXIT_ZOMBIE，退出状态，进程成为僵尸进程。
+* `X`: TASK_DEAD – EXIT_DEAD，退出状态，进程即将被销毁。
+
+## B.疑问/不懂
+* 孤儿进程组?
+* 文件模式创建屏蔽字是什么？有何作用？(umask()设置的那个))
+
+## C.参考
 * https://blog.csdn.net/i_scream_/article/details/51569355
 * 《Unix环境高级编程》
 * 《现代操作系统》
