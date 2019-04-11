@@ -4,6 +4,9 @@
 #include <errno.h>
 #include <string.h>
 #include <stdlib.h>
+#include <syslog.h>
+#include <signal.h>
+#include <sys/stat.h>
 
 #include "../../A.lib/isshe_file.h"
 #include "../../A.lib/isshe_common.h"
@@ -133,6 +136,9 @@ void sighup(int signo)
     reread();
 }
 
+// SIGHUP: 1 = 0x1
+// SIGTERM: 15 = 0xf
+// kill -x pid
 int main(int argc, char *argv[])
 {
     char *cmd;
@@ -155,7 +161,7 @@ int main(int argc, char *argv[])
 
     sa.sa_handler = sigterm;
     sigemptyset(&sa.sa_mask);
-    sigaddset(&sa.sa_mask, SIGHUP);     // !!!
+    sigaddset(&sa.sa_mask, SIGHUP); // 当调用sigterm时，屏蔽SIGHUP信号
     sa.sa_flags = 0;
     if (sigaction(SIGTERM, &sa, NULL) < 0) {
         syslog(LOG_ERR, "can't catch SIGTERM: %s", strerror(errno));
@@ -164,15 +170,16 @@ int main(int argc, char *argv[])
 
     sa.sa_handler = sighup;
     sigemptyset(&sa.sa_mask);
-    sigaddset(&sa.sa_mask, SIGTERM);     // !!!
-    sa.sa_flags = 0;
+    sigaddset(&sa.sa_mask, SIGTERM); // 当调用sighup时，屏蔽SIGTERM信号
+    sa.sa_flags = 0; //SA_RESTART 无法重启sleep（大概是因为：sleep是标准库函数，不是系统调用）
     if (sigaction(SIGHUP, &sa, NULL) < 0) {
         syslog(LOG_ERR, "can't catch SIGTERM: %s", strerror(errno));
         exit(1);
     }
 
+    syslog(LOG_ERR, "sleep...pid = %d", getpid());
     sleep(30);
-
+    syslog(LOG_ERR, "sleep done!");
     exit(0);
 }
 
