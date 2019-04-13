@@ -4,7 +4,7 @@
 #include <sys/errno.h>
 #include <string.h>
 
-#include "isshe_common.h"
+#include "isshe_error.h"
 
 void isshe_error(const char *msg)
 {

@@ -1,5 +1,5 @@
 #include "isshe_signal.h"
-#include "isshe_common.h"
+#include "isshe_error.h"
 
 /**
  * 可移植的signal函数：

@@ -163,7 +163,7 @@ int pause(void);
 ```
 ### A.2 子进程回收方式
 * 回收子进程的方式：用SIGCHLD信号。子进程终止时，会发送SIGCHLD信号给其父进程。
-【详见[ex_SIGCHLD.c](../2.进程通信/1.信号/Examples/ex_SIGCHLD.c)】
+【详见[ex_SIGCHLD.c](../3.进程通信/1.信号/Examples/ex_SIGCHLD.c)】
 
 ### A.3 C程序的启动和终止
 ![C程序的启动和终止](./c_program_start_end.png)

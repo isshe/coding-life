@@ -9,7 +9,7 @@
 #include <sys/stat.h>
 
 #include "../../A.lib/isshe_process.h"
-#include "../../A.lib/isshe_common.h"
+#include "../../A.lib/isshe_error.h"
 
 
 void daemonize(const char *cmd)

@@ -6,7 +6,7 @@
 #include <stdlib.h>
 
 #include "../../A.lib/isshe_file.h"
-#include "../../A.lib/isshe_common.h"
+#include "../../A.lib/isshe_error.h"
 
 
 #define LOCKFILE "/tmp/isshe_daemon.pid"
