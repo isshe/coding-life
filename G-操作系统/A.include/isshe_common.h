@@ -5,7 +5,5 @@
 #define ISSHE_FAILED    (-1)
 #define ISSHE_TRUE      1
 #define ISSHE_FALSE     0
-
-void isshe_error(const char *msg);
-
+#define ISSHE_MAXLINE   4096
 #endif

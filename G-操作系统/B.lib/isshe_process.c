@@ -4,6 +4,10 @@
 #include <sys/errno.h>
 #include <string.h>
 #include <sys/wait.h>
+#include <syslog.h>
+#include <fcntl.h>
+#include <sys/stat.h>
+#include <signal.h>
 
 #include "isshe_process.h"
 #include "isshe_error.h"

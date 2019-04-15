@@ -7,8 +7,8 @@
 #include <errno.h>
 #include <string.h>
 
-#include "../../../A.lib/isshe_process.h"
-#include "../../../A.lib/isshe_signal.h"
+#include "isshe_process.h"
+#include "isshe_signal.h"
 
 #define MAXBUF 1024
 
@@ -61,7 +61,7 @@ int main(void) {
         printf("signal error\n");
         exit(0);
     }
-    for (int i = 0; i < 3; i++) {
+    for (i = 0; i < 3; i++) {
         if (isshe_fork() == 0) {
             printf("Hello from child %d\n", (int)getpid());
             sleep(1);

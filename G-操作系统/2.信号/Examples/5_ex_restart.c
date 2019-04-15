@@ -7,8 +7,8 @@
 #include <string.h>
 #include <setjmp.h>
 
-#include "../../../A.lib/isshe_process.h"
-#include "../../../A.lib/isshe_signal.h"
+#include "isshe_process.h"
+#include "isshe_signal.h"
 
 sigjmp_buf buf;
 

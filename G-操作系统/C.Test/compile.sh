@@ -8,4 +8,4 @@ fi
 
 #gcc $1 -I ././../../A.lib/*h -L . ././../../A.lib/*.c
 
-gcc $1 -I ../../A.lib/*.h -L . ../../A.lib/*.c
+gcc $1 -I ../A.lib/*.h -L . ../A.lib/*.c

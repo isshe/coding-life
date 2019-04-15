@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <errno.h>      // for "errno"
 #include <stdarg.h>     // for "可变参"
+#include <string.h>
+#include <stdlib.h>
 
 #include "isshe_error.h"
 
@@ -15,7 +17,7 @@ err_doit(enum caller_type type, int error, const char *fmt, va_list ap)
 
     vsnprintf(buf, ISSHE_ERROR_MAX_LINE-1, fmt, ap);
     if (type == SYSTEM_CALL) {
-        snprintf(buf+strlen(buf), MAXLINE-strlen(buf)-1, ": %s", strerror(error));
+        snprintf(buf+strlen(buf), ISSHE_ERROR_MAX_LINE-strlen(buf)-1, ": %s", strerror(error));
     }
 
     strcat(buf, "\n");
@@ -73,7 +75,7 @@ void isshe_sys_error_param_exit(int error, const char *fmt, ...)
     exit(1);
 }
 
-void isshe_error(int error, const char *fmt, ...)
+void isshe_error(const char *fmt, ...)
 {
     va_list ap;
 
@@ -82,7 +84,7 @@ void isshe_error(int error, const char *fmt, ...)
     va_end(ap);
 }
 
-void isshe_error_exit(int error, const char *fmt, ...)
+void isshe_error_exit(const char *fmt, ...)
 {
     va_list ap;
 

@@ -9,7 +9,7 @@
 #include <sys/stat.h>
 
 #include "isshe_file.h"
-#include "isshe_error.h"
+//#include "isshe_error.h"
 
 static int isshe_lock_unlock(int fd, short type) {
     struct flock fl;

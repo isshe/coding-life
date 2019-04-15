@@ -6,7 +6,7 @@
 enum caller_type{
     USER_CALL = 0,
     SYSTEM_CALL = 1
-}
+};
 
 /*
  * 系统调用错误；不退出；
@@ -36,11 +36,11 @@ void isshe_sys_error_param_exit(int error, const char *fmt, ...);
 /*
  * 用户调用错误；不退出；
  */
-void isshe_error(int error, const char *fmt, ...);
+void isshe_error(const char *fmt, ...);
 
 /*
  * 用户调用错误；退出；
  */
-void isshe_error_exit(int error, const char *fmt, ...);
+void isshe_error_exit(const char *fmt, ...);
 
 #endif

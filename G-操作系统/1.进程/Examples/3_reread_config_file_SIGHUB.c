@@ -8,13 +8,13 @@
 #include <signal.h>
 #include <sys/stat.h>
 
-#include "../../A.lib/isshe_file.h"
-#include "../../A.lib/isshe_error.h"
-#include "../../A.lib/isshe_process.h"
+#include "isshe_file.h"
+#include "isshe_common.h"
+#include "isshe_process.h"
 
 #define LOCKFILE "/tmp/isshe_daemon.pid"
 
-void daemonize(const char *cmd)
+static void book_daemonize(const char *cmd)
 {
     int i, fd0, fd1, fd2;
     pid_t pid;
@@ -81,7 +81,7 @@ void daemonize(const char *cmd)
         syslog(LOG_ERR, "unexpected file descriptors %d %d %d\n", fd0, fd1, fd2);
         exit(1);
     }
-    syslog(LOG_ERR, "-----isshe-----daemonize run finish\n");
+    syslog(LOG_ERR, "-----isshe-----book_daemonize run finish\n");
 }
 
 
@@ -151,7 +151,7 @@ int main(int argc, char *argv[])
     }
 
     // 成为守护进程
-    daemonize(cmd);
+    book_daemonize(cmd);
 
     // 确保只有一个守护进程
     if (isshe_already_running(LOCKFILE)) {
