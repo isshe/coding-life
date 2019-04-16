@@ -4,7 +4,9 @@ include $(ROOT)/Make.defines.$(PLATFORM)
 
 PROGS =	1_ex_pipe \
 		2_ex_pipe_copy_file_to_less_or_more \
-		3_ex_read_and_write
+		3_ex_read_and_write \
+		4_popen_copy_file_to_less_or_more
+
 FDPASS =
 
 all:	$(PROGS) $(FDPASS)
