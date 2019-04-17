@@ -1,4 +1,4 @@
-DIRS = 1.管道 2.FIFO
+DIRS = Examples
 
 all:
 	for i in $(DIRS); do \

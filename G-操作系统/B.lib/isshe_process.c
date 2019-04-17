@@ -38,7 +38,7 @@ void isshe_print_exit_status(int status)
     }
 }
 
-void daemonize(const char *cmd)
+void isshe_daemonize(const char *cmd)
 {
     int i, fd0, fd1, fd2;
     pid_t pid;
@@ -105,4 +105,16 @@ void daemonize(const char *cmd)
         syslog(LOG_ERR, "unexpected file descriptors %d %d %d\n", fd0, fd1, fd2);
         exit(1);
     }
+}
+
+
+pid_t isshe_waitpid(pid_t pid, int *iptr, int options)
+{
+    pid_t ret_pid;
+
+    if ( (ret_pid = waitpid(pid, iptr, options)) == -1 ) {
+        isshe_error_exit("waitpid error");
+    }
+
+    return ret_pid;
 }

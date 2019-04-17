@@ -7,9 +7,11 @@
 #include <errno.h>
 #include <stdio.h>
 #include <sys/stat.h>
+#include <stdarg.h>
 
 #include "isshe_file.h"
-//#include "isshe_error.h"
+#include "isshe_error.h"
+#include "isshe_common.h"
 
 static int isshe_lock_unlock(int fd, short type) {
     struct flock fl;
@@ -31,4 +33,40 @@ int isshe_lock_file(int fd)
 int isshe_unlock_file(int fd)
 {
     return isshe_lock_unlock(fd, F_UNLCK);
+}
+
+int isshe_open(const char *pathname, int oflag, ...)
+{
+    int fd;
+    va_list ap;
+    mode_t mode;
+
+    if (oflag & O_CREAT) {
+        va_start(ap, oflag);
+        mode = va_arg(ap, va_mode_t);
+        if ( (fd = open(pathname, oflag, mode)) == ISSHE_FAILED ) {
+            isshe_error_exit("open error for %s", pathname);
+        }
+        va_end(ap);
+    } else {
+        if ( (fd = open(pathname, oflag)) == ISSHE_FAILED ) {
+            isshe_error_exit("open error for %s", pathname);
+        }
+    }
+
+    return fd;
+}
+
+void isshe_close(int fd)
+{
+    if (close(fd) == ISSHE_FAILED) {
+        isshe_error_exit("close error");
+    }
+}
+
+void isshe_unlink(const char *pathname)
+{
+    if (unlink(pathname) == ISSHE_FAILED) {
+        isshe_error_exit("unlink error for %s", pathname);
+    }
 }

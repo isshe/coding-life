@@ -11,4 +11,10 @@
 #define	PATH_MAX        1024    /* max # of characters in a pathname */
 #endif
 
+/* default permissions for new files */
+#define	ISSHE_FILE_MODE (S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH)
+
+/* default permissions for new directories */
+#define	ISSHE_DIR_MODE  (FILE_MODE | S_IXUSR | S_IXGRP | S_IXOTH)
+
 #endif

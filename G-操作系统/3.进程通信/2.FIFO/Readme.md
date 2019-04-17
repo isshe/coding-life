@@ -3,9 +3,12 @@
 # FIFO
 * FIFO有时被称为命名管道。
 * FIFO是一种文件类型。
+* 支持在无亲缘进程间使用。
 
 ## 1. FIFO创建
 * 创建FIFO类似于创建文件；FIFO的路径名存在于文件系统中。
+
+## 2. 创建FIFO
 * 相关函数
 ```c
 #include <sys/stat.h>
@@ -17,7 +20,7 @@ int mkfifo(const char *path, mode_t mode);
 int mkfifoat(int fd, const char *path, mode_t mode);
 ```
 
-## 2. 其他
+## 3. 其他
 * open一个FIFO时，非阻塞标记(O_NONBLOCK)会产生的影响：
     * 一般情况下(没有指定O_NONBLOCK)，
         * 只读open要阻塞到其他进程为写打开此FIFO为止；
