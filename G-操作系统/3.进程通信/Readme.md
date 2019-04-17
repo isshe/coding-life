@@ -2,22 +2,39 @@
 [TOC]
 
 # 进程间通信
-进程间通信：InterProcess Communication，IPC
+* 进程间通信：InterProcess Communication，IPC
+* UNIX进程间共享信息的三种方式：
+![UNIX进程间共享信息的三种方式](./unix_process_share_info.png)
+* IPC对象的持续性
+    * 随进程(process-persistent)：IPC对象生存到最后关联进程终止；
+    * 随内核(kernel-persistent)：IPC对象生存到内核重启或者显式删除为止；
+    * 随文件系统(filesystem-persistent)：IPC对象生存到显式删除为止；
+![IPC对象的持续性](./IPC_persistent.png)
+* 名字空间：对于给定IPC类型，它所有可能的名字的集合。
+![IPC名字空间](./IPC_name_space.png)
 
 ## 1. 类型
 ### 1.1 经典IPC
 * 管道
 * FIFO
-* 消息队列
-* 信号量
-* 共享存储
+* Systemv: 消息队列、信号量、共享内存
+* Posix: 消息队列、信号量、共享内存
 
 ### 1.2 IPC类型
 ![IPC类型](./IPC_type.png)
-* 前10种IPC通常智能用于同一台主机
+* 前10种IPC通常只能用于同一台主机
 
-## 2. XSI IPC
-有三种：消息队列、信号量、共享存储器。
+## 2. XSI(Systemv) IPC
+* System v IPC：消息队列、信号量、共享存储器。
+* 创建/打开一个IPC对象的逻辑
+![创建或打开一个IPC对象的逻辑](./system_v_open_create_ipc_object.png)
+* 结果
+
+|oflag标记|key不存在|key已存在|
+|---|---|---|
+|无特殊标记|出错，errno = ENOENT|成功，引用已存在对象|
+|O_CREAT|成功，创建新对象|成功，引用已存在对象|
+|O_CREAT O_EXCL|成功，创建新对象|出错，errno = EEXIST|
 
 ### 2.1 不同XSI IPC相似之处
 * 非负整数的`标识符`。
@@ -88,5 +105,30 @@ struct ipc_perm {
 ### 2.A 注意
 * 决不能指定`IPC_PRIVATE`作为键来引用一个现有队列。因为这个键值总是用于创建一个新队列。
     * 为了引用一个用IPC_PRIVATE创建的现有队列，一定要知道相关的标识符。在其他IPC调用中使用标识符，这样可绕过get函数。
+
+## 3. Posix IPC
+Posix IPC: 消息队列、信号量、共享内存区
+### 3.1 概述
+* Posix IPC函数汇总
+![Posix IPC函数汇总](./posix_ipc_functions.png)
+* 三种类型的posixIPC都使用`Posix IPC名字`进行标识。
+
+### 3.2 创建/打开IPC通道
+* 相关函数:
+    * mq_open
+    * sem_open
+    * shm_open
+* 打开或创建Posix IPC对象所用的oflag常值
+![oflag常值](./posix_ipc_oflag.png)
+* 打开/创建一个IPC对象的逻辑
+![打开或创建一个IPC对象的逻辑](./posix_open_create_ipc_object.png)
+
+* 结果
+
+|oflag标记|对象不存在|对象已存在|
+|---|---|---|
+|无特殊标记|出错，errno = ENOENT|成功，引用已存在对象|
+|O_CREAT|成功，创建新对象|成功，引用已存在对象|
+|O_CREAT O_EXCL|成功，创建新对象|出错，errno = EEXIST|
 
 ## A.参考

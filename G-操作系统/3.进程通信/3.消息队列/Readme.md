@@ -1,7 +1,7 @@
 [TOC]
 
 # 消息队列
-* **在新的应用程序中，不应再使用消息队列。**
+* **在新的应用程序中，不应再使用消息队列。【分布式系统里面，好像很常用！需要时再了解！】**
     * 详见[此Readme 2.4节](../Readme.md)
     * 若需要客户进程和服务器进程之间的双向数据流，用`UNIX域套接字`或`全双工管道`。
 * 队列：消息队列。信息的链接表，存储在内核中，由标识符标识。
@@ -87,5 +87,12 @@ int msgsnd(int msqid, const void *ptr, size_t nbytes, int flag);
 int msgrcv(int msqid, const void *ptr, size_t nbytes, long type, int flag);
 ```
 
-## A. 参考
+## 3. 注意
+* 对于"在新的应用程序中，不应再使用消息队列"，貌似现在很多系统还在使用，不确定是否说的是一个东西，需要时要再了解。
+
+## A.拓展
+* [分布式消息队列](http://www.cnblogs.com/itfly8/p/5155983.html)
+* [消息队列](http://www.cnblogs.com/itfly8/p/5156155.html)
+
+## B. 参考
 * 《UNIX环境高级编程 第三版》
