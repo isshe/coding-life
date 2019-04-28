@@ -4,7 +4,7 @@ include $(ROOT)/Make.defines.$(PLATFORM)
 
 LIBMISC	= libisshe.a
 OBJS   = isshe_common.o isshe_error.o isshe_file.o \
-			isshe_process.o isshe_signal.o
+			isshe_process.o isshe_signal.o isshe_stdio.o
 
 # ???
 all:	$(LIBMISC)

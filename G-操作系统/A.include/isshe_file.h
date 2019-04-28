@@ -14,5 +14,8 @@ int isshe_unlock_file(int fd);
 int isshe_open(const char *pathname, int oflag, ...);
 void isshe_close(int fd);
 void isshe_unlink(const char *pathname);
+ssize_t isshe_read(int fd, void *ptr, size_t nbytes);
+void isshe_write(int fd, void *ptr, size_t nbytes);
+ssize_t isshe_readline(int fd, void *ptr, size_t maxlen);
 
 #endif
