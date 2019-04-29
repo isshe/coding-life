@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
     }
 
     readfifo = isshe_open(SERV_FIFO, O_RDONLY, 0);
-    dummyfd = isshe_open(SERV_FIFO, O_WRONLY, 0);   // 不用，开着！
+    dummyfd = isshe_open(SERV_FIFO, O_WRONLY, 0);   // 不用，但是开着！
 
     while((n = isshe_readline(readfifo, buf, ISSHE_MAXLINE)) > 0) {
         if (buf[n - 1] == '\n') {

@@ -5,7 +5,8 @@ include $(ROOT)/Make.defines.$(PLATFORM)
 SUFFIX = .out
 PROGS =	1_ex_fifo \
 		2_1_ex_mainserver \
-		2_2_ex_mainclient
+		2_2_ex_mainclient \
+		3_ex_pipeconf
 
 FDPASS =
 

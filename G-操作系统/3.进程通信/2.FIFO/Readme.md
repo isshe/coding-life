@@ -34,9 +34,15 @@ int mkfifoat(int fd, const char *path, mode_t mode);
     * shell命令使用FIFO将数据从一条管道传送到另一条时，无需创建中间临时文件；
     * 客户——服务器进程应用中，FIFO用作汇聚点，在客户和服务器进程间传递数据；
 
+## 4.管道和FIFO的限制
+* OPEN_MAX: 一个进程在任意时刻打开的最大描述符数。（sysconf函数获取）
+    * 示例见[3_ex_pipeconf.c](./Examples/3_ex_pipeconf.c)
+* PIPE_BUF: 可原子写管道/FIFO的最大数据量。（pathconf/fpathconf函数获取）
+    * 示例见[3_ex_pipeconf.c](./Examples/3_ex_pipeconf.c)
+
 ## A. 疑问
-* 学习完还是一脸懵逼。没有示例。
 
 ## B. 参考
 * 《unix环境高级编程 第三版》
+* 《UNIX网络编程 卷2 进程间通信 第2版》
 
