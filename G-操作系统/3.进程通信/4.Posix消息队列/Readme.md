@@ -5,13 +5,22 @@
 * 消息队列可认为是一个消息链表。具有`随内核的持续性`
 * 有读权限的线程可以从队列中取走信息；
 * 有写权限的线程可以从队列中放置信息；
+* 允许异步事件通知。
 
 ## 1. 相关函数
 ```c
 #include <mqueue.h>
-
+// 打开消息队列
 mqd_t mq_open(const char *name, int oflag, ...
                 /* mode_t mode, struct mq_attr *attr */);
+// 关闭消息队列，调用进程不用，但不会被删除消息队列
+int mq_close(mqd_t mqdes);
+
+// 从系统中删除消息队列
+// mq_unlink(const char *name);
+
+// 
+int mq_notify(mqd_t mqdes, const struct sigevent *notification);
 ```
 
 
