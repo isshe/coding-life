@@ -17,4 +17,7 @@
 /* default permissions for new directories */
 #define	ISSHE_DIR_MODE  (FILE_MODE | S_IXUSR | S_IXGRP | S_IXOTH)
 
+#define	min(a,b)    ((a) < (b) ? (a) : (b))
+#define	max(a,b)    ((a) > (b) ? (a) : (b))
+
 #endif

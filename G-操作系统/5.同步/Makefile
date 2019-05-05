@@ -1,4 +1,4 @@
-DIRS = B.lib 1.进程 2.信号 3.进程通信 5.同步
+DIRS = 1.互斥锁
 
 all:
 	for i in $(DIRS); do \
