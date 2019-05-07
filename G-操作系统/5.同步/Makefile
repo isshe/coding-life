@@ -1,4 +1,4 @@
-DIRS = 1.互斥锁
+DIRS = 1.互斥锁与条件变量
 
 all:
 	for i in $(DIRS); do \

@@ -7,8 +7,9 @@
 #include "isshe_error.h"
 
 /*
- * 打印一个信息，并返回到调用者
- * 调用者指定"errno_flag".
+ * 打印一个信息，并返回到调用者。
+ * 调用者指定"errno_flag"。
+ * 改变这个函数，就能实现打印到文件中或者其他地方。
  */
 static void
 err_doit(enum caller_type type, int error, const char *fmt, va_list ap)
