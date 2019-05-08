@@ -17,5 +17,6 @@ void isshe_unlink(const char *pathname);
 ssize_t isshe_read(int fd, void *ptr, size_t nbytes);
 void isshe_write(int fd, void *ptr, size_t nbytes);
 ssize_t isshe_readline(int fd, void *ptr, size_t maxlen);
+off_t isshe_lseek(int fd, off_t offset, int whence);
 
 #endif

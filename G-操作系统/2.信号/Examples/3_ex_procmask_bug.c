@@ -16,6 +16,11 @@
 #include <errno.h>
 #include <string.h>
 
+#ifdef __linux__
+#include <sys/types.h>
+#include <sys/wait.h>
+#endif
+
 #include "isshe_process.h"
 #include "isshe_signal.h"
 

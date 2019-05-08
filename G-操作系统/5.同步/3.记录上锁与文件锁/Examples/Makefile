@@ -4,10 +4,9 @@ include $(ROOT)/Make.defines.$(PLATFORM)
 
 SUFFIX = .out
 
-PROGS =	1_ex_producer_consumer 2_ex_prod_cons_cond
+PROGS =	1_ex_locknone
 
 FDPASS =
-LDLIBS += -lpthread
 
 all:	$(PROGS) $(FDPASS)
 %:	%.c $(LIBAPUE)

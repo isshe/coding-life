@@ -9,6 +9,11 @@
 #include <sys/stat.h>
 #include <signal.h>
 
+#ifdef __linux__
+#include <sys/time.h>
+#include <sys/resource.h>
+#endif
+
 #include "isshe_process.h"
 #include "isshe_error.h"
 

@@ -8,6 +8,11 @@
 #include <signal.h>
 #include <sys/stat.h>
 
+#ifdef __linux__
+#include <sys/time.h>
+#include <sys/resource.h>
+#endif
+
 #include "isshe_file.h"
 #include "isshe_common.h"
 #include "isshe_process.h"

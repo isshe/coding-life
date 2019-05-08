@@ -8,6 +8,11 @@
 #include <sys/stat.h>
 #include <string.h>
 
+#ifdef __linux__
+#include <sys/types.h>
+#include <sys/wait.h>
+#endif
+
 #include "isshe_file.h"
 #include "isshe_error.h"
 #include "isshe_stdio.h"

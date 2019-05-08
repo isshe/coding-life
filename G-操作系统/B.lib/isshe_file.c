@@ -151,3 +151,14 @@ ssize_t isshe_readline(int fd, void *ptr, size_t maxlen)
     return(n);
 }
 
+off_t isshe_lseek(int fd, off_t offset, int whence)
+{
+    off_t pos;
+
+    if ( (pos = lseek(fd, offset, whence)) == (off_t) -1) {
+        isshe_error_exit("lseek error");
+    }
+
+    return(pos);
+}
+
