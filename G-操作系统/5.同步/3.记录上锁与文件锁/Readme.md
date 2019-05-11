@@ -40,11 +40,17 @@ struct flock {
 
 ## 3. 用途
 * 确保某个程序(如守护进程)在任意时刻只有一个实例在运行。
+    * 见示例[5_ex](./Examples/5_ex_one_daemon.c)
 
 # A.疑问
 * [1] macOS 10.14.4使用[2_ex](./Examples/2_ex_lock_fcntl.c)实测，锁期间还能修改文件内容。
 * [2] 如果某个资源已经被读锁定，并有一个写入锁在等待，那么是否允许有另一个读出锁？
-    * 结果：macOS 10.14.4下，允许第二个读锁。
     * 示例详见[3_ex](./Examples/3_ex_test_wlock_rlock.c)
+    * 结果：
+        * macOS 10.14.4 下，允许第二个读锁。
+        * Ubuntu 18.04 下，允许第二个读锁。
     
-* [3]
+* [3] 等待的写锁是否比读等待的锁优先级高？
+    * 示例详见[4_ex](./Examples/4_ex_test_wlock_rlock_prio.c)
+    * 结果：
+        × Ubuntu 18.04：看着像是随机的，运行两次，两次优先级不同

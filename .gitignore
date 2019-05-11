@@ -55,3 +55,6 @@ dkms.conf
 .vscode/
 .idea/
 *.class
+
+# isshe
+*.temp

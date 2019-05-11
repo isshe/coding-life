@@ -145,7 +145,7 @@ ssize_t isshe_readline(int fd, void *ptr, size_t maxlen)
     ssize_t n;
 
     if ( (n = readline(fd, ptr, maxlen)) < 0) {
-        isshe_error_exit("readline error");
+        isshe_sys_error_exit("readline error");
     }
 
     return(n);
@@ -156,9 +156,16 @@ off_t isshe_lseek(int fd, off_t offset, int whence)
     off_t pos;
 
     if ( (pos = lseek(fd, offset, whence)) == (off_t) -1) {
-        isshe_error_exit("lseek error");
+        isshe_sys_error_exit("lseek error");
     }
 
     return(pos);
+}
+
+void isshe_ftruncate(int fd, off_t length)
+{
+    if (ftruncate(fd, length) == -1) {
+        isshe_sys_error_exit("ftruncate error");
+    }
 }
 

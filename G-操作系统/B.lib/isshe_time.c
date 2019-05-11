@@ -2,6 +2,10 @@
 #include <string.h>
 #include <stdio.h>
 
+#ifdef __linux__
+#include <time.h>
+#endif
+
 #include "isshe_time.h"
 #include "isshe_error.h"
 
@@ -16,6 +20,7 @@ char *isshe_gf_time(void)
     }
 
     ptr = ctime(&tv.tv_sec);
+    printf("ptr = %s\n", ptr);
     strcpy(str, &ptr[11]);
         /* Fri Sep 13 00:00:00 1986\n\0 */
         /* 0123456789012345678901234 5  */

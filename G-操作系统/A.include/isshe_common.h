@@ -1,6 +1,12 @@
 #ifndef _ISSHE_COMMON_H_
 #define _ISSHE_COMMON_H_
 
+#include <errno.h>
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <unistd.h>
+
 #define ISSHE_SUCCEED   0
 #define ISSHE_FAILED    (-1)
 #define ISSHE_TRUE      1

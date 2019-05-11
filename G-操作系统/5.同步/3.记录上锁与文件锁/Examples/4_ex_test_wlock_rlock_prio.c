@@ -16,9 +16,9 @@ int main(int argc, char **argv)
 
     fd = isshe_open("test1.temp", O_RDWR | O_CREAT, ISSHE_FILE_MODE);
     printf("fd = %d\n", fd);
-    isshe_read_lock(fd, 0, SEEK_SET, 0);  // 父进程加读锁
+    isshe_writew_lock(fd, 0, SEEK_SET, 0);  // 父进程加读锁
     printf("fd = %d\n", fd);
-    printf("%s: 父进程加了读锁\n", isshe_gf_time());
+    printf("%s: 父进程加了写锁\n", isshe_gf_time());
 
     if (isshe_fork() == 0) {
         // 第一个子进程
@@ -46,6 +46,6 @@ int main(int argc, char **argv)
 
     sleep(5);
     isshe_un_lock(fd, 0, SEEK_SET, 0);
-    printf("%s: 父进程释放读锁\n", isshe_gf_time());
+    printf("%s: 父进程释放写锁\n", isshe_gf_time());
     exit(0);
 }
