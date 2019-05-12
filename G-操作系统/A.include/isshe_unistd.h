@@ -43,4 +43,6 @@ pid_t isshe_lock_test(int fd, int type, off_t offset, int whence, off_t len);
 #define	isshe_is_write_lockable(fd, offset, whence, len) \
             (isshe_lock_test((fd), F_WRLCK, (offset), (whence), (len)) == 0)
 
+int isshe_getopt(int argc, char *const *argv, const char *str);
+
 #endif

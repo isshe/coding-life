@@ -4,8 +4,6 @@
 #include <unistd.h>
 #include <fcntl.h>
 
-#define	va_mode_t   int
-
 #define LOCKMODE (S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH)
 
 int isshe_lock_file(int fd);

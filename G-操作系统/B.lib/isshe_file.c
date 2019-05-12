@@ -1,13 +1,7 @@
 
-#include <unistd.h>
 #include <fcntl.h>
-#include <stdlib.h>
 #include <syslog.h>
-#include <string.h>
-#include <errno.h>
-#include <stdio.h>
 #include <sys/stat.h>
-#include <stdarg.h>
 
 #include "isshe_file.h"
 #include "isshe_error.h"

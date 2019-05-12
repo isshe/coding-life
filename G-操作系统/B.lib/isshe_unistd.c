@@ -1,6 +1,7 @@
 #include <errno.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <stdlib.h>
 
 #include "isshe_unistd.h"
 #include "isshe_error.h"
@@ -93,4 +94,15 @@ pid_t isshe_lock_test(int fd, int type, off_t offset, int whence, off_t len)
     }
 
     return(pid);
+}
+
+int isshe_getopt(int argc, char *const *argv, const char *str)
+{
+    int opt;
+
+    if ( ( opt = getopt(argc, argv, str)) == '?') {
+        exit(1);        /* getopt() has already written to stderr */
+    }
+
+    return(opt);
 }

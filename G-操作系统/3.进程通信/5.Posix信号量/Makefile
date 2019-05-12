@@ -1,4 +1,4 @@
-DIRS = 1.管道 2.FIFO 5.Posix信号量
+DIRS = Examples
 
 all:
 	for i in $(DIRS); do \

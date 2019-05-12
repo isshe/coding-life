@@ -6,6 +6,15 @@
 #include <string.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <stdarg.h>
+#include <fcntl.h>           /* For O_* constants */
+#include <sys/stat.h>        /* For mode constants */
+
+#ifdef __bsdi__
+#define va_mode_t   int
+#else
+#define va_mode_t   mode_t
+#endif
 
 #define ISSHE_SUCCEED   0
 #define ISSHE_FAILED    (-1)
