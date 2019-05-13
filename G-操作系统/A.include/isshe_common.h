@@ -10,7 +10,7 @@
 #include <fcntl.h>           /* For O_* constants */
 #include <sys/stat.h>        /* For mode constants */
 
-#ifdef __bsdi__
+#if defined(__bsdi__) || defined(__APPLE__)
 #define va_mode_t   int
 #else
 #define va_mode_t   mode_t

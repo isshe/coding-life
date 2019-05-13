@@ -113,20 +113,6 @@ void isshe_sem_unlink(const char *pathname)
     }
 }
 
-void isshe_sem_init(sem_t *sem, int pshared, unsigned int value)
-{
-    if (sem_init(sem, pshared, value) == -1) {
-        isshe_sys_error_exit("sem_init error");
-    }
-}
-
-void isshe_sem_destroy(sem_t *sem)
-{
-    if (sem_destroy(sem) == -1) {
-        isshe_sys_error_exit("sem_destroy error");
-    }
-}
-
 void isshe_sem_wait(sem_t *sem)
 {
     if (sem_wait(sem) == -1) {
@@ -152,9 +138,27 @@ void isshe_sem_post(sem_t *sem)
     }
 }
 
+#ifdef __linux__
+
+void isshe_sem_init(sem_t *sem, int pshared, unsigned int value)
+{
+    if (sem_init(sem, pshared, value) == -1) {
+        isshe_sys_error_exit("sem_init error");
+    }
+}
+
+void isshe_sem_destroy(sem_t *sem)
+{
+    if (sem_destroy(sem) == -1) {
+        isshe_sys_error_exit("sem_destroy error");
+    }
+}
+
 void isshe_sem_getvalue(sem_t *sem, int *valp)
 {
     if (sem_getvalue(sem, valp) == -1) {
         isshe_sys_error_exit("sem_getvalue error");
     }
 }
+
+#endif

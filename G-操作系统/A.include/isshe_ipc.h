@@ -1,10 +1,8 @@
 #ifndef _ISSHE_IPC_H_
 #define _ISSHE_IPC_H_
 
-#ifdef __linux__
 #include <sys/msg.h>
 #include <semaphore.h>
-#endif
 
 #ifndef SEM_FAILED
 #define SEM_FAILED  ((sem_t *)(-1))
@@ -25,11 +23,15 @@ ssize_t isshe_msgrcv(int id, void *ptr, size_t len, int type, int flag);
 sem_t * isshe_sem_open(const char *pathname, int oflag, ...);
 void isshe_sem_close(sem_t *sem);
 void isshe_sem_unlink(const char *pathname);
-void isshe_sem_init(sem_t *sem, int pshared, unsigned int value);
-void isshe_sem_destroy(sem_t *sem);
 void isshe_sem_wait(sem_t *sem);
 int isshe_sem_trywait(sem_t *sem);
 void isshe_sem_post(sem_t *sem);
+
+// macos 已经弃用了这几个
+#ifdef __linux__
 void isshe_sem_getvalue(sem_t *sem, int *valp);
+void isshe_sem_init(sem_t *sem, int pshared, unsigned int value);
+void isshe_sem_destroy(sem_t *sem);
+#endif
 
 #endif

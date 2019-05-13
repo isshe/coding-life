@@ -33,8 +33,12 @@ int sem_timedwait(sem_t *sem, const struct timespec *abs_timeout);
 // “解锁”——信号量+1
 int sem_post(sem_t *sem);
 
-// 获取信号量的值
+// 获取信号量的值(macOS不支持)
 int sem_getvalue(sem_t *sem, int *sval);
+
+// 基于内存的信号量(macOS不支持)
+int sem_init(sem_t *sem, int shared, unsigned int value);
+int sem_destroy(sem_t *sem);
 ```
 
 ## A.拓展
@@ -42,3 +46,4 @@ int sem_getvalue(sem_t *sem, int *sval);
     * 互斥锁必须由给它上锁的线程解锁；信号量的挂出(解锁)却不必在同一线程执行。
     * 互斥锁要么被锁住，要么被解开。（二值状态）
     * 信号量有一个与之关联的状态（计数值），信号量的挂出操作总是被记住。【？】
+* macOS不支持基于内存的信号量。
