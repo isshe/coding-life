@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="index.css">
+        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    </head>
+    <body>
+        <div id="app">
+            <span v-if="seen">Now you see me</span>
+        </div>
+
+        <div id="app2">
+            <span v-if="seen">you can not see me</span>
+        </div>
+
+        <div id="app3">
+            <ol>
+                <li v-for="todo in todos">
+                    {{ todo.text }}
+                </li>
+            </ol>
+        </div>
+
+        <div id="app4">
+          <span v-bind:title="message">
+            鼠标悬停几秒钟查看此处动态绑定的提示信息！
+          </span>
+        </div>
+
+        <div id="app5">
+            <p>{{ message }}</p>
+            <button v-on:click="reverseMessage">逆转消息</button>
+        </div>
+
+        <dev id="app6">
+            <p>{{ message }}</p>
+            <input v-model="message">
+        </dev>
+
+        <script src="index.js"></script>
+    </body>
+</html>

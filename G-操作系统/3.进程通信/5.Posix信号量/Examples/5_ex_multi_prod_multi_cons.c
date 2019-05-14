@@ -6,9 +6,9 @@
 #define NBUFF 10
 #define MAXNTHREAD 100
 
-#define SEM_MUTEX   "mutex3.temp"
-#define SEM_NEMPTY  "nempty3.temp"
-#define SEM_NSTORED "nstored3.temp"
+#define SEM_MUTEX   "mutex.temp"
+#define SEM_NEMPTY  "nempty.temp"
+#define SEM_NSTORED "nstored.temp"
 
 int nitems, nproducers, nconsumers;
 
@@ -57,7 +57,6 @@ void *consume(void *arg)
         if (shared.nget >= nitems) {
             isshe_sem_post(shared.nstored);
             isshe_sem_post(shared.mutex);
-            printf("consumer finish...\n");
             return NULL;
         }
 
@@ -67,8 +66,9 @@ void *consume(void *arg)
         }
         shared.nget++;
         shared.ngetval++;
-        printf("shared.nget = %d\n", shared.nget);
-
+        if (shared.nget >= nitems) {        // -isshe-
+            isshe_sem_post(shared.nstored);
+        }
         isshe_sem_post(shared.mutex);
         isshe_sem_post(shared.nempty);  // 空余数量+1
 
