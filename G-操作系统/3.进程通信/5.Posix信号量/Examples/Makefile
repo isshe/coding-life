@@ -11,7 +11,9 @@ PROGS =	1_1_ex_sem_create \
 	2_prod_cons_sem \
 	3_ex_file_lock_posix_sem \
 	4_ex_multi_prod_single_cons \
-	5_ex_multi_prod_multi_cons
+	5_ex_multi_prod_multi_cons \
+	6_ex_multi_buff_prod_cons \
+	7_ex_sem_limit_semsysconf
 
 FDPASS =
 LDLIBS += -lpthread
