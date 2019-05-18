@@ -38,6 +38,16 @@ char *isshe_posix_ipc_name(const char *name)
     return ptr;
 }
 
+key_t isshe_ftok(const char *pathname, int id)
+{
+    key_t	key;
+
+    if ( (key = ftok(pathname, id)) == -1) {
+        isshe_sys_error_exit("ftok error for pathname \"%s\" and id %d", pathname, id);
+    }
+    return(key);
+}
+
 //  System V message queue
 int isshe_msgget(key_t key, int flag)
 {
@@ -162,3 +172,43 @@ void isshe_sem_getvalue(sem_t *sem, int *valp)
 }
 
 #endif
+
+int isshe_semget(key_t key, int nsems, int flag)
+{
+    int     rc;
+
+    if ( (rc = semget(key, nsems, flag)) == -1) {
+        isshe_sys_error_exit("semget error");
+    }
+    return(rc);
+}
+
+void isshe_semop(int id, struct sembuf *opsptr, size_t nops)
+{
+    if (semop(id, opsptr, nops) == -1) {
+        isshe_sys_error_exit("semctl error");
+    }
+}
+
+int isshe_semctl(int id, int semnum, int cmd, ...)
+{
+    int		rc;
+    va_list	ap;
+    union semun	arg;
+
+    if (cmd == GETALL || cmd == SETALL || cmd == SETVAL ||
+        cmd == IPC_STAT || cmd == IPC_SET) {
+        va_start(ap, cmd);		/* init ap to final named argument */
+        arg = va_arg(ap, union semun);
+        if ( (rc = semctl(id, semnum, cmd, arg)) == -1) {
+            isshe_sys_error_exit("semctl error");
+        }
+        va_end(ap);
+    } else {
+        if ( (rc = semctl(id, semnum, cmd)) == -1) {
+            isshe_sys_error_exit("semctl error");
+        }
+    }
+
+    return(rc);
+}
