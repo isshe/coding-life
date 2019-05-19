@@ -72,3 +72,4 @@ int semctl(int semid, int semnum, int cmd, ... /*union semun org*/);
 * semop()睡眠时, 如果被中断，会返回`EINTR`错误；
     * semop()是需被所捕获的信号中断的`慢系统调用`。
 * 删除信号量将导致等待此信号量的(睡眠中的)线程返回`EIDRM(identifier removed)`错误。
+* 指定SEM_UNDO时，程序结束，信号量会被还原。

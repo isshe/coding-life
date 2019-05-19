@@ -44,5 +44,6 @@ pid_t isshe_lock_test(int fd, int type, off_t offset, int whence, off_t len);
             (isshe_lock_test((fd), F_WRLCK, (offset), (whence), (len)) == 0)
 
 int isshe_getopt(int argc, char *const *argv, const char *str);
+void *isshe_calloc(size_t n, size_t size);
 
 #endif
