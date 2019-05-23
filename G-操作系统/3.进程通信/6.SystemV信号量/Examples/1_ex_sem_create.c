@@ -8,7 +8,7 @@ int main(int argc, char *argv[])
 {
     int c, oflag, semid, nsems;
 
-    oflag = SVSEM_MODE | IPC_CREAT;
+    oflag = ISSHE_SVSEM_MODE | IPC_CREAT;
 
     while ( (c = isshe_getopt(argc, argv, "abe")) != -1 ) {
         switch (c)

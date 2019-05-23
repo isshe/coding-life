@@ -8,6 +8,7 @@
 
 #include "isshe_time.h"
 #include "isshe_error.h"
+#include "isshe_common.h"
 
 char *isshe_gf_time(void)
 {
@@ -15,7 +16,7 @@ char *isshe_gf_time(void)
     static char		str[30];
     char			*ptr;
 
-    if (gettimeofday(&tv, NULL) < 0) {
+    if (gettimeofday(&tv, NULL) < ISSHE_SUCCESS) {
         isshe_sys_error_exit("gettimeofday error");
     }
 

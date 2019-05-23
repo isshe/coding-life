@@ -1,5 +1,6 @@
 #include "isshe_signal.h"
 #include "isshe_error.h"
+#include "isshe_common.h"
 
 /**
  * 可移植的signal函数：
@@ -20,7 +21,7 @@ sighandler_t isshe_signal(int signum, sighandler_t handler)
     //Restart syscalls if possible（尽可能重启系统调用）
     action.sa_flags = SA_RESETHAND;
 
-    if (sigaction(signum, &action, &old_action) < 0) {
+    if (sigaction(signum, &action, &old_action) < ISSHE_SUCCESS) {
         isshe_error("isshe_signal error");
     }
 

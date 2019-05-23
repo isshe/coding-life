@@ -54,6 +54,10 @@ union semun {
 
 // 创建或访问一个信号量集
 // @nsems: 指定集合中的信号量数
+// @oflag:
+//  * IPC_CREAT: 不存在就创建，返回ID
+//  * IPC_EXCL: 不管是否存在，都返回-1；
+//  * IPC_CREAT|IPC_EXCL: 存在返回-1；不存在，创建，返回ID；
 int semget(key_t key, int nsems, int oflag);
 
 // 信号量操纵函数
@@ -69,7 +73,15 @@ int semctl(int semid, int semnum, int cmd, ... /*union semun org*/);
 ```
 
 ## 3. 注意
+* semget()并不初始化信号量，初始化工作需要通过semctl来完成。这会存在问题如多次初始化。【详见[示例6_ex]()】
+    * 解决方案是：指定`IPC_CREAT|IPC_EXCL`，保证只有一个进程创建信号量并初始化信号量。
+        * 其他进程semget会放着EEXIST错误，并再次调用semget()。（一次不指定IPC_CREAT，也不指定IPC_EXCL）
+        * 创建和初始化分为两步，这个方案还是存在竞争问题：
+            * 进程A进行创建(semget)后，未进行初始化(semctl), 时间片到；进程B进行信号量操作（但是信号量还未初始化）。
+            * 解决办法是：
+                * 调用以IPC_STAT命令semctl，等待sem_otime变为非零值。
+                * 原因：System V手册保证semget创建一个新的信号量集时，semid_ds的sem_otime成员一定被初始化为0。
 * semop()睡眠时, 如果被中断，会返回`EINTR`错误；
     * semop()是需被所捕获的信号中断的`慢系统调用`。
 * 删除信号量将导致等待此信号量的(睡眠中的)线程返回`EIDRM(identifier removed)`错误。
-* 指定SEM_UNDO时，程序结束，信号量会被还原。
+* 指定SEM_UNDO时，进程结束后，信号量会被还原。

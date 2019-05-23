@@ -11,18 +11,21 @@
 #define SEM_FAILED  ((sem_t *)(-1))
 #endif
 
+#ifdef __linux__
 /* $$.ix [SVMSG_MODE]~constant,~definition~of$$ */
 /* default permissions for new SV semaphores */
 #define SEM_R (0400)
 #define SEM_A (0200)
-#define	SVSEM_MODE	(SEM_R | SEM_A | SEM_R>>3 | SEM_R>>6)
-
 
 union semun {       /* define union for semctl() */
     int              val;
     struct semid_ds *buf;
     unsigned short  *array;
 };
+#endif
+
+#define	ISSHE_SVSEM_MODE	(SEM_R | SEM_A | SEM_R>>3 | SEM_R>>6)
+
 
 /*
  * Posix IPC对象使用路径名进行标识，此函数的作用就是生成完整路径名
@@ -55,5 +58,8 @@ void isshe_sem_destroy(sem_t *sem);
 int isshe_semget(key_t key, int nsems, int flag);
 void isshe_semop(int id, struct sembuf *opsptr, size_t nops);
 int isshe_semctl(int id, int semnum, int cmd, ...);
+
+// 管道
+void isshe_pipe(int *fds);
 
 #endif

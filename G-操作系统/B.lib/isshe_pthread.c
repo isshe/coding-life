@@ -2,13 +2,14 @@
 
 #include "isshe_pthread.h"
 #include "isshe_error.h"
+#include "isshe_common.h"
 
 void isshe_pthread_create(pthread_t *tid, const pthread_attr_t *attr,
                             void * (*func)(void *), void *arg)
 {
     int n;
 
-    if ( (n = pthread_create(tid, attr, func, arg)) == 0) {
+    if ( (n = pthread_create(tid, attr, func, arg)) == ISSHE_SUCCESS) {
         return;
     }
 
@@ -20,7 +21,7 @@ void isshe_pthread_join(pthread_t tid, void **status)
 {
     int n;
 
-    if ( (n = pthread_join(tid, status)) == 0) {
+    if ( (n = pthread_join(tid, status)) == ISSHE_SUCCESS) {
         return;
     }
 
@@ -33,7 +34,7 @@ void isshe_pthread_mutex_lock(pthread_mutex_t *mptr)
 {
     int n;
 
-    if ( (n = pthread_mutex_lock(mptr)) == 0) {
+    if ( (n = pthread_mutex_lock(mptr)) == ISSHE_SUCCESS) {
         return;
     }
 
@@ -46,7 +47,7 @@ void isshe_pthread_mutex_unlock(pthread_mutex_t *mptr)
 {
     int n;
 
-    if ( (n = pthread_mutex_unlock(mptr)) == 0) {
+    if ( (n = pthread_mutex_unlock(mptr)) == ISSHE_SUCCESS) {
         return;
     }
 
@@ -58,7 +59,7 @@ void isshe_pthread_cond_signal(pthread_cond_t *cptr)
 {
     int n;
 
-    if ( (n = pthread_cond_signal(cptr)) == 0) {
+    if ( (n = pthread_cond_signal(cptr)) == ISSHE_SUCCESS) {
         return;
     }
 
@@ -70,7 +71,7 @@ void isshe_pthread_cond_wait(pthread_cond_t *cptr, pthread_mutex_t *mptr)
 {
     int n;
 
-    if ( (n = pthread_cond_wait(cptr, mptr)) == 0) {
+    if ( (n = pthread_cond_wait(cptr, mptr)) == ISSHE_SUCCESS) {
         return;
     }
 
@@ -83,7 +84,7 @@ void isshe_pthread_cond_timedwait(pthread_cond_t *cptr, pthread_mutex_t *mptr,
 {
     int n;
 
-    if ( (n = pthread_cond_timedwait(cptr, mptr, tsptr)) == 0) {
+    if ( (n = pthread_cond_timedwait(cptr, mptr, tsptr)) == ISSHE_SUCCESS) {
         return;
     }
 

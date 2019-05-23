@@ -38,12 +38,12 @@ int isshe_open(const char *pathname, int oflag, ...)
     if (oflag & O_CREAT) {
         va_start(ap, oflag);
         mode = va_arg(ap, va_mode_t);
-        if ( (fd = open(pathname, oflag, mode)) == ISSHE_FAILED ) {
+        if ( (fd = open(pathname, oflag, mode)) == ISSHE_FAILURE ) {
             isshe_sys_error_exit("open error for %s", pathname);
         }
         va_end(ap);
     } else {
-        if ( (fd = open(pathname, oflag)) == ISSHE_FAILED ) {
+        if ( (fd = open(pathname, oflag)) == ISSHE_FAILURE ) {
             isshe_sys_error_exit("open error for %s", pathname);
         }
     }
@@ -53,7 +53,7 @@ int isshe_open(const char *pathname, int oflag, ...)
 
 void isshe_close(int fd)
 {
-    if (close(fd) == ISSHE_FAILED) {
+    if (close(fd) == ISSHE_FAILURE) {
         isshe_sys_error_exit("close error");
     }
 }
@@ -62,7 +62,7 @@ ssize_t isshe_read(int fd, void *ptr, size_t nbytes)
 {
     ssize_t n;
 
-    if ( (n = read(fd, ptr, nbytes)) == -1) {
+    if ( (n = read(fd, ptr, nbytes)) == ISSHE_FAILURE) {
         isshe_sys_error_exit("read error");
     }
 
@@ -78,7 +78,7 @@ void isshe_write(int fd, void *ptr, size_t nbytes)
 
 void isshe_unlink(const char *pathname)
 {
-    if (unlink(pathname) == ISSHE_FAILED) {
+    if (unlink(pathname) == ISSHE_FAILURE) {
         isshe_sys_error_exit("unlink error for %s", pathname);
     }
 }
@@ -149,7 +149,7 @@ off_t isshe_lseek(int fd, off_t offset, int whence)
 {
     off_t pos;
 
-    if ( (pos = lseek(fd, offset, whence)) == (off_t) -1) {
+    if ( (pos = lseek(fd, offset, whence)) == (off_t) ISSHE_FAILURE) {
         isshe_sys_error_exit("lseek error");
     }
 
@@ -158,7 +158,7 @@ off_t isshe_lseek(int fd, off_t offset, int whence)
 
 void isshe_ftruncate(int fd, off_t length)
 {
-    if (ftruncate(fd, length) == -1) {
+    if (ftruncate(fd, length) == ISSHE_FAILURE) {
         isshe_sys_error_exit("ftruncate error");
     }
 }

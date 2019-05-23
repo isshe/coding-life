@@ -42,7 +42,7 @@ key_t isshe_ftok(const char *pathname, int id)
 {
     key_t	key;
 
-    if ( (key = ftok(pathname, id)) == -1) {
+    if ( (key = ftok(pathname, id)) == ISSHE_FAILURE) {
         isshe_sys_error_exit("ftok error for pathname \"%s\" and id %d", pathname, id);
     }
     return(key);
@@ -53,7 +53,7 @@ int isshe_msgget(key_t key, int flag)
 {
     int rc;
 
-    if ( (rc = msgget(key, flag)) == -1) {
+    if ( (rc = msgget(key, flag)) == ISSHE_FAILURE) {
         isshe_sys_error_exit("msgget error");
     }
 
@@ -62,14 +62,14 @@ int isshe_msgget(key_t key, int flag)
 
 void isshe_msgctl(int id, int cmd, struct msqid_ds *buf)
 {
-    if (msgctl(id, cmd, buf) == -1) {
+    if (msgctl(id, cmd, buf) == ISSHE_FAILURE) {
         isshe_sys_error_exit("msgctl error");
     }
 }
 
 void isshe_msgsnd(int id, const void *ptr, size_t len, int flag)
 {
-    if (msgsnd(id, ptr, len, flag) == -1){
+    if (msgsnd(id, ptr, len, flag) == ISSHE_FAILURE){
         isshe_sys_error_exit("msgsnd error");
     }
 }
@@ -78,7 +78,7 @@ ssize_t isshe_msgrcv(int id, void *ptr, size_t len, int type, int flag)
 {
     ssize_t	rc;
 
-    if ( (rc = msgrcv(id, ptr, len, type, flag)) == -1){
+    if ( (rc = msgrcv(id, ptr, len, type, flag)) == ISSHE_FAILURE){
         isshe_sys_error_exit("msgrcv error");
     }
 
@@ -111,21 +111,21 @@ sem_t * isshe_sem_open(const char *pathname, int oflag, ...)
 
 void isshe_sem_close(sem_t *sem)
 {
-    if (sem_close(sem) == -1) {
+    if (sem_close(sem) == ISSHE_FAILURE) {
         isshe_sys_error_exit("sem_close error");
     }
 }
 
 void isshe_sem_unlink(const char *pathname)
 {
-    if (sem_unlink(pathname) == -1) {
+    if (sem_unlink(pathname) == ISSHE_FAILURE) {
         isshe_sys_error_exit("sem_unlink error");
     }
 }
 
 void isshe_sem_wait(sem_t *sem)
 {
-    if (sem_wait(sem) == -1) {
+    if (sem_wait(sem) == ISSHE_FAILURE) {
         isshe_sys_error_exit("sem_wait error");
     }
 }
@@ -134,7 +134,7 @@ int isshe_sem_trywait(sem_t *sem)
 {
     int     rc;
 
-    if ( (rc = sem_trywait(sem)) == -1 && errno != EAGAIN) {
+    if ( (rc = sem_trywait(sem)) == ISSHE_FAILURE && errno != EAGAIN) {
         isshe_sys_error_exit("sem_trywait error");
     }
 
@@ -143,7 +143,7 @@ int isshe_sem_trywait(sem_t *sem)
 
 void isshe_sem_post(sem_t *sem)
 {
-    if (sem_post(sem) == -1) {
+    if (sem_post(sem) == ISSHE_FAILURE) {
         isshe_sys_error_exit("sem_post error");
     }
 }
@@ -152,21 +152,21 @@ void isshe_sem_post(sem_t *sem)
 
 void isshe_sem_init(sem_t *sem, int pshared, unsigned int value)
 {
-    if (sem_init(sem, pshared, value) == -1) {
+    if (sem_init(sem, pshared, value) == ISSHE_FAILURE) {
         isshe_sys_error_exit("sem_init error");
     }
 }
 
 void isshe_sem_destroy(sem_t *sem)
 {
-    if (sem_destroy(sem) == -1) {
+    if (sem_destroy(sem) == ISSHE_FAILURE) {
         isshe_sys_error_exit("sem_destroy error");
     }
 }
 
 void isshe_sem_getvalue(sem_t *sem, int *valp)
 {
-    if (sem_getvalue(sem, valp) == -1) {
+    if (sem_getvalue(sem, valp) == ISSHE_FAILURE) {
         isshe_sys_error_exit("sem_getvalue error");
     }
 }
@@ -177,7 +177,7 @@ int isshe_semget(key_t key, int nsems, int flag)
 {
     int     rc;
 
-    if ( (rc = semget(key, nsems, flag)) == -1) {
+    if ( (rc = semget(key, nsems, flag)) == ISSHE_FAILURE) {
         isshe_sys_error_exit("semget error");
     }
     return(rc);
@@ -185,7 +185,7 @@ int isshe_semget(key_t key, int nsems, int flag)
 
 void isshe_semop(int id, struct sembuf *opsptr, size_t nops)
 {
-    if (semop(id, opsptr, nops) == -1) {
+    if (semop(id, opsptr, nops) == ISSHE_FAILURE) {
         isshe_sys_error_exit("semctl error");
     }
 }
@@ -200,15 +200,22 @@ int isshe_semctl(int id, int semnum, int cmd, ...)
         cmd == IPC_STAT || cmd == IPC_SET) {
         va_start(ap, cmd);		/* init ap to final named argument */
         arg = va_arg(ap, union semun);
-        if ( (rc = semctl(id, semnum, cmd, arg)) == -1) {
+        if ( (rc = semctl(id, semnum, cmd, arg)) == ISSHE_FAILURE) {
             isshe_sys_error_exit("semctl error");
         }
         va_end(ap);
     } else {
-        if ( (rc = semctl(id, semnum, cmd)) == -1) {
+        if ( (rc = semctl(id, semnum, cmd)) == ISSHE_FAILURE) {
             isshe_sys_error_exit("semctl error");
         }
     }
 
     return(rc);
+}
+
+void isshe_pipe(int *fds)
+{
+    if (pipe(fds) < 0) {
+        isshe_sys_error_exit("pipe error");
+    }
 }

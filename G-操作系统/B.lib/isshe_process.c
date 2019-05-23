@@ -16,12 +16,13 @@
 
 #include "isshe_process.h"
 #include "isshe_error.h"
+#include "isshe_common.h"
 
 pid_t isshe_fork(void)
 {
     pid_t pid;
     if ((pid = fork()) < 0) {
-        isshe_error("Fork error");
+        isshe_sys_error_exit("Fork error");
     }
 
     return pid;
@@ -117,9 +118,16 @@ pid_t isshe_waitpid(pid_t pid, int *iptr, int options)
 {
     pid_t ret_pid;
 
-    if ( (ret_pid = waitpid(pid, iptr, options)) == -1 ) {
-        isshe_error_exit("waitpid error");
+    if ( (ret_pid = waitpid(pid, iptr, options)) == ISSHE_FAILURE ) {
+        isshe_sys_error_exit("waitpid error");
     }
 
     return ret_pid;
+}
+
+void isshe_kill(pid_t pid, int signo)
+{
+    if (kill(pid, signo) == -1) {
+        isshe_sys_error_exit("kill error");
+    }
 }

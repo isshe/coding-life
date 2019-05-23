@@ -16,8 +16,8 @@
 #define va_mode_t   mode_t
 #endif
 
-#define ISSHE_SUCCEED   0
-#define ISSHE_FAILED    (-1)
+#define ISSHE_SUCCESS    0
+#define ISSHE_FAILURE    (-1)
 #define ISSHE_TRUE      1
 #define ISSHE_FALSE     0
 #define ISSHE_MAXLINE   4096
