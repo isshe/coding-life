@@ -73,7 +73,7 @@ int semctl(int semid, int semnum, int cmd, ... /*union semun org*/);
 ```
 
 ## 3. 注意
-* semget()并不初始化信号量，初始化工作需要通过semctl来完成。这会存在问题如多次初始化。【详见[示例6_ex]()】
+* semget()并不初始化信号量，初始化工作需要通过semctl来完成。这会存在问题如多次初始化。【详见[示例6_ex](./Examples/6_ex_lock_sv_sem.c)】
     * 解决方案是：指定`IPC_CREAT|IPC_EXCL`，保证只有一个进程创建信号量并初始化信号量。
         * 其他进程semget会放着EEXIST错误，并再次调用semget()。（一次不指定IPC_CREAT，也不指定IPC_EXCL）
         * 创建和初始化分为两步，这个方案还是存在竞争问题：
