@@ -18,3 +18,6 @@
 * 实现表单和应用状态之间的双向绑定。详见[app6](2.Base/index.html)
 
 ## 6. component
+
+## 7. 实例的生命周期
+![生命周期](./lifecycle.png)
