@@ -3,7 +3,10 @@ PLATFORM=$(shell $(ROOT)/systype.sh)
 include $(ROOT)/Make.defines.$(PLATFORM)
 
 SUFFIX = .out
-PROGS =	1_ex_shm_incr1
+PROGS =	1_ex_sem_incr1 \
+	2_ex_shm_increase2 \
+	3_ex_increase_map_anon \
+	4_ex_increase_dev_zero
 
 FDPASS =
 LDLIBS += -lpthread

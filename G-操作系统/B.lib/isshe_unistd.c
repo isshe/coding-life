@@ -2,6 +2,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <stdlib.h>
+#include <sys/mman.h>
 
 #include "isshe_unistd.h"
 #include "isshe_error.h"
@@ -128,4 +129,21 @@ void *isshe_malloc(size_t size)
     }
 
     return(ptr);
+}
+
+void *isshe_mmap(void *addr, size_t len, int prot, int flags, int fd, off_t offset)
+{
+    void    *ptr;
+
+    if ( (ptr = mmap(addr, len, prot, flags, fd, offset)) == MAP_FAILED ) {
+        isshe_sys_error_exit("mmap error");
+    }
+    return(ptr);
+}
+
+void isshe_munmap(void *addr, size_t len)
+{
+    if (munmap(addr, len) == -1) {
+        isshe_sys_error_exit("munmap error");
+    }
 }

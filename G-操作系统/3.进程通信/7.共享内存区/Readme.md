@@ -26,7 +26,11 @@
 // len: 映射的长度——字节数；
 // offset: 从被映射文件开头起offset字节开始映射；
 // prot: 属性/模式(PROT_READ|PROT_WRITE|PROT_EXEC|PROT_NONE)
-// flag: MAP_SHARED/MAP_PRIVATE|MAP_FIXED
+//  * PROT_NONE   Pages may not be accessed.
+//  * PROT_READ   Pages may be read.
+//  * PROT_WRITE  Pages may be written.
+//  * PROT_EXEC   Pages may be executed.
+// flag: 很多歌，具体见man
 //  * MAP_PRIVATE: 变动私有，不改变低层支撑对象；
 //  * MAP_SHARED: 变动共享，其他进程可见，改变低层支撑对象；
 //  * MAP_FIXED: 准确地解释addr参数；【？？？】
@@ -54,6 +58,18 @@ int munmap(void *addr, size_t len);
 //  * MS_INVALIDATE: 使高速缓存的数据失效
 int msync(void *addr, size_t len, int flags);
 ```
+
+## 2. 文件内存映射
+内存映射一个普通文件时，内存中映射区的大小(mmap的第2个参数)通常等于改文件的大小。
+详见[示例](./Examples/2_ex_shm_increase2.c)
+
+## 3. 匿名内存映射
+使用非匿名内存映射时，需要在文件系统中创建一个文件，进行open并write一些数据进行初始化。
+如果目的是提供一个父子进程共享的内存映射，匿名内存映射则能简化上述流程。
+创建匿名映射的方法：
+* mmap的flag参数指定`MAP_SHARED|MAP_ANON`, fd = -1。
+* 这样的内存区会被初始化为0；
+详见[示例](./Examples/3_ex_increase_map_anon.c)
 
 ## A. 注意
 * 从移植性考虑，MAP_FIXED不应该指定。
