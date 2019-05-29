@@ -75,12 +75,21 @@ int msync(void *addr, size_t len, int flags);
 * 从移植性考虑，MAP_FIXED不应该指定。
 * 可移植的代码，应该把addr指定为NULL，并且不指定MAP_FIXED。
 * mmap成功返回后，fd可关闭。
-* 不是所有文件都能mmap
+* 不是所有文件都能mmap。
 
 ## B.问题
 * 为什么使用mmap？
     * 不用调用read/write/lseek，简化了代码。
-
+* 当映射的内存大于文件大小？等于文件大小？
+    * macOS的man手册中，明确说明，文件映射的内存不是`页`的倍数时会被扩充。【详见[示例](./Examples/5_ex_shm_test_filesize_mmapsize.c)】
+    * 等于：
+        * ![](./filesize_eq_mmapsize.png)
+    * 大于：
+        * **SIGBUS意味着：是在内存映射区访问，但是超出了低层支撑对象的大小。**
+        * ![](./filesize_lt_mmapsize.png)
+* 如何映射一个持续增长的文件？
+    * 映射比文件大的多的区域，随着文件增长再对相应区域进行访问。
+    * 详见[示例](./Examples/6_ex_shm_test2_map_inc_file.c)
 
 
 
