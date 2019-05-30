@@ -1,7 +1,6 @@
 
-#include <fcntl.h>
 #include <syslog.h>
-#include <sys/stat.h>
+#include <fcntl.h>
 
 #include "isshe_file.h"
 #include "isshe_error.h"
@@ -27,6 +26,25 @@ int isshe_lock_file(int fd)
 int isshe_unlock_file(int fd)
 {
     return isshe_lock_unlock(fd, F_UNLCK);
+}
+
+int lock_reg(int fd, int cmd, int type, off_t offset, int whence, off_t len)
+{
+    struct flock    lock;
+
+    lock.l_type = type;     /* F_RDLCK, F_WRLCK, F_UNLCK */
+    lock.l_start = offset;  /* byte offset, relative to l_whence */
+    lock.l_whence = whence; /* SEEK_SET, SEEK_CUR, SEEK_END */
+    lock.l_len = len;       /* #bytes (0 means to EOF) */
+
+    return( fcntl(fd, cmd, &lock) );    /* -1 upon error */
+}
+
+void isshe_lock_reg(int fd, int cmd, int type, off_t offset, int whence, off_t len)
+{
+    if (lock_reg(fd, cmd, type, offset, whence, len) == ISSHE_FAILURE) {
+        isshe_sys_error_exit("lock_reg error");
+    }
 }
 
 int isshe_open(const char *pathname, int oflag, ...)
@@ -160,6 +178,13 @@ void isshe_ftruncate(int fd, off_t length)
 {
     if (ftruncate(fd, length) == ISSHE_FAILURE) {
         isshe_sys_error_exit("ftruncate error");
+    }
+}
+
+void isshe_fstat(int fd, struct stat *ptr)
+{
+    if (fstat(fd, ptr) == -1) {
+        isshe_sys_error_exit("fstat error");
     }
 }
 

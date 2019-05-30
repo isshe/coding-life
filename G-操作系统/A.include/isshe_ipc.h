@@ -62,4 +62,8 @@ int isshe_semctl(int id, int semnum, int cmd, ...);
 // 管道
 void isshe_pipe(int *fds);
 
+// Posix共享内存
+int isshe_shm_open(const char *pathname, int oflag, mode_t mode);
+void isshe_shm_unlink(const char *pathname);
+
 #endif

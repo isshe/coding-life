@@ -24,16 +24,6 @@ void isshe_sys_error_dump(const char *fmt, ...);
 void isshe_sys_error_exit(const char *fmt, ...);
 
 /*
- * 系统调用错误；不退出；错误码作为参数
- */
-void isshe_sys_error_param(int error, const char *fmt, ...);
-
-/*
- * 系统调用错误；退出；错误码作为参数
- */
-void isshe_sys_error_param_exit(int error, const char *fmt, ...);
-
-/*
  * 用户调用错误；不退出；
  */
 void isshe_error(const char *fmt, ...);
@@ -42,5 +32,15 @@ void isshe_error(const char *fmt, ...);
  * 用户调用错误；退出；
  */
 void isshe_error_exit(const char *fmt, ...);
+
+/*
+ * 系统调用错误；INFO级别，不退出
+ */
+void isshe_sys_info(const char *fmt, ...);
+
+/*
+ * 用户调用错误；INFO级别，不退出
+ */
+void isshe_info(const char *fmt, ...);
 
 #endif

@@ -2,8 +2,8 @@
 #define _ISSHE_SIGNAL_H_
 
 #include <signal.h>
-typedef void (*sighandler_t)(int);
+typedef void sighandler_t(int);
 
-sighandler_t isshe_signal(int signum, sighandler_t handler);
+sighandler_t *isshe_signal(int signo, sighandler_t *handler);
 
 #endif

@@ -17,6 +17,9 @@
 #include "isshe_process.h"
 #include "isshe_error.h"
 #include "isshe_common.h"
+#include "isshe_signal.h"
+
+extern int daemon_proc;    // defined in isshe_error.c
 
 pid_t isshe_fork(void)
 {
@@ -44,19 +47,18 @@ void isshe_print_exit_status(int status)
     }
 }
 
-void isshe_daemonize(const char *cmd)
+void isshe_daemonize(const char *pname, int facility)
 {
     int i, fd0, fd1, fd2;
     pid_t pid;
     struct rlimit rl;
-    struct sigaction sa;
 
     // 清除文件模式创建屏蔽字
     umask(0);
 
     // 获取最大文件描述符
     if (getrlimit(RLIMIT_NOFILE, &rl) < 0) {
-        printf("%s: can't get file limit\n", cmd);
+        printf("%s: can't get file limit\n", pname);
         exit(0);
     }
 
@@ -66,29 +68,24 @@ void isshe_daemonize(const char *cmd)
         printf("fork failed\n");
         exit(0);
     } else if (pid != 0) {
-        // parent
-        exit(0);
+        exit(0);    // 终止父进程
     }
 
     setsid();
 
     // 确保之后的open不会分配控制终端
-    sa.sa_handler = SIG_IGN;
-    sigemptyset(&sa.sa_mask);
-    sa.sa_flags = 0;
-    if (sigaction(SIGHUP, &sa, NULL) < 0) {
-        printf("%s: can't ignore SIGHUP\n", cmd);
-        exit(0);
-    }
+    isshe_signal(SIGHUP, SIG_IGN);
+
     pid = isshe_fork();
     if (pid != 0) {
-        // parent
-        exit(0);
+        exit(0);    // 终止第一个子进程
     }
+
+    daemon_proc = 1;    /* for our err_XXX() functions */
 
     // 改工作目录
     if (chdir("/") < 0) {
-        printf("%s: can't change directory to /", cmd);
+        printf("%s: can't change directory to /", pname);
         exit(0);
     }
 
@@ -106,13 +103,12 @@ void isshe_daemonize(const char *cmd)
     fd2 = dup(0);
 
     // 初始化log文件
-    openlog(cmd, LOG_CONS, LOG_DAEMON);
+    openlog(pname, LOG_PID, LOG_DAEMON);
     if (fd0 != 0 || fd1 != 1 || fd2 != 2) {
         syslog(LOG_ERR, "unexpected file descriptors %d %d %d\n", fd0, fd1, fd2);
         exit(1);
     }
 }
-
 
 pid_t isshe_waitpid(pid_t pid, int *iptr, int options)
 {

@@ -10,7 +10,7 @@
  *  4. 一旦设置了信号处理程序，它就会一直保持，
  *      直到此函数带着handler参数为SIG_IGN或者SIG_DFL被调用。
  */
-sighandler_t isshe_signal(int signum, sighandler_t handler)
+sighandler_t *signal(int signo, sighandler_t *handler)
 {
     struct sigaction action;
     struct sigaction old_action;
@@ -18,12 +18,33 @@ sighandler_t isshe_signal(int signum, sighandler_t handler)
     action.sa_handler = handler;
     // Block sigs of type being handled（阻塞被捕获的信号）
     sigemptyset(&action.sa_mask);
-    //Restart syscalls if possible（尽可能重启系统调用）
-    action.sa_flags = SA_RESETHAND;
+    action.sa_flags = 0;
 
-    if (sigaction(signum, &action, &old_action) < ISSHE_SUCCESS) {
-        isshe_error("isshe_signal error");
+    if (signo == SIGALRM) {
+#ifdef  SA_INTERRUPT
+        action.sa_flags |= SA_INTERRUPT;    /* SunOS 4.x */
+#endif
+    } else {
+#ifdef  SA_RESTART
+        //Restart syscalls if possible（尽可能重启系统调用）
+        action.sa_flags |= SA_RESTART;         /* SVR4, 44BSD */
+#endif
+    }
+
+    if (sigaction(signo, &action, &old_action) < ISSHE_SUCCESS) {
+        return SIG_ERR;
     }
 
     return (old_action.sa_handler);
+}
+
+sighandler_t *isshe_signal(int signo, sighandler_t *handler)
+{
+    sighandler_t *sigfunc;
+
+    if ( (sigfunc = signal(signo, handler)) == SIG_ERR) {
+        isshe_sys_error_exit("signal error");
+    }
+
+    return(sigfunc);
 }

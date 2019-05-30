@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/mman.h>
+#include <fcntl.h>
 
 #include "isshe_ipc.h"
 #include "isshe_error.h"
@@ -217,5 +219,23 @@ void isshe_pipe(int *fds)
 {
     if (pipe(fds) < 0) {
         isshe_sys_error_exit("pipe error");
+    }
+}
+
+int isshe_shm_open(const char *pathname, int oflag, mode_t mode)
+{
+    int     fd;
+
+    if ( (fd = shm_open(pathname, oflag, mode)) == -1) {
+        isshe_sys_error_exit("shm_open error for %s", pathname);
+    }
+
+    return(fd);
+}
+
+void isshe_shm_unlink(const char *pathname)
+{
+    if (shm_unlink(pathname) == -1) {
+        isshe_sys_error_exit("shm_unlink error");
     }
 }

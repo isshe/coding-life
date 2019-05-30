@@ -9,7 +9,7 @@ void isshe_print_exit_status(int status);
 /**
  * daemonize: 守护进程化——使一个进程"变为"守护进程
  */
-void isshe_daemonize(const char *cmd);
+void isshe_daemonize(const char *pname, int facility);
 
 pid_t isshe_waitpid(pid_t pid, int *iptr, int options);
 
