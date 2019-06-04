@@ -42,11 +42,11 @@ ssize_t isshe_msgrcv(int id, void *ptr, size_t len, int type, int flag);
 
 // Posix信号量相关函数
 sem_t * isshe_sem_open(const char *pathname, int oflag, ...);
-void isshe_sem_close(sem_t *sem);
-void isshe_sem_unlink(const char *pathname);
-void isshe_sem_wait(sem_t *sem);
+int isshe_sem_close(sem_t *sem);
+int isshe_sem_unlink(const char *pathname);
+int isshe_sem_wait(sem_t *sem);
 int isshe_sem_trywait(sem_t *sem);
-void isshe_sem_post(sem_t *sem);
+int isshe_sem_post(sem_t *sem);
 // macos 已经弃用了这几个
 #ifdef __linux__
 void isshe_sem_getvalue(sem_t *sem, int *valp);

@@ -25,7 +25,7 @@ int mkfifoat(int fd, const char *path, mode_t mode);
     * 一般情况下(没有指定O_NONBLOCK)，
         * 只读open要阻塞到其他进程为写打开此FIFO为止；
         * 只写open要阻塞到其他进程为读打开此FIFO为止；
-    * 如果制定了O_NONBLOCK，则：
+    * 如果指定了O_NONBLOCK，则：
         * 只读open时，立即返回。【返回啥？正常返回？】
         * 只写open时，如果没有其他进程为读打开此FIFO，则此只写open返回-1，errno置为ENXIO。
 * 若write一个没有进程为读打开的FIFO，则产生信号SIGPIPE。（类似pipe）

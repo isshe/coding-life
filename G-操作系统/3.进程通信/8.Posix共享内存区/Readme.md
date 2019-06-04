@@ -46,5 +46,10 @@ int fstat(int fildes, struct stat *buf);
 * 为什么shm_open不直接返回共享内存的地址？
     * 因为Posix.1的共享内存发明之前，mmap已经存在。
     * mmap使用的是已打开的描述符。
+* 是否支持亲缘进程间使用？先映射，再fork，是否还能使用？
+    * 支持。父进程中open/shm_open；fork后，分别mmap。
+    * 详见[示例5_ex](./Examples/5_ex_pxshm_test3.c)
+* 是否支持无亲缘进程间使用？
+    * 支持。
 
 

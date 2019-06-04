@@ -12,5 +12,6 @@ void *isshe_malloc(size_t size);
 
 void *isshe_mmap(void *addr, size_t len, int prot, int flags, int fd, off_t offset);
 void isshe_munmap(void *addr, size_t len);
+void isshe_sleep_us(unsigned int nusecs);
 
 #endif

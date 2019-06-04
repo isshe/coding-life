@@ -69,6 +69,7 @@ void *consume(void *arg)
     for (i = 0; i < nitems; i++) {
         isshe_pthread_mutex_lock(&nready.mutex);
         while(nready.nready == 0) {
+            // 这里会持有互斥锁进行等待吗？不会持有，等待前会释放该互斥锁
             isshe_pthread_cond_wait(&nready.cond, &nready.mutex);
         }
         nready.nready--;

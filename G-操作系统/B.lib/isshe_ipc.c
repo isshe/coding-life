@@ -111,25 +111,35 @@ sem_t * isshe_sem_open(const char *pathname, int oflag, ...)
     return(sem);
 }
 
-void isshe_sem_close(sem_t *sem)
+int isshe_sem_close(sem_t *sem)
 {
-    if (sem_close(sem) == ISSHE_FAILURE) {
+    int     rc;
+    if ((rc = sem_close(sem)) == ISSHE_FAILURE ) {
         isshe_sys_error_exit("sem_close error");
     }
+
+    return(rc);
 }
 
-void isshe_sem_unlink(const char *pathname)
+int isshe_sem_unlink(const char *pathname)
 {
-    if (sem_unlink(pathname) == ISSHE_FAILURE) {
+    int     rc;
+    if ( (rc = sem_unlink(pathname)) == ISSHE_FAILURE ) {
         isshe_sys_error_exit("sem_unlink error");
     }
+
+    return(rc);
 }
 
-void isshe_sem_wait(sem_t *sem)
+int isshe_sem_wait(sem_t *sem)
 {
-    if (sem_wait(sem) == ISSHE_FAILURE) {
+    int     rc;
+
+    if ( (rc = sem_wait(sem)) == ISSHE_FAILURE ) {
         isshe_sys_error_exit("sem_wait error");
     }
+
+    return(rc);
 }
 
 int isshe_sem_trywait(sem_t *sem)
@@ -143,11 +153,15 @@ int isshe_sem_trywait(sem_t *sem)
     return(rc);
 }
 
-void isshe_sem_post(sem_t *sem)
+int isshe_sem_post(sem_t *sem)
 {
-    if (sem_post(sem) == ISSHE_FAILURE) {
+    int     rc;
+
+    if ( (rc = sem_post(sem)) == ISSHE_FAILURE ) {
         isshe_sys_error_exit("sem_post error");
     }
+
+    return(rc);
 }
 
 #ifdef __linux__

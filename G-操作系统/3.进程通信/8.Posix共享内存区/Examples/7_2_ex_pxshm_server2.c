@@ -32,28 +32,23 @@ int main(int argc, char *argv[])
     sem_unlink(isshe_posix_ipc_name(NFMUTEX_NAME));
     noverflowmutex = isshe_sem_open(isshe_posix_ipc_name(NFMUTEX_NAME), O_CREAT | O_EXCL, ISSHE_FILE_MODE, 1);
 
-    memcpy(&ptr->mutex, mutex, sizeof(sem_t));
-    memcpy(&ptr->nempty, nempty, sizeof(sem_t));
-    memcpy(&ptr->nstored, nstored, sizeof(sem_t));
-    memcpy(&ptr->noverflowmutex, noverflowmutex, sizeof(sem_t));
-
     index = 0;
     lastnoverflow = 0;
     for (; ;) {
-        isshe_sem_wait(&ptr->nstored);
-        isshe_sem_wait(&ptr->mutex);
+        isshe_sem_wait(nstored);
+        isshe_sem_wait(mutex);
 
         offset = ptr->msgoff[index];
         printf("index = %d: %s\n", index, &ptr->msgdata[offset]);
         if (++index >= NMESG) {
             index = 0;
         }
-        isshe_sem_post(&ptr->mutex);
-        isshe_sem_post(&ptr->nempty);
+        isshe_sem_post(mutex);
+        isshe_sem_post(nempty);
 
-        isshe_sem_wait(&ptr->noverflowmutex);
+        isshe_sem_wait(noverflowmutex);
         temp = ptr->noverflow;
-        isshe_sem_post(&ptr->noverflowmutex);
+        isshe_sem_post(noverflowmutex);
 
         if (temp != lastnoverflow) {
             printf("noverflow = %d\n", temp);

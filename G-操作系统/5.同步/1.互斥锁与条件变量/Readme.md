@@ -71,6 +71,11 @@ int pthread_condattr_destroy(pthread_condattr_t *attr);
 // 属性设置：进程间共享等（MACOS和LINUX相关函数有所不同: MACOX没有条件变量属性设置函数）
 ```
 
+## 2. 注意
+* 条件的检测是在互斥锁的保护下进行的；
+    * 条件变量进行等待前，会释放持有的互斥锁。
+    * 【详见[2_ex](./Examples/2_ex_prod_cons_cond.c)】
+
 ## A. 拓展
 * 生产者-消费者问题，也称为`有界缓冲区`问题。
     * 当生产者-消费者使用管道、消息队列(SystemV/Posix)进行通信时，同步是`隐式的(implicit)`，由内核执行同步。
