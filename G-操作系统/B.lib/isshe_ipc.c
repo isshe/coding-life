@@ -189,6 +189,7 @@ void isshe_sem_getvalue(sem_t *sem, int *valp)
 
 #endif
 
+// system V 信号量
 int isshe_semget(key_t key, int nsems, int flag)
 {
     int     rc;
@@ -199,11 +200,15 @@ int isshe_semget(key_t key, int nsems, int flag)
     return(rc);
 }
 
-void isshe_semop(int id, struct sembuf *opsptr, size_t nops)
+int isshe_semop(int id, struct sembuf *opsptr, size_t nops)
 {
-    if (semop(id, opsptr, nops) == ISSHE_FAILURE) {
+    int     rc;
+
+    if ( (rc = semop(id, opsptr, nops)) == ISSHE_FAILURE) {
         isshe_sys_error_exit("semctl error");
     }
+
+    return(rc);
 }
 
 int isshe_semctl(int id, int semnum, int cmd, ...)
@@ -229,13 +234,31 @@ int isshe_semctl(int id, int semnum, int cmd, ...)
     return(rc);
 }
 
-void isshe_pipe(int *fds)
+// 管道
+int isshe_pipe(int *fds)
 {
-    if (pipe(fds) < 0) {
+    int     rc;
+    if ((rc = pipe(fds)) < 0) {
         isshe_sys_error_exit("pipe error");
     }
+
+    return(rc);
 }
 
+// FIFO
+// mkfifo -- make a fifo file
+int isshe_mkfifo(const char *pathname, mode_t mode)
+{
+    int     rc;
+
+    if ((rc = mkfifo(pathname, mode)) == -1) {
+        isshe_sys_error_exit("mkfifo error for %s", pathname);
+    }
+
+    return(rc);
+}
+
+// posix共享内存区
 int isshe_shm_open(const char *pathname, int oflag, mode_t mode)
 {
     int     fd;
@@ -247,9 +270,56 @@ int isshe_shm_open(const char *pathname, int oflag, mode_t mode)
     return(fd);
 }
 
-void isshe_shm_unlink(const char *pathname)
+int isshe_shm_unlink(const char *pathname)
 {
-    if (shm_unlink(pathname) == -1) {
+    int     rc;
+
+    if ( (rc = shm_unlink(pathname)) == -1) {
         isshe_sys_error_exit("shm_unlink error");
     }
+
+    return(rc);
+}
+
+// system V共享内存区
+int isshe_shmget(key_t key, size_t size, int flags)
+{
+    int     rc;
+
+    if ( (rc = shmget(key, size, flags)) == -1) {
+        isshe_sys_error_exit("shmget error");
+    }
+
+    return(rc);
+}
+
+void * isshe_shmat(int id, const void *shmaddr, int flags)
+{
+    void    *ptr;
+
+    if ( (ptr = shmat(id, shmaddr, flags)) == (void *) -1) {
+        isshe_sys_error_exit("shmat error");
+    }
+
+    return(ptr);
+}
+
+int isshe_shmdt(const void *shmaddr)
+{
+    int     rc;
+    if ((rc = shmdt(shmaddr)) == -1) {
+        isshe_sys_error_exit("shmdt error");
+    }
+
+    return(rc);
+}
+
+int isshe_shmctl(int id, int cmd, struct shmid_ds *buff)
+{
+    int     rc;
+    if ((rc = shmctl(id, cmd, buff)) == -1) {
+        isshe_sys_error_exit("shmctl error");
+    }
+
+    return(rc);
 }

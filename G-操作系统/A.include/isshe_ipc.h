@@ -5,15 +5,14 @@
 #include <semaphore.h>
 #include <sys/types.h>
 #include <sys/ipc.h>
-#include <sys/sem.h>
+#include <sys/sem.h>    // system v
+#include <sys/shm.h>    // system v
 
 #ifndef SEM_FAILED
 #define SEM_FAILED  ((sem_t *)(-1))
 #endif
 
 #ifdef __linux__
-/* $$.ix [SVMSG_MODE]~constant,~definition~of$$ */
-/* default permissions for new SV semaphores */
 #define SEM_R (0400)
 #define SEM_A (0200)
 
@@ -24,7 +23,13 @@ union semun {       /* define union for semctl() */
 };
 #endif
 
-#define	ISSHE_SVSEM_MODE	(SEM_R | SEM_A | SEM_R>>3 | SEM_R>>6)
+/* default permissions for new SV semaphores */
+/* $$.ix [SVSEM_MODE]~constant,~definition~of$$ */
+#define ISSHE_SVSEM_MODE    (SEM_R | SEM_A | SEM_R>>3 | SEM_R>>6)
+
+/* default permissions for new SV shared memory */
+/* $$.ix [SVSHM_MODE]~constant,~definition~of$$ */
+#define ISSHE_SVSHM_MODE    (SHM_R | SHM_W | SHM_R>>3 | SHM_R>>6)
 
 
 /*
@@ -56,14 +61,23 @@ void isshe_sem_destroy(sem_t *sem);
 
 // System V信号量
 int isshe_semget(key_t key, int nsems, int flag);
-void isshe_semop(int id, struct sembuf *opsptr, size_t nops);
+int isshe_semop(int id, struct sembuf *opsptr, size_t nops);
 int isshe_semctl(int id, int semnum, int cmd, ...);
 
 // 管道
-void isshe_pipe(int *fds);
+int isshe_pipe(int *fds);
+
+// FIFO
+int isshe_mkfifo(const char *pathname, mode_t mode);
 
 // Posix共享内存
 int isshe_shm_open(const char *pathname, int oflag, mode_t mode);
-void isshe_shm_unlink(const char *pathname);
+int isshe_shm_unlink(const char *pathname);
+
+// System V共享内存
+int isshe_shmget(key_t key, size_t size, int flags);
+void * isshe_shmat(int id, const void *shmaddr, int flags);
+int isshe_shmdt(const void *shmaddr);
+int isshe_shmctl(int id, int cmd, struct shmid_ds *buff);
 
 #endif
