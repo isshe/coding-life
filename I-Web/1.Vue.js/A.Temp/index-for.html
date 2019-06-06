@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://cdn.bootcss.com/vue/2.6.10/vue.min.js"></script>
+</head>
+<body>
+<div id="app">
+    <div v-for="item in list">
+        <div v-if = "item.age > 25">
+            {{item.name}}, {{item.age}}
+        </div>
+        <div v-else v-bind:style="style">
+            {{item.name}}
+        </div>
+    </div>
+    {{msg}}
+</div>
+<script>
+    var arr = "new test"
+    var app = new Vue({
+        el: '#app',
+        data: {
+            msg: 'Hello Vue!',
+            another: 'another...',
+            list: [{
+                name: 'isshe',
+                age: 25,
+            }, {
+                name: "chduai",
+                age: 30
+            }],
+            style: {
+                'color':'blue',
+                'text-shadow': '0 0 5px red'
+            }
+        },
+        watch: {
+            msg: function (newval, oldval) {
+                console.log('newval is: '+newval)
+                console.log('oldval is: '+oldval)
+            }
+        },
+        computed: {
+            msg1: function () {
+                return 'computed:' + this.msg + ',' + this.another + ',' + arr
+            }
+        }
+    })
+</script>
+
+</body>
+</html>
