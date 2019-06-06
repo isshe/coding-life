@@ -91,3 +91,20 @@ void isshe_pthread_cond_timedwait(pthread_cond_t *cptr, pthread_mutex_t *mptr,
     errno = n;
     isshe_sys_error_exit("pthread_cond_timedwait error");
 }
+
+pthread_t isshe_thread_id(pthread_t *ptr)
+{
+#if defined(sun)
+	return((ptr == NULL) ? pthread_self() : *ptr);	/* Solaris */
+
+#elif defined(__osf__) && defined(__alpha)
+	pthread_t	tid;
+
+	tid = (ptr == NULL) ? pthread_self() : *ptr;	/* Digital Unix */
+	return(pthread_getsequence_np(tid));
+#else
+
+	/* 4everything else */
+	return((ptr == NULL) ? pthread_self() : *ptr);
+#endif
+}

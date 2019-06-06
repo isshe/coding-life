@@ -13,4 +13,6 @@ void isshe_pthread_cond_signal(pthread_cond_t *cptr);
 void isshe_pthread_cond_wait(pthread_cond_t *cptr, pthread_mutex_t *mptr);
 void isshe_pthread_cond_timedwait(pthread_cond_t *cptr, pthread_mutex_t *mptr, const struct timespec *tsptr);
 
+pthread_t isshe_thread_id(pthread_t *ptr);
+
 #endif

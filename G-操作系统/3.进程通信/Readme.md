@@ -131,4 +131,7 @@ Posix IPC: 消息队列、信号量、共享内存区
 |O_CREAT|成功，创建新对象|成功，引用已存在对象|
 |O_CREAT O_EXCL|成功，创建新对象|出错，errno = EEXIST|
 
-## A.参考
+## A.拓展
+* 关于各种IPC及同步的性能测量：《UNIX网络编程 卷2》附录A 性能测量
+    * 带宽(bandwidth)；
+    * 延迟(latency)；
