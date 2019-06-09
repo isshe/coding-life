@@ -9,6 +9,10 @@
 #include <stdarg.h>
 #include <fcntl.h>           /* For O_* constants */
 #include <sys/stat.h>        /* For mode constants */
+#include <sys/errno.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netdb.h>
 
 #if defined(__bsdi__) || defined(__APPLE__)
 #define va_mode_t   int

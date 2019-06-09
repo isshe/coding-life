@@ -56,7 +56,7 @@ void isshe_sys_error_dump(const char *fmt, ...)
     err_doit(SYSTEM_CALL, LOG_ERR, fmt, ap);
     va_end(ap);
     abort();        // dump core and terminate
-    exit(1);        // shouldn't get here
+    exit(0);        // shouldn't get here
 }
 
 void isshe_sys_error_exit(const char *fmt, ...)
@@ -66,7 +66,7 @@ void isshe_sys_error_exit(const char *fmt, ...)
     va_start(ap, fmt);
     err_doit(SYSTEM_CALL, LOG_ERR, fmt, ap);
     va_end(ap);
-    exit(1);
+    exit(0);
 }
 
 void isshe_error(const char *fmt, ...)
@@ -85,7 +85,7 @@ void isshe_error_exit(const char *fmt, ...)
     va_start(ap, fmt);
     err_doit(USER_CALL, LOG_ERR, fmt, ap);
     va_end(ap);
-    exit(1);
+    exit(0);
 }
 
 void isshe_sys_info(const char *fmt, ...)
@@ -104,4 +104,25 @@ void isshe_info(const char *fmt, ...)
     va_start(ap, fmt);
     err_doit(USER_CALL, LOG_INFO, fmt, ap);
     va_end(ap);
+}
+
+void isshe_unix_error_exit(const char *fmt, ...) /* Unix-style error */
+{
+    va_list ap;
+
+    va_start(ap, fmt);
+    err_doit(SYSTEM_CALL, LOG_ERR, fmt, ap);
+    va_end(ap);
+    exit(0);
+}
+
+void isshe_posix_error_exit(int code, const char *fmt, ...) /* Posix-style error */
+{
+    va_list ap;
+
+    va_start(ap, fmt);
+    errno = code;
+    err_doit(SYSTEM_CALL, LOG_ERR, fmt, ap);
+    va_end(ap);
+    exit(0);
 }

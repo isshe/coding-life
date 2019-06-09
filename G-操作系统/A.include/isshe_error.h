@@ -43,4 +43,12 @@ void isshe_sys_info(const char *fmt, ...);
  */
 void isshe_info(const char *fmt, ...);
 
+/*
+ * 和isshe_sys_error_exit()相同
+ */
+void isshe_unix_error_exit(const char *fmt, ...);
+
+
+void isshe_posix_error_exit(int code, const char *fmt, ...);
+
 #endif
