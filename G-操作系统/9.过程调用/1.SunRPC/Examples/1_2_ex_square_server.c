@@ -6,6 +6,7 @@
 
 #include "1_1_ex_square.h"
 #include "isshe_pthread.h"
+#include "isshe_common.h"
 
 square_out *
 squareproc_1_svc(square_in *argp, struct svc_req *rqstp)
@@ -17,12 +18,12 @@ squareproc_1_svc(square_in *argp, struct svc_req *rqstp)
      * insert server code here
      */
 
-    printf("thread %ld started, arg = %ld\n", isshe_thread_id(NULL), argp->arg1);
+    printf("thread %ld started, arg = %ld\n", (long)isshe_thread_id(NULL), argp->arg1);
     sleep(5);
 
     result.res1 = argp->arg1 * argp->arg1;
 
-    printf("thread %ld done\n", isshe_thread_id(NULL));
+    printf("thread %ld done\n", (long)isshe_thread_id(NULL));
 
     return(&result);
 }

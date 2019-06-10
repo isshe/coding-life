@@ -13,6 +13,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netdb.h>
+#include <arpa/inet.h>
 
 #if defined(__bsdi__) || defined(__APPLE__)
 #define va_mode_t   int
@@ -24,7 +25,8 @@
 #define ISSHE_FAILURE    (-1)
 #define ISSHE_TRUE      1
 #define ISSHE_FALSE     0
-#define ISSHE_MAXLINE   4096
+#define MAXLINE         4096
+#define ISSHE_MAXLINE   MAXLINE
 
 #ifndef	PATH_MAX                /* should be in <limits.h> */
 #define	PATH_MAX        1024    /* max # of characters in a pathname */
