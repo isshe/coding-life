@@ -35,6 +35,6 @@ $(SQUARE_NAME)_server:	$(SQUARE_NAME).h $(SQUARE_NAME)_server.o $(SQUARE_NAME)_s
 		${LIBS} ${LIBS_RPC} $(LDFLAGS) $(LDLIBS)
 
 clean:
-	rm -f $(PROGS) $(TEMPFILES) *.o *_clnt.c *_svc.c *_xdr.c $(SQUARE_NAME).h
+	$(RM) $(RMFLAGS) $(PROGS) $(TEMPFILES) *.o *_clnt.c *_svc.c *_xdr.c $(SQUARE_NAME).h
 
 include $(ROOT)/Make.libisshe.inc

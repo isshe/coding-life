@@ -18,6 +18,6 @@ all:	$(PROGS) $(FDPASS)
 	$(CC) $(CFLAGS) $@.c -o $@$(SUFFIX) $(LDFLAGS) $(LDLIBS)
 
 clean:
-	rm -f $(PROGS) $(TEMPFILES) *.o
+	$(RM) $(RMFLAGS) $(PROGS) $(TEMPFILES) *.o
 
 include $(ROOT)/Make.libisshe.inc

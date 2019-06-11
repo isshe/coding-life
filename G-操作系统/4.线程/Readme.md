@@ -130,9 +130,14 @@ int pthread_once(pthread_once_t *once_control, void (*init_routine)(void));
 * 根据这个模型，变量实例是如何映射到存储器的？
 * 有多少线程引用这些实例？
 
-## A.拓展
+## 4. 线程的终止
 * 线程的终止方式：
     * 自身显式终止：pthread_exit;
     * 他人显式终止：pthread_join;
     * 隐式终止：函数返回；
     * 某个线程调用exit函数；
+
+## A.拓展
+* 预线程化：生成一个管理线程+多个工作线程；
+    * 用一个`有限`缓冲区存储数据，这些数据被工作线程处理。
+![](./prethreading.png)
