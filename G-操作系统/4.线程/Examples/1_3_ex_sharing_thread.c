@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
     ptr = msgs;
 
     for (i = 0; i < N; i++) {
-        isshe_pthread_create(&tid, NULL, thread, (void *)i);
+        isshe_pthread_create(&tid, NULL, thread, (void *)&i);
     }
 
     isshe_pthread_exit(NULL);
@@ -38,7 +38,7 @@ int main(int argc, char *argv[])
 
 void *thread(void *vargp)
 {
-    int myid = (int)vargp;
+    int myid = *((int *)vargp);
     static int cnt = 0;
     printf("[%d]: %s (cnt = %d)\n", myid, ptr[myid], ++cnt);
     return NULL;

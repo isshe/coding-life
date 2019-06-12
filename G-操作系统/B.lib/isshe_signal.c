@@ -4,7 +4,7 @@
 
 /**
  * 可移植的signal函数：
- *  1.只有这个处理程序当前正在处理得哪种类型的信号被阻塞。
+ *  1.只有这个处理程序当前正在处理的那种类型的信号被阻塞。
  *  2.和所有信号实现一样，信号不会排队等待。
  *  3.只要可能，被中断的系统调用会自动重启。
  *  4. 一旦设置了信号处理程序，它就会一直保持，
@@ -17,7 +17,7 @@ sighandler_t *signal(int signo, sighandler_t *handler)
 
     action.sa_handler = handler;
     // Block sigs of type being handled（阻塞被捕获的信号）
-    sigemptyset(&action.sa_mask);
+    sigemptyset(&action.sa_mask);   // 清空sa_mask，执行信号处理函数期间，不阻塞任何信号
     action.sa_flags = 0;
 
     if (signo == SIGALRM) {

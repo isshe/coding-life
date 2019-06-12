@@ -114,7 +114,11 @@ void *isshe_malloc(size_t size)
 
 void isshe_free(void *ptr)
 {
-    free(ptr);
+    if (ptr) {
+        free(ptr);
+    } else {
+        isshe_error("want to free(NULL)");
+    }
 }
 
 void *isshe_mmap(void *addr, size_t len, int prot, int flags, int fd, off_t offset)
