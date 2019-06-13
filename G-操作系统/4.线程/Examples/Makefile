@@ -8,7 +8,8 @@ PROGS =	1_1_ex_echo_server_thread \
 		1_3_ex_sharing_thread \
 		1_4_ex_bad_cnt_thread \
 		1_5_ex_good_cnt_thread \
-		1_6_ex_echo_server_pre_thread
+		1_6_ex_echo_server_pre_thread \
+		1_7_ex_psum_thread
 
 FDPASS =
 LDLIBS += -lpthread

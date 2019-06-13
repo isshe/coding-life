@@ -29,7 +29,8 @@ int main(int argc, char *argv[])
     ptr = msgs;
 
     for (i = 0; i < N; i++) {
-        isshe_pthread_create(&tid, NULL, thread, (void *)&i);
+        isshe_pthread_create(&tid, NULL, thread, (void *)&i);   // 存在竞争，i只有一个！
+        //isshe_pthread_create(&tid, NULL, thread, (void *)i);
     }
 
     isshe_pthread_exit(NULL);
