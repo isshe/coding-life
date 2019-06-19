@@ -4,12 +4,7 @@ include $(ROOT)/Make.defines.$(PLATFORM)
 
 SUFFIX = .out
 
-PROGS =	1_ex_locknone \
-	2_ex_lock_fcntl \
-	3_ex_test_wlock_rlock \
-	4_ex_test_wlock_rlock_prio \
-	5_ex_one_daemon
-
+PROGS =
 FDPASS =
 
 all:	$(PROGS) $(FDPASS)

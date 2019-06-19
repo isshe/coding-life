@@ -15,4 +15,7 @@ void *isshe_mmap(void *addr, size_t len, int prot, int flags, int fd, off_t offs
 void isshe_munmap(void *addr, size_t len);
 void isshe_sleep_us(unsigned int nusecs);
 
+int isshe_select(int nfds, fd_set *readfds,
+    fd_set *writefds,  fd_set *exceptfds, struct timeval *timeout);
+
 #endif

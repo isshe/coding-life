@@ -174,3 +174,22 @@ void isshe_sleep_us(unsigned int nusecs)
         isshe_sys_error_exit("sleep_us error");
     }
 }
+
+int isshe_select(int nfds, fd_set *readfds,
+    fd_set *writefds,  fd_set *exceptfds, struct timeval *timeout)
+{
+    int n;
+
+again_select:
+    if ( (n = select(nfds, readfds, writefds, exceptfds, timeout)) < 0) {
+        if (errno == EINTR) {
+            goto again_select;
+        } else {
+            isshe_sys_error_exit("select error");
+        }
+    } else if (n == 0 && timeout == NULL) {
+        isshe_error_exit("select returned 0 with no timeout");
+    }
+
+    return(n);  /* can return 0 on timeout */
+}

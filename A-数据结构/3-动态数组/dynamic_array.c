@@ -88,7 +88,6 @@ void *dynamic_array_push_n(dynamic_array_t *array, unsigned int n)
 
     if (array->nelts + n > array->nalloc) {
         // 数组不够了
-
         nalloc = 2 * ((n >= array->nalloc) ? n : array->nalloc);
         new = realloc(array->elts, nalloc * array->elt_size);
         if (new == NULL) {

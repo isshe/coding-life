@@ -1,4 +1,4 @@
-DIRS = B.lib 1.进程 2.信号 3.进程通信 5.同步 4.线程 8.IO多路复用 9.过程调用
+DIRS = 1.Select
 
 all:
 	for i in $(DIRS); do \

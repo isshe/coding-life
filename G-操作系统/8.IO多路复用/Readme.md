@@ -13,7 +13,7 @@ I/O复用的的典型使用场合：
 Unix下可用的5中I/O模型：
 * 阻塞式I/O；
 * 非阻塞式I/O；
-* I/O复用(select/poll)；
+* I/O复用(select/poll)；（又被称为：`事件驱动式I/O`）
 * 信号驱动式I/O(SIGIO)；
     * 让`内核`在描述符就绪时，发送`SIGIO`信号通知相关进程。
 * 异步I/O(POSIX的aio_系列函数)
