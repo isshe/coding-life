@@ -56,6 +56,26 @@ select函数允许进程指示内核等待多个事件，并在有一个或多�
 |待处理错误|+|+||
 |TCP带外数据|||+|
 
+## 3. shutdown
+终止网络连接的通常方法是close函数，但是close有两个限制：（可以用shutdown来避免）。
+* close把描述符的引用计数-1，仅在计数为0时才关闭套接字。
+* close终止读和写两个方向的数据传送。
+```c
+#include <sys/socket.h>
+
+int shutdown(int sockfd, int howto);
+```
+* 作用：关闭网络连接。
+* 参数：
+    * howto:
+        * SHUT_RD: 关闭连接的读一半。
+        * SHUT_WR: 关闭连接的写一半。
+        * SHUT_RDWR: 读写都关闭。（与调用两次shutdown等效。）
+
+* 返回：
+    * 成功：0
+    * 失败：Exxx值
+
 ## A. 注意、拓展
 * timeval结构允许指定微秒级的分辨率，然而内核支持的真实分辨率往往粗糙得多。
 * timeval结构能支持select不支持的值。

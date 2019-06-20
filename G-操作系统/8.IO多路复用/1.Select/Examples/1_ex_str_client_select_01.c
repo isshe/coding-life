@@ -13,6 +13,12 @@
 #include "isshe_rpc.h"
 #include "isshe_sbuf.h"
 
+
+/*
+ * 这个函数存在的问题：
+ *  1. fp 读完并发送给sockfd，但是sockfd可能没有读完就结束了。
+ *  2. 由于stdio的缓冲区问题，fgets和readline(我们的缓冲区)，都只操作了一行，缓冲区中可能还有未消费的数据。
+ */
 void str_cli(FILE *fp, int sockfd)
 {
     int maxfd, stdineof = 0;
@@ -21,31 +27,23 @@ void str_cli(FILE *fp, int sockfd)
 
     FD_ZERO(&rset);
     for (; ;) {
-        if (stdineof == 0) {
-            FD_SET(fileno(fp), &rset);
-        }
+        FD_SET(fileno(fp), &rset);
         FD_SET(sockfd, &rset);
         maxfd = max(fileno(fp), sockfd) + 1;
         isshe_select(maxfd, &rset, NULL, NULL, NULL);
 
         if (FD_ISSET(sockfd, &rset)) {
             if (isshe_readline(sockfd, recvline, MAXLINE) == 0) {
-                if (stdineof == 1) {
-                    return;     // 正常结束
-                } else {
-                    isshe_error_quit("str_cli: server terminated prematurely");
-                }
+                isshe_error_quit("str_cli: server terminated prematurely");
             }
 
+            // 输出到标准输出
             isshe_fput(recvline, stdout);
         }
 
         if (FD_ISSET(fileno(fp), &rset)) {
             if (isshe_fgets(sendline, MAXLINE, fp) == NULL) {
-                stdineof = 1;
-                isshe_shutdown(sockfd, SHUT_WR);    // send FIN
-                FD_CLR(fileno(fp), &rset);
-                continue;
+                return;
             }
 
             isshe_write(sockfd, sendline, strlen(sendline));
