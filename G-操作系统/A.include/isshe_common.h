@@ -14,6 +14,7 @@
 #include <sys/socket.h>
 #include <netdb.h>
 #include <arpa/inet.h>
+#include <sys/syslimits.h>  // for OPEN_MAX
 
 #if defined(__bsdi__) || defined(__APPLE__)
 #define va_mode_t   int

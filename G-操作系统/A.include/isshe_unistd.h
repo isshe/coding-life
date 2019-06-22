@@ -2,6 +2,12 @@
 #define _ISSHE_UNISTD_H_
 
 #include <sys/mman.h>
+#include <sys/time.h>
+#include <poll.h>
+
+#ifndef INFTIM
+#define INFTIM          (-1)    /* infinite poll timeout */
+#endif
 
 long isshe_pathconf(const char *pathname, int name);
 long isshe_sysconf(int name);
@@ -17,5 +23,7 @@ void isshe_sleep_us(unsigned int nusecs);
 
 int isshe_select(int nfds, fd_set *readfds,
     fd_set *writefds,  fd_set *exceptfds, struct timeval *timeout);
+
+int isshe_poll(struct pollfd *fdarray, unsigned long nfds, int timeout);
 
 #endif

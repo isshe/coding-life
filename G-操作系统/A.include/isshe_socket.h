@@ -2,6 +2,7 @@
 #define _ISSHE_SOCKET_H_
 
 #define LISTENQ  1024  /* Second argument to listen() */
+#define SA  struct sockaddr
 
 int isshe_socket(int domain, int type, int protocol);
 

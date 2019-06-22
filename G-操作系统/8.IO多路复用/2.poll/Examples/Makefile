@@ -4,7 +4,7 @@ include $(ROOT)/Make.defines.$(PLATFORM)
 
 SUFFIX = .out
 
-PROGS = 3_ex_tcp_echo_server_select_01
+PROGS = 1_ex_tcp_echo_server_poll_01
 
 
 FDPASS =

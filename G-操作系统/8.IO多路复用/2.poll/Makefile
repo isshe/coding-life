@@ -1,4 +1,4 @@
-DIRS = 1.Select 2.poll
+DIRS = Examples
 
 all:
 	for i in $(DIRS); do \

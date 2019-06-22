@@ -193,3 +193,14 @@ again_select:
 
     return(n);  /* can return 0 on timeout */
 }
+
+int isshe_poll(struct pollfd *fdarray, unsigned long nfds, int timeout)
+{
+    int n;
+
+    if ( (n = poll(fdarray, nfds, timeout)) < 0) {
+        isshe_error_exit("poll error");
+    }
+
+    return(n);
+}
