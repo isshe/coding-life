@@ -14,12 +14,17 @@
 #include <sys/socket.h>
 #include <netdb.h>
 #include <arpa/inet.h>
-#include <sys/syslimits.h>  // for OPEN_MAX
 
 #if defined(__bsdi__) || defined(__APPLE__)
+#include <sys/syslimits.h>  // for OPEN_MAX
+
 #define va_mode_t   int
 #else
 #define va_mode_t   mode_t
+#endif
+
+#ifndef OPEN_MAX
+#define OPEN_MAX FOPEN_MAX
 #endif
 
 #define ISSHE_SUCCESS    0

@@ -4,7 +4,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/mman.h>
-#include <fcntl.h>
+#include <sys/stat.h>        /* For mode constants */
+#include <fcntl.h>           /* For O_* constants */
 
 #include "isshe_ipc.h"
 #include "isshe_error.h"

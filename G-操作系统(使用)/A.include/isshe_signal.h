@@ -4,18 +4,18 @@
 #include <signal.h>
 
 /*
-typedef void (* sighandler_t)(int)
+typedef void (* sigfunc)(int)
 */
-typedef void sighandler_t(int);
+typedef void sigfunc(int);
 
 /*
  * 出错不退出
  */
-sighandler_t *signal(int signo, sighandler_t *handler);
+sigfunc *signal(int signo, sigfunc *handler);
 
 /*
  * 出错退出
  */
-sighandler_t *isshe_signal(int signo, sighandler_t *handler);
+sigfunc *isshe_signal(int signo, sigfunc *handler);
 
 #endif

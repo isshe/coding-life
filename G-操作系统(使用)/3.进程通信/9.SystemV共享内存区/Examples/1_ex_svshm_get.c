@@ -31,7 +31,8 @@ int main(int argc, char *argv[])
     length = atoi(argv[optind + 1]);
 
     id = isshe_shmget(isshe_ftok(argv[optind], 0), length, oflag);
-    printf("shm id = %d\n", id);
     ptr = isshe_shmat(id, NULL, 0);
+    printf("shm id = %d, ptr = %p\n", id, ptr);
+
     exit(0);
 }

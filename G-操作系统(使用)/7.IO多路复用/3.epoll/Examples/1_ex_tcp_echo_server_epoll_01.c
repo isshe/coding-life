@@ -45,12 +45,12 @@ int main(int argc, char *argv[])
     }
 
     for ( ; ; ) {
-        nready = isshe_epoll_wait(epollfd, events, MAX_EVENTS, -1);
+        nready = isshe_epoll_wait(epollfd, events, MAX_EVENTS, -1, NULL);
         for (i = 0; i < nready; i++) {
             if (events[i].data.fd == listenfd) {
                 chilen = sizeof(cliaddr);
                 connfd = isshe_accept(listenfd, (SA *)&cliaddr, &chilen);
-                setnonblocking(connfd);
+                //setnonblocking(connfd);
                 ev.events = EPOLLIN | EPOLLET;
                 ev.data.fd = connfd;
                 isshe_epoll_ctl(epollfd, EPOLL_CTL_ADD, connfd, &ev);
@@ -80,7 +80,7 @@ int main(int argc, char *argv[])
                             }
                         }
                     } else {
-                        isshe_sys_error("(%d)read error", client[i].fd);
+                        isshe_sys_error("(%d)read error", client[i]);
                     }
                 } else if (n == 0) {
                     isshe_close(sockfd);

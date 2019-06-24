@@ -8,6 +8,7 @@
 #include <sys/sem.h>    // system v
 #include <sys/shm.h>    // system v
 
+
 #ifndef SEM_FAILED
 #define SEM_FAILED  ((sem_t *)(-1))
 #endif
