@@ -203,4 +203,49 @@ int isshe_poll(struct pollfd *fdarray, unsigned long nfds, int timeout)
     }
 
     return(n);
+ }
+
+#ifdef __linux__
+
+int isshe_epoll_create(int flags)
+{
+    int rc;
+
+    if ( (rc = epoll_create1(flags)) < 0 ) {
+        isshe_sys_error_exit("epoll_create1 error");
+    }
+
+    return(rc);
 }
+
+int isshe_epoll_ctl(int epfd, int op, int fd, struct epoll_event *event)
+{
+    int rc;
+
+    if ( (rc = epoll_ctl(epfd, op, fd, event)) < 0 ) {
+        isshe_sys_error_exit("epoll_ctl error");
+    }
+
+    return(rc);
+}
+
+int isshe_epoll_wait(int epfd, struct epoll_event *events,
+               int maxevents, int timeout,
+               const sigset_t *sigmask)
+{
+    int rc;
+
+    if (sigmask) {
+        if ( (rc = epoll_pwait(epfd, events, maxevents, timeout, sigmask)) < 0 ) {
+            isshe_sys_error_exit("epoll_pwait error");
+        }
+    } else {
+        if ( (rc = epoll_wait(epfd, events, maxevents, timeout)) < 0 ) {
+            isshe_sys_error_exit("epoll_wait error");
+        }
+    }
+
+    return(rc);
+}
+
+#endif

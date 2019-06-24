@@ -1,4 +1,4 @@
-DIRS = 1.select 2.poll 3.epoll
+DIRS = Examples
 
 all:
 	for i in $(DIRS); do \

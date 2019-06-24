@@ -3,7 +3,17 @@
 
 #include <sys/mman.h>
 #include <sys/time.h>
+#include <sys/types.h>
 #include <poll.h>
+
+#ifdef __linux__
+#include <sys/epoll.h>
+#endif
+
+#ifdef __APPLE__
+#include <sys/event.h>
+#endif
+
 
 #ifndef INFTIM
 #define INFTIM          (-1)    /* infinite poll timeout */
@@ -25,5 +35,12 @@ int isshe_select(int nfds, fd_set *readfds,
     fd_set *writefds,  fd_set *exceptfds, struct timeval *timeout);
 
 int isshe_poll(struct pollfd *fdarray, unsigned long nfds, int timeout);
+
+#ifdef __linux__
+int isshe_epoll_create(int flags);
+int isshe_epoll_ctl(int epfd, int op, int fd, struct epoll_event *event);
+int isshe_epoll_wait(int epfd, struct epoll_event *events,
+               int maxevents, int timeout, const sigset_t *sigmask);
+#endif
 
 #endif
