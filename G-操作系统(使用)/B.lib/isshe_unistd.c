@@ -206,7 +206,6 @@ int isshe_poll(struct pollfd *fdarray, unsigned long nfds, int timeout)
  }
 
 #ifdef __linux__
-
 int isshe_epoll_create(int flags)
 {
     int rc;
@@ -247,5 +246,43 @@ int isshe_epoll_wait(int epfd, struct epoll_event *events,
 
     return(rc);
 }
+#endif
 
+#if defined(__bsdi__) || defined(__APPLE__)
+int isshe_kqueue(void)
+{
+    int rc;
+
+    if ((rc = kqueue()) == ISSHE_FAILURE){
+        isshe_sys_error_exit("kqueue error");
+    }
+
+    return rc;
+}
+
+int isshe_kevent(int kq, const struct kevent *changelist, int nchanges,
+        struct kevent *eventlist, int nevents,
+        const struct timespec *timeout)
+{
+    int rc;
+
+    if ((rc = kevent(kq, changelist, nchanges, eventlist, nevents, timeout)) == ISSHE_FAILURE){
+        isshe_sys_error_exit("kevent error");
+    }
+
+    return rc;
+}
+
+int isshe_kevent64(int kq, const struct kevent64_s *changelist, int nchanges,
+        struct kevent64_s *eventlist, int nevents, unsigned int flags,
+        const struct timespec *timeout)
+{
+    int rc;
+
+    if ((rc = kevent64(kq, changelist, nchanges, eventlist, nevents, flags, timeout)) == ISSHE_FAILURE){
+        isshe_sys_error_exit("kevent64 error");
+    }
+
+    return rc;
+}
 #endif

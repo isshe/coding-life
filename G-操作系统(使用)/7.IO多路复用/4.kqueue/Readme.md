@@ -67,16 +67,16 @@ int kevent_qos(int kq, const struct kevent_qos_s *changelist, int nchanges,
     * kq: kqueue文件描述符；
     * changelist: 指向`events/events64_s/kevent_qos_s`结构数组的指针。
     * nchanges: changelist的大小。
-    * eventlist: 指向`events/events64_s/kevent_qos_s`结构数组的指针。
-    * nevnets: 
+    * eventlist: 指向`events/events64_s/kevent_qos_s`结构数组的指针。返回的事件存放在这里。
+    * nevnets: eventlist的大小；能支持返回的最大事件数量。
     * flags: 
-    * timeout: 超时时间。
-    * data_out: 
-    * data_available: 
-* 返回：
+    * timeout: 超时时间。如果timeout为NULL，则永久等待；否则，等待指定时间。
+    * data_out: 提供一块空间供一些特定的过滤器输出数据。
+    * data_available: 指定了输入时数据池的可用的空间大小，并包含输出时仍空闲的空间大小。
+* 返回：`eventlist`中放置的事件数，最多为nevents提供的值。
 
 
-## 3. EV_SET/EV_SET64/EV_SET_QOS
+## 3. EV_SET/EV_SET64/EV_SET_QOS宏
 ```c
 EV_SET(&kev, ident, filter, flags, fflags, data, udata);
 
@@ -84,6 +84,8 @@ EV_SET64(&kev, ident, filter, flags, fflags, data, udata, ext[0], ext[1]);
 
 EV_SET_QOS(&kev, ident, filter, flags, qos, udata, fflags, xflags, data, ext[0], ext[1], ext[2], ext[3]);
 ```
-
+* 作用：提供一个初始化相关数据结构(kevent/kevent64_s/kevent_qos_s)的简单方法。
 
 ## A. 问题/拓展
+* 完整示例：[2_ex](./Examples/2_ex_kevent_watch_file_changes_full.c)
+    * kevent: 要分开两次进行。

@@ -6,11 +6,12 @@
 #include <sys/types.h>
 #include <poll.h>
 
+
 #ifdef __linux__
 #include <sys/epoll.h>
 #endif
 
-#ifdef __APPLE__
+#if defined(__bsdi__) || defined(__APPLE__)
 #include <sys/event.h>
 #endif
 
@@ -41,6 +42,17 @@ int isshe_epoll_create(int flags);
 int isshe_epoll_ctl(int epfd, int op, int fd, struct epoll_event *event);
 int isshe_epoll_wait(int epfd, struct epoll_event *events,
                int maxevents, int timeout, const sigset_t *sigmask);
+#endif
+
+#if defined(__bsdi__) || defined(__APPLE__)
+int isshe_kqueue(void);
+int isshe_kevent(int kq, const struct kevent *changelist, int nchanges,
+        struct kevent *eventlist, int nevents,
+        const struct timespec *timeout);
+
+int isshe_kevent64(int kq, const struct kevent64_s *changelist, int nchanges,
+        struct kevent64_s *eventlist, int nevents, unsigned int flags,
+        const struct timespec *timeout);
 #endif
 
 #endif
