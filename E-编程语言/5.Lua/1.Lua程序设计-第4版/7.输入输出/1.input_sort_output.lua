@@ -1,3 +1,8 @@
+--[[
+* mcaOS/Linux: CTRL + D 输入nil
+* Windows: CTRL + Z 输入nil(没有测试)
+]]
+
 local function input_sort_output(...)
     local input_file, output_file = ...
     local lines = {}
