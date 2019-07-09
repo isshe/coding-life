@@ -50,4 +50,9 @@ end
 
 local output_file = "/dev/null"
 local input_file = ...
+if not input_file then
+    io.write("Usage: lua xxx.lua <input_file>\n")
+    os.exit()
+end
+--local output_file = input_file .. ".out"
 read_time(input_file, output_file)

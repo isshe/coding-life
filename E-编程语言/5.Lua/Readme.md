@@ -33,3 +33,15 @@ function xxx(...)
 
 ## 2. table.pack和table.unpack
 打包成table或者把table拆了。
+
+## 3. 安全操作
+```lua
+zip = a and a.b and a.b.c and a.b.c.d
+```
+可替换为：
+```lua
+E = {}
+zip = (((a or E).b or E).c or E).d
+```
+
+## 4.
