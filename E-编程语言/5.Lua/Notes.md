@@ -13,6 +13,11 @@
         * 局部变量的作用域终止于声明变量的代码块中的最后一个有效(non-void)语句。
         * goto标签是无效(void)语句。
         * 详见《Lua程序设计 第4版》第85页。
+* 当只需要一个返回的时候，可以套一层`()`，来实现：
+```
+print((string.gsub("hello, up-down!", "%A", "."))), 返回： hello..up.down.
+print(string.gsub("hello, up-down!", "%A", ".")), 返回：hello..up.down. 4(4是替换次数)
+```
 
 ## 2.IO操作
 * 使用`io.write(a, b, c)` 而不用`io.write(a .. b .. c)`。
