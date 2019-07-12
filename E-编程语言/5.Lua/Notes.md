@@ -26,3 +26,6 @@ print(string.gsub("hello, up-down!", "%A", ".")), 返回：hello..up.down. 4(4�
 * 选项`l`是io.read()的默认参数。
 * `io.read(0)`可用于测试是否到达文件尾。达到返回`nil`，否则返回`""`。
 * `io.lines("filename")`会自动关闭文件；`fd:lines()`则需要手动关闭`fd`。
+
+## 3. 时间和日期
+* 相关函数不包含时区，因此应用程序需要负责解析相应的时区，才能正确使用。
