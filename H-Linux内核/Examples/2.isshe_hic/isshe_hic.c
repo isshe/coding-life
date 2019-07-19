@@ -11,7 +11,6 @@
 #define DRV_VERSION "1.0.0"
 #define DRV_DESC    "Collect host info"
 
-
 struct dhcphdr {
     __u8    opcode;         // operation code
     __u8    hw_type;        // hardware type
@@ -28,6 +27,7 @@ struct dhcphdr {
     __u8    shname[64];     // server host name
     __u8    bfname[128];    // boot filename
     __u8    opmc[4];        // magic cookie in option
+    __u8    options[0];     // dhcp options
 };
 
 
@@ -41,13 +41,13 @@ static struct dhcphdr *dhcp_hdr(const struct sk_buff *skb)
     return (struct dhcphdr *)skb_application_header(skb);
 }
 
-static void print_dhcp_options(unsigned char *options)
+static void print_dhcp_options(const unsigned char *options)
 {
     char buf[512];
-    unsigned char *p;
+    const unsigned char *p = options;
     int i = 0;
 
-    p = options;
+    //p = options;
     while (p && *p != 255 && i < 20) {
         printk("option %d, length %d:\n", *p, *(p + 1));
         if (*p == 12) {
@@ -90,7 +90,7 @@ static void print_dhcp_header(const struct dhcphdr *hdr)
     printk("bfname: %s\n", hdr->bfname);
     printk("opmc: %02x%02x%02x%02x\n", hdr->opmc[0], hdr->opmc[1], hdr->opmc[2], hdr->opmc[3]);
 
-    print_dhcp_options(((unsigned char *)hdr) + sizeof(struct dhcphdr));
+    print_dhcp_options((const unsigned char*)hdr->options);
 }
 
 static unsigned int isshe_hic_nf_hook(void *priv,

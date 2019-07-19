@@ -1,7 +1,3 @@
-[TOC]
-
-# 内核编码规范
-
 .. _codingstyle:
 
 Linux kernel coding style
