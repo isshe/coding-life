@@ -101,6 +101,7 @@ int main(int argc, char *argv[])
     struct timeval st, et;
     long long spend_time;
     struct wantype_config cfg;
+    struct timeval timeout;
 
     init_config(&cfg);
     if (parse_opt(argc, argv, &cfg) < 0) {
@@ -134,9 +135,10 @@ int main(int argc, char *argv[])
     }
 
     maxfd = dhcp_fd > pppoe_fd ? dhcp_fd + 1 : pppoe_fd + 1;
+    memcpy(&timeout, &cfg.timeout, sizeof(struct timeval));
     do {
         rset = allset;
-        if (select(maxfd, &rset, NULL, NULL, &cfg.timeout) < 0) {
+        if (select(maxfd, &rset, NULL, NULL, &timeout) < 0) {
             printf("select error: %s\n", strerror(errno));
             exit(1);
         }
@@ -154,6 +156,7 @@ int main(int argc, char *argv[])
         }
 
         if (!(FD_ISSET(pppoe_fd, &allset) || FD_ISSET(dhcp_fd, &allset))) {
+            printf("ZERO\n");
             break;
         }
 
@@ -162,7 +165,7 @@ int main(int argc, char *argv[])
             exit(1);
         }
         spend_time = (et.tv_sec - st.tv_sec) * SEC2USEC + et.tv_usec - st.tv_usec;
-        printf("spend_time = %lld\n", spend_time);
+        printf("spend_time = %lld, %ld * %d = %ld\n", spend_time, cfg.timeout.tv_sec, SEC2USEC, cfg.timeout.tv_sec * SEC2USEC);
     } while(spend_time < cfg.timeout.tv_sec * SEC2USEC);
 
     close(pppoe_fd);
