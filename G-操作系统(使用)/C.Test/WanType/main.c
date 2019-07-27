@@ -15,105 +15,158 @@
 #include <linux/if_pppox.h>
 #include <sys/ioctl.h>
 #include <sys/select.h>
+#include <sys/time.h>
 
-#define MAC_LEN 6
-#define IFNAME "ens33"
-#define BUF_LEN 1024
-#define ETHER_TYPE_DISCOVERY ETH_P_PPP_DISC
+#include "dhcp.h"
+#include "pppoe.h"
+#include "common.h"
 
-/*
-enum pppoe_code {
-    PADI = 0x09,    // PPPoE Active Discovery Initiation
-    PADO = 0x07,    // PPPoE Active Discovery Offer
-    PADR = 0x19,    // PPPoE Active Discovery Request
-    PADS = 0x65,    // PPPoE Active Discovery Session-confirmation
-    PADT = 0xa7,    // PPPoE Active Discovery Terminate
-};
-*/
-
-void hwaddr_get(int sockfd, const char *ifname, char *res_hwaddr)
+void display_help()
 {
-    struct ifreq ifr;
-    int len = sizeof(ifname) > sizeof(ifr.ifr_name) ? sizeof(ifr.ifr_name) : sizeof(ifname);
-    memcpy(ifr.ifr_name, ifname, len);
-    if (ioctl(sockfd, SIOCGIFHWADDR, &ifr) < 0) {
-        printf("ioctl error: %s\n", strerror(errno));
-        exit(1);
-    }
-
-    memcpy(res_hwaddr, ifr.ifr_hwaddr.sa_data, ETH_ALEN);
+    printf("./a.out <interface> [ht:]\n");
 }
 
-int send_PADI(int sockfd)
+int parse_opt(int argc, char *argv[], struct wantype_config *cfg)
 {
-    char buff[BUF_LEN];
-    struct ethhdr ehdr;
-    struct pppoe_hdr phdr;
-    struct pppoe_tag ptag;
-    struct sockaddr_ll dst;
-    int send_len;
+    char c;
+    int len;
+    int res;
 
-    memset(buff, 0, BUF_LEN);
-    memset(ehdr.h_dest, 0xff, MAC_LEN);
-    hwaddr_get(sockfd, IFNAME, (char *)ehdr.h_source);
-    ehdr.h_proto = htons(ETHER_TYPE_DISCOVERY);
-
-    phdr.type = 1;
-    phdr.ver = 1;
-    phdr.code = PADI_CODE;
-    phdr.sid = 0;
-    phdr.length = htons(sizeof(struct pppoe_tag));
-
-    ptag.tag_type = htons(0x0101);
-    ptag.tag_len = 0;
-
-    dst.sll_family = AF_PACKET;
-    dst.sll_halen = ETH_ALEN;
-    dst.sll_ifindex = if_nametoindex(IFNAME);
-    memset(dst.sll_addr, 0xff, sizeof(dst.sll_addr));
-
-    memcpy(buff, &ehdr, sizeof(struct ethhdr));
-    memcpy(buff + sizeof(struct ethhdr), &phdr, sizeof(struct pppoe_hdr));
-    memcpy(buff + sizeof(struct ethhdr) + sizeof(struct pppoe_hdr), &ptag, sizeof(struct pppoe_tag));
-
-    send_len = sizeof(struct ethhdr) + sizeof(struct pppoe_hdr) + sizeof(struct pppoe_tag);
-    printf("---isshe---: send_len = %d\n", send_len);
-    if (sendto(sockfd, buff, send_len, 0, (const struct sockaddr *)&dst,sizeof(dst)) < 0) {
-        printf("sendto error: %s\n", strerror(errno));
-        exit(1);
+    res = 0;
+    while((c = getopt(argc, argv, "ht:")) != -1 && !res) {
+        switch(c) {
+            case 'h':
+                display_help();
+                res = -1;
+            case 't':
+                cfg->timeout.tv_sec = atoi(optarg);
+                if (cfg->timeout.tv_sec <= 0) {
+                    printf("invalid timeout\n");
+                    res = -1;
+                }
+                break;
+            case '?':
+                res = -1;
+            default:
+                break;
+        }
     }
+
+    if (optind != argc - 1) {
+        display_help();
+        res = -1;
+    } else {
+        len = strlen(argv[optind]);
+        if (len > sizeof(cfg->ifname) - 1) {
+            printf("Warning: ifname to long!\n");
+            len = sizeof(cfg->ifname) - 1;
+        }
+
+        memset(cfg->ifname, 0, sizeof(cfg->ifname));
+        memcpy(cfg->ifname, argv[optind], len);
+    }
+
+    printf("argv[optind] = %s\n", argv[optind]);
+
+    return res;
+}
+
+
+void init_config(struct wantype_config *cfg)
+{
+    memset(cfg, 0, sizeof(struct wantype_config));
+}
+
+void fix_config(struct wantype_config *cfg)
+{
+    if (cfg->timeout.tv_sec <= 0) {
+        cfg->timeout.tv_sec = DEFAULT_TIMEOUT;
+    }
+}
+
+void display_config(struct wantype_config *cfg)
+{
+    printf("------config------\n");
+    printf("ifname: %s\n", cfg->ifname);
+    printf("timeout: %d\n", (int)(cfg->timeout.tv_sec));
+    printf("------------------\n");
 }
 
 int main(int argc, char *argv[])
 {
     int pppoe_fd;
+    int dhcp_fd;
     int maxfd;
-    fd_set rset;
-    struct timeval timeout = {1, 0};
+    fd_set rset, allset;
+    struct timeval st, et;
+    long long spend_time;
+    struct wantype_config cfg;
 
-    pppoe_fd = socket(AF_PACKET, SOCK_RAW, htons(ETHER_TYPE_DISCOVERY));
+    init_config(&cfg);
+    if (parse_opt(argc, argv, &cfg) < 0) {
+        exit(1);
+    }
+    fix_config(&cfg);
+    display_config(&cfg);
+
+    pppoe_fd = socket(PF_PACKET, SOCK_RAW, htons(ETH_P_PPP_DISC));
     if (pppoe_fd < 0) {
         printf("socket error: %s\n", strerror(errno));
         exit(1);
     }
 
-    send_PADI(pppoe_fd);
+    dhcp_fd = socket(PF_PACKET, SOCK_DGRAM, htons(ETH_P_IP));
+    if (dhcp_fd < 0) {
+        printf("socket error: %s\n", strerror(errno));
+        exit(1);
+    }
 
-    FD_ZERO(&rset);
-    while(1) {
-        FD_SET(pppoe_fd, &rset);
-        maxfd = pppoe_fd + 1;
-        if (select(maxfd, &rset, NULL, NULL, &timeout) < 0) {
+    send_PADI(pppoe_fd, &cfg);
+    send_dhcp_discovery(dhcp_fd, &cfg);
+
+    FD_ZERO(&allset);
+    FD_SET(pppoe_fd, &allset);
+    FD_SET(dhcp_fd, &allset);
+
+    if (gettimeofday(&st, NULL) < 0 ) {
+        printf("gettimeofday error: %s\n", strerror(errno));
+        exit(1);
+    }
+
+    maxfd = dhcp_fd > pppoe_fd ? dhcp_fd + 1 : pppoe_fd + 1;
+    do {
+        rset = allset;
+        if (select(maxfd, &rset, NULL, NULL, &cfg.timeout) < 0) {
             printf("select error: %s\n", strerror(errno));
             exit(1);
         }
 
         if (FD_ISSET(pppoe_fd, &rset)) {
             printf("pppoe\n");
+            FD_CLR(pppoe_fd, &allset);
+            maxfd = dhcp_fd + 1;
         }
-        break;
-    }
 
+        if (FD_ISSET(dhcp_fd, &rset)) {
+            printf("dhcp\n");
+            FD_CLR(dhcp_fd, &allset);
+            maxfd = pppoe_fd + 1;
+        }
+
+        if (!(FD_ISSET(pppoe_fd, &allset) || FD_ISSET(dhcp_fd, &allset))) {
+            break;
+        }
+
+        if (gettimeofday(&et, NULL) < 0 ) {
+            printf("gettimeofday error: %s\n", strerror(errno));
+            exit(1);
+        }
+        spend_time = (et.tv_sec - st.tv_sec) * SEC2USEC + et.tv_usec - st.tv_usec;
+        printf("spend_time = %lld\n", spend_time);
+    } while(spend_time < cfg.timeout.tv_sec * SEC2USEC);
+
+    close(pppoe_fd);
+    close(dhcp_fd);
 
     exit(0);
 }
