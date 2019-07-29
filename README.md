@@ -1,11 +1,18 @@
 # CodeLibrary
 个人代码仓库
+个人笔记仓库
 
-## 2. Todo
-* 
+## 1. Done
 
-## 1. Doing
+## 2. Doing
 * G-操作系统/6.池
 
+## 3. Todo
+* 
+
+
+> keep reading
+> keep writing
+> keep coding
 
 

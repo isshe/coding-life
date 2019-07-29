@@ -2,676 +2,279 @@
 
 # 内核编码规范
 
-.. _codingstyle:
-
-Linux kernel coding style
-=========================
-
-This is a short document describing the preferred coding style for the
-linux kernel.  Coding style is very personal, and I won't **force** my
-views on anybody, but this is what goes for anything that I have to be
-able to maintain, and I'd prefer it for most other things too.  Please
-at least consider the points made here.
-
-First off, I'd suggest printing out a copy of the GNU coding standards,
-and NOT read it.  Burn them, it's a great symbolic gesture.
-
-Anyway, here goes:
-
-
-1) Indentation
---------------
-
-Tabs are 8 characters, and thus indentations are also 8 characters.
-There are heretic movements that try to make indentations 4 (or even 2!)
-characters deep, and that is akin to trying to define the value of PI to
-be 3.
-
-Rationale: The whole idea behind indentation is to clearly define where
-a block of control starts and ends.  Especially when you've been looking
-at your screen for 20 straight hours, you'll find it a lot easier to see
-how the indentation works if you have large indentations.
-
-Now, some people will claim that having 8-character indentations makes
-the code move too far to the right, and makes it hard to read on a
-80-character terminal screen.  The answer to that is that if you need
-more than 3 levels of indentation, you're screwed anyway, and should fix
-your program.
-
-In short, 8-char indents make things easier to read, and have the added
-benefit of warning you when you're nesting your functions too deep.
-Heed that warning.
-
-The preferred way to ease multiple indentation levels in a switch statement is
-to align the ``switch`` and its subordinate ``case`` labels in the same column
-instead of ``double-indenting`` the ``case`` labels.  E.g.:
-
-.. code-block:: c
-
-	switch (suffix) {
-	case 'G':
-	case 'g':
-		mem <<= 30;
-		break;
-	case 'M':
-	case 'm':
-		mem <<= 20;
-		break;
-	case 'K':
-	case 'k':
-		mem <<= 10;
-		/* fall through */
-	default:
-		break;
-	}
-
-Don't put multiple statements on a single line unless you have
-something to hide:
-
-.. code-block:: c
-
-	if (condition) do_this;
-	  do_something_everytime;
-
-Don't put multiple assignments on a single line either.  Kernel coding style
-is super simple.  Avoid tricky expressions.
-
-Outside of comments, documentation and except in Kconfig, spaces are never
-used for indentation, and the above example is deliberately broken.
-
-Get a decent editor and don't leave whitespace at the end of lines.
-
-
-2) Breaking long lines and strings
-----------------------------------
-
-Coding style is all about readability and maintainability using commonly
-available tools.
-
-The limit on the length of lines is 80 columns and this is a strongly
-preferred limit.
-
-Statements longer than 80 columns will be broken into sensible chunks, unless
-exceeding 80 columns significantly increases readability and does not hide
-information. Descendants are always substantially shorter than the parent and
-are placed substantially to the right. The same applies to function headers
-with a long argument list. However, never break user-visible strings such as
-printk messages, because that breaks the ability to grep for them.
-
-
-3) Placing Braces and Spaces
-----------------------------
-
-The other issue that always comes up in C styling is the placement of
-braces.  Unlike the indent size, there are few technical reasons to
-choose one placement strategy over the other, but the preferred way, as
-shown to us by the prophets Kernighan and Ritchie, is to put the opening
-brace last on the line, and put the closing brace first, thusly:
-
-.. code-block:: c
-
-	if (x is true) {
-		we do y
-	}
-
-This applies to all non-function statement blocks (if, switch, for,
-while, do).  E.g.:
-
-.. code-block:: c
-
-	switch (action) {
-	case KOBJ_ADD:
-		return "add";
-	case KOBJ_REMOVE:
-		return "remove";
-	case KOBJ_CHANGE:
-		return "change";
-	default:
-		return NULL;
-	}
-
-However, there is one special case, namely functions: they have the
-opening brace at the beginning of the next line, thus:
-
-.. code-block:: c
-
-	int function(int x)
-	{
-		body of function
-	}
-
-Heretic people all over the world have claimed that this inconsistency
-is ...  well ...  inconsistent, but all right-thinking people know that
-(a) K&R are **right** and (b) K&R are right.  Besides, functions are
-special anyway (you can't nest them in C).
-
-Note that the closing brace is empty on a line of its own, **except** in
-the cases where it is followed by a continuation of the same statement,
-ie a ``while`` in a do-statement or an ``else`` in an if-statement, like
-this:
-
-.. code-block:: c
-
-	do {
-		body of do-loop
-	} while (condition);
-
-and
-
-.. code-block:: c
-
-	if (x == y) {
-		..
-	} else if (x > y) {
-		...
-	} else {
-		....
-	}
-
-Rationale: K&R.
-
-Also, note that this brace-placement also minimizes the number of empty
-(or almost empty) lines, without any loss of readability.  Thus, as the
-supply of new-lines on your screen is not a renewable resource (think
-25-line terminal screens here), you have more empty lines to put
-comments on.
-
-Do not unnecessarily use braces where a single statement will do.
-
-.. code-block:: c
-
-	if (condition)
-		action();
-
-and
-
-.. code-block:: none
-
-	if (condition)
-		do_this();
-	else
-		do_that();
-
-This does not apply if only one branch of a conditional statement is a single
-statement; in the latter case use braces in both branches:
-
-.. code-block:: c
-
-	if (condition) {
-		do_this();
-		do_that();
-	} else {
-		otherwise();
-	}
-
-Also, use braces when a loop contains more than a single simple statement:
-
-.. code-block:: c
-
-	while (condition) {
-		if (test)
-			do_something();
-	}
-
-3.1) Spaces
-***********
-
-Linux kernel style for use of spaces depends (mostly) on
-function-versus-keyword usage.  Use a space after (most) keywords.  The
-notable exceptions are sizeof, typeof, alignof, and __attribute__, which look
-somewhat like functions (and are usually used with parentheses in Linux,
-although they are not required in the language, as in: ``sizeof info`` after
-``struct fileinfo info;`` is declared).
-
-So use a space after these keywords::
-
-	if, switch, case, for, do, while
-
-but not with sizeof, typeof, alignof, or __attribute__.  E.g.,
-
-.. code-block:: c
-
-
-	s = sizeof(struct file);
-
-Do not add spaces around (inside) parenthesized expressions.  This example is
-**bad**:
-
-.. code-block:: c
-
-
-	s = sizeof( struct file );
-
-When declaring pointer data or a function that returns a pointer type, the
-preferred use of ``*`` is adjacent to the data name or function name and not
-adjacent to the type name.  Examples:
-
-.. code-block:: c
-
-
-	char *linux_banner;
-	unsigned long long memparse(char *ptr, char **retptr);
-	char *match_strdup(substring_t *s);
-
-Use one space around (on each side of) most binary and ternary operators,
-such as any of these::
-
-	=  +  -  <  >  *  /  %  |  &  ^  <=  >=  ==  !=  ?  :
-
-but no space after unary operators::
-
-	&  *  +  -  ~  !  sizeof  typeof  alignof  __attribute__  defined
-
-no space before the postfix increment & decrement unary operators::
-
-	++  --
-
-no space after the prefix increment & decrement unary operators::
-
-	++  --
-
-and no space around the ``.`` and ``->`` structure member operators.
-
-Do not leave trailing whitespace at the ends of lines.  Some editors with
-``smart`` indentation will insert whitespace at the beginning of new lines as
-appropriate, so you can start typing the next line of code right away.
-However, some such editors do not remove the whitespace if you end up not
-putting a line of code there, such as if you leave a blank line.  As a result,
-you end up with lines containing trailing whitespace.
-
-Git will warn you about patches that introduce trailing whitespace, and can
-optionally strip the trailing whitespace for you; however, if applying a series
-of patches, this may make later patches in the series fail by changing their
-context lines.
-
-
-4) Naming
----------
-
-C is a Spartan language, and so should your naming be.  Unlike Modula-2
-and Pascal programmers, C programmers do not use cute names like
-ThisVariableIsATemporaryCounter.  A C programmer would call that
-variable ``tmp``, which is much easier to write, and not the least more
-difficult to understand.
-
-HOWEVER, while mixed-case names are frowned upon, descriptive names for
-global variables are a must.  To call a global function ``foo`` is a
-shooting offense.
-
-GLOBAL variables (to be used only if you **really** need them) need to
-have descriptive names, as do global functions.  If you have a function
-that counts the number of active users, you should call that
-``count_active_users()`` or similar, you should **not** call it ``cntusr()``.
-
-Encoding the type of a function into the name (so-called Hungarian
-notation) is brain damaged - the compiler knows the types anyway and can
-check those, and it only confuses the programmer.  No wonder MicroSoft
-makes buggy programs.
-
-LOCAL variable names should be short, and to the point.  If you have
-some random integer loop counter, it should probably be called ``i``.
-Calling it ``loop_counter`` is non-productive, if there is no chance of it
-being mis-understood.  Similarly, ``tmp`` can be just about any type of
-variable that is used to hold a temporary value.
-
-If you are afraid to mix up your local variable names, you have another
-problem, which is called the function-growth-hormone-imbalance syndrome.
-See chapter 6 (Functions).
-
-
-5) Typedefs
------------
-
-Please don't use things like ``vps_t``.
-It's a **mistake** to use typedef for structures and pointers. When you see a
-
-.. code-block:: c
-
-
-	vps_t a;
-
-in the source, what does it mean?
-In contrast, if it says
-
-.. code-block:: c
-
-	struct virtual_container *a;
-
-you can actually tell what ``a`` is.
-
-Lots of people think that typedefs ``help readability``. Not so. They are
-useful only for:
-
- (a) totally opaque objects (where the typedef is actively used to **hide**
-     what the object is).
-
-     Example: ``pte_t`` etc. opaque objects that you can only access using
-     the proper accessor functions.
-
-     .. note::
-
-       Opaqueness and ``accessor functions`` are not good in themselves.
-       The reason we have them for things like pte_t etc. is that there
-       really is absolutely **zero** portably accessible information there.
-
- (b) Clear integer types, where the abstraction **helps** avoid confusion
-     whether it is ``int`` or ``long``.
-
-     u8/u16/u32 are perfectly fine typedefs, although they fit into
-     category (d) better than here.
-
-     .. note::
-
-       Again - there needs to be a **reason** for this. If something is
-       ``unsigned long``, then there's no reason to do
-
-	typedef unsigned long myflags_t;
-
-     but if there is a clear reason for why it under certain circumstances
-     might be an ``unsigned int`` and under other configurations might be
-     ``unsigned long``, then by all means go ahead and use a typedef.
-
- (c) when you use sparse to literally create a **new** type for
-     type-checking.
-
- (d) New types which are identical to standard C99 types, in certain
-     exceptional circumstances.
-
-     Although it would only take a short amount of time for the eyes and
-     brain to become accustomed to the standard types like ``uint32_t``,
-     some people object to their use anyway.
-
-     Therefore, the Linux-specific ``u8/u16/u32/u64`` types and their
-     signed equivalents which are identical to standard types are
-     permitted -- although they are not mandatory in new code of your
-     own.
-
-     When editing existing code which already uses one or the other set
-     of types, you should conform to the existing choices in that code.
-
- (e) Types safe for use in userspace.
-
-     In certain structures which are visible to userspace, we cannot
-     require C99 types and cannot use the ``u32`` form above. Thus, we
-     use __u32 and similar types in all structures which are shared
-     with userspace.
-
-Maybe there are other cases too, but the rule should basically be to NEVER
-EVER use a typedef unless you can clearly match one of those rules.
-
-In general, a pointer, or a struct that has elements that can reasonably
-be directly accessed should **never** be a typedef.
-
-
-6) Functions
-------------
-
-Functions should be short and sweet, and do just one thing.  They should
-fit on one or two screenfuls of text (the ISO/ANSI screen size is 80x24,
-as we all know), and do one thing and do that well.
-
-The maximum length of a function is inversely proportional to the
-complexity and indentation level of that function.  So, if you have a
-conceptually simple function that is just one long (but simple)
-case-statement, where you have to do lots of small things for a lot of
-different cases, it's OK to have a longer function.
-
-However, if you have a complex function, and you suspect that a
-less-than-gifted first-year high-school student might not even
-understand what the function is all about, you should adhere to the
-maximum limits all the more closely.  Use helper functions with
-descriptive names (you can ask the compiler to in-line them if you think
-it's performance-critical, and it will probably do a better job of it
-than you would have done).
-
-Another measure of the function is the number of local variables.  They
-shouldn't exceed 5-10, or you're doing something wrong.  Re-think the
-function, and split it into smaller pieces.  A human brain can
-generally easily keep track of about 7 different things, anything more
-and it gets confused.  You know you're brilliant, but maybe you'd like
-to understand what you did 2 weeks from now.
-
-In source files, separate functions with one blank line.  If the function is
-exported, the **EXPORT** macro for it should follow immediately after the
-closing function brace line.  E.g.:
-
-.. code-block:: c
-
-	int system_is_up(void)
-	{
-		return system_state == SYSTEM_RUNNING;
-	}
-	EXPORT_SYMBOL(system_is_up);
-
-In function prototypes, include parameter names with their data types.
-Although this is not required by the C language, it is preferred in Linux
-because it is a simple way to add valuable information for the reader.
-
-Do not use the ``extern`` keyword with function prototypes as this makes
-lines longer and isn't strictly necessary.
-
-
-7) Centralized exiting of functions
------------------------------------
-
-Albeit deprecated by some people, the equivalent of the goto statement is
-used frequently by compilers in form of the unconditional jump instruction.
-
-The goto statement comes in handy when a function exits from multiple
-locations and some common work such as cleanup has to be done.  If there is no
-cleanup needed then just return directly.
-
-Choose label names which say what the goto does or why the goto exists.  An
-example of a good name could be ``out_free_buffer:`` if the goto frees ``buffer``.
-Avoid using GW-BASIC names like ``err1:`` and ``err2:``, as you would have to
-renumber them if you ever add or remove exit paths, and they make correctness
-difficult to verify anyway.
-
-The rationale for using gotos is:
-
-- unconditional statements are easier to understand and follow
-- nesting is reduced
-- errors by not updating individual exit points when making
-  modifications are prevented
-- saves the compiler work to optimize redundant code away ;)
-
-.. code-block:: c
-
-	int fun(int a)
-	{
-		int result = 0;
-		char *buffer;
-
-		buffer = kmalloc(SIZE, GFP_KERNEL);
-		if (!buffer)
-			return -ENOMEM;
-
-		if (condition1) {
-			while (loop1) {
-				...
-			}
-			result = 1;
-			goto out_free_buffer;
+这是一个描述Linux内核完美编码风格的小文档。
+
+
+## 1) 缩进
+`Tabs`是`8`个字符，因此缩进也是8个字符。
+理由：缩进的背后思想是清楚地定义控制块的开始和结束位置。如果需要超过`3`个级别的缩进，那么就应该修改/修复程序。简言之，8字符使代码更容易阅读。
+当函数嵌套太深时，一个额外的好处是给你警告【注意这个警告】。
+为缓解switch语句多个缩进级别的首选方法是switch和case对齐，而不是二次缩进case，例如：
+```c
+switch (suffix) {
+case 'G':
+case 'g':
+	mem <<= 30;
+	break;
+case 'M':
+case 'm':
+	mem <<= 20;
+	break;
+case 'K':
+case 'k':
+	mem <<= 10;
+	/* fall through */
+default:
+	break;
+}
+```
+除非你有隐藏的内容，否则`不要`在一行中放置多个语句：
+```c
+if (condition) do_this;
+  do_something_everytime;
+```
+* 不要在一行上放置多个语句。内核编码风格非常简单，避免棘手的表达。
+* 除了`注释/文档/Kconfig`外，**`空格永远不会用于缩进`**。
+* 不要在行尾留下空白。
+
+## 2) 打破长行和长字符串
+* 行长限制是`80`字符。
+    * 除非超过`80`字符的行显著提高可读性并且不隐藏信息，否则都应该分解为合理的块。
+    * 后代总是比父母短得多，并且基本放在右边。
+* 永远不要破坏用户可见的字符串，例如printk消息，因为这会破坏`grep`的能力。
+
+## 3. 大括号和空格
+大括号在右边：(适用于`if, switch, for, while, do`)
+```c
+if (x is true) {
+	we do y
+}
+```
+大括号在新一行：
+```c
+int function(int x)
+{
+	body of function
+}
+```
+注意，右括号`}`是另起一行的，`除非`后面跟着相同语句的延续。即`do`的`while`，或者`if`的`else if`或`else`。如下：
+```c
+do {
+	body of do-loop
+} while (condition);
+```
+和
+```c
+if (x == y) {
+	..
+} else if (x > y) {
+	...
+} else {
+	....
+}
+```
+不要使用不必要的大括号：（单语句时）
+```c
+if (condition)
+	action();
+```
+和
+```c
+if (condition)
+	do_this();
+else
+	do_that();
+```
+如果条件语句只有一个分支是单语句则`不适用`:
+```c
+if (condition) {
+	do_this();
+	do_that();
+} else {
+	otherwise();
+}
+```
+当循环中包含包含多个单语句时，使用大括号：
+```c
+while (condition) {
+	if (test)
+		do_something();
+}
+```
+
+## 3.1 空格
+内核中空格的使用依赖(大多时候)函数与关键字的使用。
+* 大多时候会在关键字`后`使用空格，如`if, switch, case, for, do, while`
+    * 值得注意的例外是：看着像函数的`sizeof/typeof/alignof/__attribute__`。
+使用空格：
+```
+if () {
+	do_something();
+}
+```
+使用():
+```c
+s = sizeof(struct file);
+```
+但不要——在括号旁边加空格，如：
+```c
+s = sizeof( struct file );
+```
+声明指针或者返回指针时，`*`靠近变量名：
+```c
+char *linux_banner;
+unsigned long long memparse(char *ptr, char **retptr);
+char *match_strdup(substring_t *s);
+```
+在大多数二元三元运算符周围(两侧)使用一个空格，如以下的运算符：
+```c
+=  +  -  <  >  *  /  %  |  &  ^  <=  >=  ==  !=  ?  :
+```
+但一元运算符后不加空格：
+```c
+&  *  +  -  ~  !  sizeof  typeof  alignof  __attribute__  defined
+```
+前后都不要空格：
+```c
+++  --
+```
+数据结构的`.`和`->`周围也不用空格。
+行尾不要留有空格。
+
+
+## 4) 命名
+全局变量（仅在真正需要时才使用）/全局函数需要具有描述性的名称。
+* 例如，定义一个统计活跃用户数的函数，应该用count_active_users()，而不应该cntusr()。
+局部变量应该简要。
+
+
+
+
+
+## 5) Typedefs
+不要使用类似`vps_t`这样的类型。
+将typedef用于struct和指针是一个错误，
+```c
+vps_t a;
+```
+这样的代码是什么意思呢？相反，如果是：
+```c
+struct virtual_container *a;
+```
+你就可以说明a是什么。
+很多人觉得typedef有助于可读性。这是个误解，typdef仅适用于：
+* 完全不透明对象：typedef主动用于**隐藏**对象的内容。
+    * 例如：`pte_t`等只能使用正确的访问器进行访问的不透明对象。
+* 清除整型类型：有助于避免混淆，无论是int还是long。u8/u16/u32是完美的typedef。
+* 当你使用稀疏字面创建一个新类型以进行类型检查。【？？？】
+    * when you use sparse to literally create a new type for type-checking.
+* 在某些特殊情况下，与标准C99类型相同的新类型。【？？？】
+* 在用户空间中安全使用的类型。（内核编程是内核空间）
+    * 在用户空间可见的某些结构中，我们不能要求C99类型，也不能使用u32之类的。因此，我们在与用户空间共享的所有结构中使用__u32和类似的类型。
+规则是：基本上，永远不用使用typedef，除非你能清楚匹配以上其中一个规则。
+
+## 6) 函数
+
+函数应该是短而甜，只做一件事的，并做好一件事。它们应该只占1到2屏(1屏：80x24)。
+函数的最大长度与该函数的复杂度和缩进级别成`反比`。（简单的函数可以很长，但是复杂的函数反而应该短）
+函数的局部变量的数量不应该超过`5-10`个。否则你应该重新考虑功能，并将其拆分成更小的部分。
+在源文件中，使用`一个空行`分隔函数，如果导出该函数，则它的EXPORT宏应该紧随其后。如：
+```c
+int system_is_up(void)
+{
+	return system_state == SYSTEM_RUNNING;
+}
+EXPORT_SYMBOL(system_is_up);
+```
+在函数原型中，包含参数名称及其数据类型。
+不要将extern关键字与函数原型一起使用。
+
+
+## 7) 集中退出函数
+虽然有些人不赞成使用，但编译器经常以`无条件跳转指令`的形式使用等效的goto语句。
+当函数从多个位置退出并且必须完成一些常见工作(如清理)时，goto语句会派上用场。如果不需要清理，则直接返回。
+标签名称：说明goto的作用或goto存在的原因。如，一个好名称`out_free_buffer`，goto去释放buffer。避免使用`err1:`或`err2:`，因为如果你增加或删除退出路径，你必须重新进行编号。
+使用goto的基本原理是：
+* `无条件语句(uncoditional statments)`更容易理解和遵循。
+* 嵌套减少了。
+* 防止进行修改时不更新各个出口点的错误。
+* 保存编译器工作以优化冗余代码。
+```c
+int fun(int a)
+{
+	int result = 0;
+	char *buffer;
+
+	buffer = kmalloc(SIZE, GFP_KERNEL);
+	if (!buffer)
+		return -ENOMEM;
+
+	if (condition1) {
+		while (loop1) {
+			...
 		}
-		...
-	out_free_buffer:
-		kfree(buffer);
-		return result;
+		result = 1;
+		goto out_free_buffer;
 	}
-
-A common type of bug to be aware of is ``one err bugs`` which look like this:
-
-.. code-block:: c
-
-	err:
-		kfree(foo->bar);
-		kfree(foo);
-		return ret;
-
-The bug in this code is that on some exit paths ``foo`` is NULL.  Normally the
-fix for this is to split it up into two error labels ``err_free_bar:`` and
-``err_free_foo:``:
-
-.. code-block:: c
-
-	 err_free_bar:
-		kfree(foo->bar);
-	 err_free_foo:
-		kfree(foo);
-		return ret;
-
-Ideally you should simulate errors to test all exit paths.
-
-
-8) Commenting
--------------
-
-Comments are good, but there is also a danger of over-commenting.  NEVER
-try to explain HOW your code works in a comment: it's much better to
-write the code so that the **working** is obvious, and it's a waste of
-time to explain badly written code.
-
-Generally, you want your comments to tell WHAT your code does, not HOW.
-Also, try to avoid putting comments inside a function body: if the
-function is so complex that you need to separately comment parts of it,
-you should probably go back to chapter 6 for a while.  You can make
-small comments to note or warn about something particularly clever (or
-ugly), but try to avoid excess.  Instead, put the comments at the head
-of the function, telling people what it does, and possibly WHY it does
-it.
-
-When commenting the kernel API functions, please use the kernel-doc format.
-See the files at :ref:`Documentation/doc-guide/ <doc_guide>` and
-``scripts/kernel-doc`` for details.
-
-The preferred style for long (multi-line) comments is:
-
-.. code-block:: c
-
-	/*
-	 * This is the preferred style for multi-line
-	 * comments in the Linux kernel source code.
-	 * Please use it consistently.
-	 *
-	 * Description:  A column of asterisks on the left side,
-	 * with beginning and ending almost-blank lines.
-	 */
-
-For files in net/ and drivers/net/ the preferred style for long (multi-line)
-comments is a little different.
-
-.. code-block:: c
-
-	/* The preferred comment style for files in net/ and drivers/net
-	 * looks like this.
-	 *
-	 * It is nearly the same as the generally preferred comment style,
-	 * but there is no initial almost-blank line.
-	 */
-
-It's also important to comment data, whether they are basic types or derived
-types.  To this end, use just one data declaration per line (no commas for
-multiple data declarations).  This leaves you room for a small comment on each
-item, explaining its use.
+	...
+out_free_buffer:
+	kfree(buffer);
+	return result;
+}
+```
+一个常见的`one err bugs`：
+```c
+err:
+	kfree(foo->bar);
+	kfree(foo);
+	return ret;
+```
+当存在退出路径foo是NULL时，会出现bug。通常这种情况的解决方法是分成两个错误标签：
+```c
+ err_free_bar:
+	kfree(foo->bar);
+ err_free_foo:
+	kfree(foo);
+	return ret;
+```
+理想情况下，你应该模拟错误以测试所有路径。
 
 
-9) You've made a mess of it
----------------------------
-
-That's OK, we all do.  You've probably been told by your long-time Unix
-user helper that ``GNU emacs`` automatically formats the C sources for
-you, and you've noticed that yes, it does do that, but the defaults it
-uses are less than desirable (in fact, they are worse than random
-typing - an infinite number of monkeys typing into GNU emacs would never
-make a good program).
-
-So, you can either get rid of GNU emacs, or change it to use saner
-values.  To do the latter, you can stick the following in your .emacs file:
-
-.. code-block:: none
-
-  (defun c-lineup-arglist-tabs-only (ignored)
-    "Line up argument lists by tabs, not spaces"
-    (let* ((anchor (c-langelem-pos c-syntactic-element))
-           (column (c-langelem-2nd-pos c-syntactic-element))
-           (offset (- (1+ column) anchor))
-           (steps (floor offset c-basic-offset)))
-      (* (max steps 1)
-         c-basic-offset)))
-
-  (dir-locals-set-class-variables
-   'linux-kernel
-   '((c-mode . (
-          (c-basic-offset . 8)
-          (c-label-minimum-indentation . 0)
-          (c-offsets-alist . (
-                  (arglist-close         . c-lineup-arglist-tabs-only)
-                  (arglist-cont-nonempty .
-		      (c-lineup-gcc-asm-reg c-lineup-arglist-tabs-only))
-                  (arglist-intro         . +)
-                  (brace-list-intro      . +)
-                  (c                     . c-lineup-C-comments)
-                  (case-label            . 0)
-                  (comment-intro         . c-lineup-comment)
-                  (cpp-define-intro      . +)
-                  (cpp-macro             . -1000)
-                  (cpp-macro-cont        . +)
-                  (defun-block-intro     . +)
-                  (else-clause           . 0)
-                  (func-decl-cont        . +)
-                  (inclass               . +)
-                  (inher-cont            . c-lineup-multi-inher)
-                  (knr-argdecl-intro     . 0)
-                  (label                 . -1000)
-                  (statement             . 0)
-                  (statement-block-intro . +)
-                  (statement-case-intro  . +)
-                  (statement-cont        . +)
-                  (substatement          . +)
-                  ))
-          (indent-tabs-mode . t)
-          (show-trailing-whitespace . t)
-          ))))
-
-  (dir-locals-set-directory-class
-   (expand-file-name "~/src/linux-trees")
-   'linux-kernel)
-
-This will make emacs go better with the kernel coding style for C
-files below ``~/src/linux-trees``.
-
-But even if you fail in getting emacs to do sane formatting, not
-everything is lost: use ``indent``.
-
-Now, again, GNU indent has the same brain-dead settings that GNU emacs
-has, which is why you need to give it a few command line options.
-However, that's not too bad, because even the makers of GNU indent
-recognize the authority of K&R (the GNU people aren't evil, they are
-just severely misguided in this matter), so you just give indent the
-options ``-kr -i8`` (stands for ``K&R, 8 character indents``), or use
-``scripts/Lindent``, which indents in the latest style.
-
-``indent`` has a lot of options, and especially when it comes to comment
-re-formatting you may want to take a look at the man page.  But
-remember: ``indent`` is not a fix for bad programming.
-
-Note that you can also use the ``clang-format`` tool to help you with
-these rules, to quickly re-format parts of your code automatically,
-and to review full files in order to spot coding style mistakes,
-typos and possible improvements. It is also handy for sorting ``#includes``,
-for aligning variables/macros, for reflowing text and other similar tasks.
-See the file :ref:`Documentation/process/clang-format.rst <clangformat>`
-for more details.
+## 8) 注释
+注释很好，但是也有过度注释的危险。
+永远不要在注释中解释你的代码如何工作的。应该把代码写好，而不是浪费时间注释差的代码。
+一般来说，注释中应该说明代码是`做什么`而不是`怎么做`。
+并且，尽量不要在函数体内进行注释；如果函数太复杂而需要单独注释它的一部分，那么你应该回到`6)`去看看。你可以进行一些小注释，但是尽量避免过多。相反，将注释放在头部，告诉人们它做什么和它为什么可以做到。
+注释内核API时，请使用`内核文档格式`。详见`Documentation/doc-guide/ <doc_guide>`和`scripts/kernel-doc`。
+多行注释示例：
+```c
+/*
+ * This is the preferred style for multi-line
+ * comments in the Linux kernel source code.
+ * Please use it consistently.
+ *
+ * Description:  A column of asterisks on the left side,
+ * with beginning and ending almost-blank lines.
+ */
+```
+`net/`和`drivers/net/`的多行注释稍有不同：(第一行不同)
+```c
+/* The preferred comment style for files in net/ and drivers/net
+ * looks like this.
+ *
+ * It is nearly the same as the generally preferred comment style,
+ * but there is no initial almost-blank line.
+ */
+```
+对数据的注释也很重要，无论他们是基本类型还是派生类型。每行只使用一个函数声明。
 
 
-10) Kconfig configuration files
--------------------------------
+## 9) 你弄得一团糟
+> emacs相关，跳过
 
-For all of the Kconfig* configuration files throughout the source tree,
-the indentation is somewhat different.  Lines under a ``config`` definition
-are indented with one tab, while help text is indented an additional two
-spaces.  Example::
-
+## 10) Kconfig配置文件
+代码树中的所有Kconfig配置文件，缩进有所不同。config定义的行，用一个`tab`缩进，而帮助文本缩进再两个空格。
+```c
   config AUDIT
 	bool "Auditing support"
 	depends on NET
@@ -680,165 +283,82 @@ spaces.  Example::
 	  kernel subsystem, such as SELinux (which requires this for
 	  logging of avc messages output).  Does not do system-call
 	  auditing without CONFIG_AUDITSYSCALL.
-
-Seriously dangerous features (such as write support for certain
-filesystems) should advertise this prominently in their prompt string::
-
+```
+真正危险的特性（例如对某些文件系统的写支持）应在其提示字符串中突出显示：
+```c
   config ADFS_FS_RW
 	bool "ADFS write support (DANGEROUS)"
 	depends on ADFS_FS
 	...
+```
+有关配置文件的完整文档，见`Documentation/kbuild/kconfig-language.rst`。
 
-For full documentation on the configuration files, see the file
-Documentation/kbuild/kconfig-language.rst.
+## 11) 数据结构
+在创建和销毁此数据结构的单线程环境之外具有可见性的数据结构，应始终具有引用计数。内核中没有垃圾回收，因此必须使用引用计数记录所有用途。
+引用计数意味着可以避免`锁定`，并允许多个用户并行访问。
+请注意，`锁定`不是引用计数的代替。**锁定用于保持数据结构的一致性，而引用计数是一种内存管理技术**。两者通常都是必须的，不要相互混淆。
+当存在不同的用户时，许多数据结构可以具有两个级别的引用计数。子类计数计算子类用户的数量，并在子类计数变为0时，仅减少一次全局计数。
+这种`多级引用计数`可以再内存管理(struct mm_struct:mm_users/mm_count)和文件系统(struct super_block: s_count/s_active)中找到。
+请记住：如果另一个线程可以找到你的数据结构，并且你没有进行引用计数，那么几乎可以肯定会有错误！
 
-
-11) Data structures
--------------------
-
-Data structures that have visibility outside the single-threaded
-environment they are created and destroyed in should always have
-reference counts.  In the kernel, garbage collection doesn't exist (and
-outside the kernel garbage collection is slow and inefficient), which
-means that you absolutely **have** to reference count all your uses.
-
-Reference counting means that you can avoid locking, and allows multiple
-users to have access to the data structure in parallel - and not having
-to worry about the structure suddenly going away from under them just
-because they slept or did something else for a while.
-
-Note that locking is **not** a replacement for reference counting.
-Locking is used to keep data structures coherent, while reference
-counting is a memory management technique.  Usually both are needed, and
-they are not to be confused with each other.
-
-Many data structures can indeed have two levels of reference counting,
-when there are users of different ``classes``.  The subclass count counts
-the number of subclass users, and decrements the global count just once
-when the subclass count goes to zero.
-
-Examples of this kind of ``multi-level-reference-counting`` can be found in
-memory management (``struct mm_struct``: mm_users and mm_count), and in
-filesystem code (``struct super_block``: s_count and s_active).
-
-Remember: if another thread can find your data structure, and you don't
-have a reference count on it, you almost certainly have a bug.
-
-
-12) Macros, Enums and RTL
--------------------------
-
-Names of macros defining constants and labels in enums are capitalized.
-
-.. code-block:: c
-
-	#define CONSTANT 0x12345
-
-Enums are preferred when defining several related constants.
-
-CAPITALIZED macro names are appreciated but macros resembling functions
-may be named in lower case.
-
-Generally, inline functions are preferable to macros resembling functions.
-
-Macros with multiple statements should be enclosed in a do - while block:
-
-.. code-block:: c
-
-	#define macrofun(a, b, c)			\
-		do {					\
-			if (a == 5)			\
-				do_this(b, c);		\
-		} while (0)
-
-Things to avoid when using macros:
-
-1) macros that affect control flow:
-
-.. code-block:: c
-
-	#define FOO(x)					\
-		do {					\
-			if (blah(x) < 0)		\
-				return -EBUGGERED;	\
-		} while (0)
-
-is a **very** bad idea.  It looks like a function call but exits the ``calling``
-function; don't break the internal parsers of those who will read the code.
-
-2) macros that depend on having a local variable with a magic name:
-
-.. code-block:: c
-
-	#define FOO(val) bar(index, val)
-
-might look like a good thing, but it's confusing as hell when one reads the
-code and it's prone to breakage from seemingly innocent changes.
-
-3) macros with arguments that are used as l-values: FOO(x) = y; will
-bite you if somebody e.g. turns FOO into an inline function.
-
-4) forgetting about precedence: macros defining constants using expressions
-must enclose the expression in parentheses. Beware of similar issues with
-macros using parameters.
-
-.. code-block:: c
-
-	#define CONSTANT 0x4000
-	#define CONSTEXP (CONSTANT | 3)
-
-5) namespace collisions when defining local variables in macros resembling
-functions:
-
-.. code-block:: c
-
-	#define FOO(x)				\
-	({					\
-		typeof(x) ret;			\
-		ret = calc_ret(x);		\
-		(ret);				\
-	})
-
-ret is a common name for a local variable - __foo_ret is less likely
-to collide with an existing variable.
-
-The cpp manual deals with macros exhaustively. The gcc internals manual also
-covers RTL which is used frequently with assembly language in the kernel.
+## 12) 宏、枚举和RTL
+宏和枚举(enum)标签的名称是大写的。如：
+```c
+#define CONSTANT 0x12345
+```
+在定义几个相关常量时，首选枚举。
+通常，内联函数优于类型函数的宏。
+具有多个语句的宏应该包含在do-while块中：
+```c
+#define macrofun(a, b, c)			\
+	do {					\
+		if (a == 5)			\
+			do_this(b, c);		\
+	} while (0)
+```
+使用宏时要注意的事项：
+* 影响控制流程的宏：是**非常**糟糕的。
+```c
+#define FOO(x)					\
+	do {					\
+		if (blah(x) < 0)		\
+			return -EBUGGERED;	\
+	} while (0)
+```
+它看起来像一个函数，但退出了调用函数。不要破坏那些将读取代码的人的内部解析器。【？？？】
+* 依赖于具有魔术名称的局部变量的宏：
+```c
+#define FOO(val) bar(index, val)
+```
+* 带有用作左值的参数的宏：`FOO(x) = y`，如果某人将宏转为内联函数，那么他可能会打死你。
+* 忘记优先级：使用表达式定义常量的宏必须将表达式括在括号中。（使用参数的宏也要注意类似问题）
+```c
+#define CONSTANT 0x4000
+#define CONSTEXP (CONSTANT | 3)
+```
+* 在类似函数的宏中定义局部变量时的命名空间冲突：【？？？】
+```c
+#define FOO(x)				\
+({					\
+	typeof(x) ret;			\
+	ret = calc_ret(x);		\
+	(ret);				\
+})
+```
+ret是局部变量的通用名称 - __foo_ret不太可能与现有变量发生冲突。
+cpp手册详尽地讨论了宏。gcc internals手册还介绍了RTL，它在内核中经常与汇编语言一起使用。
 
 
-13) Printing kernel messages
-----------------------------
-
-Kernel developers like to be seen as literate. Do mind the spelling
-of kernel messages to make a good impression. Do not use crippled
-words like ``dont``; use ``do not`` or ``don't`` instead.  Make the messages
-concise, clear, and unambiguous.
-
-Kernel messages do not have to be terminated with a period.
-
-Printing numbers in parentheses (%d) adds no value and should be avoided.
-
-There are a number of driver model diagnostic macros in <linux/device.h>
-which you should use to make sure messages are matched to the right device
-and driver, and are tagged with the right level:  dev_err(), dev_warn(),
-dev_info(), and so forth.  For messages that aren't associated with a
-particular device, <linux/printk.h> defines pr_notice(), pr_info(),
-pr_warn(), pr_err(), etc.
-
-Coming up with good debugging messages can be quite a challenge; and once
-you have them, they can be a huge help for remote troubleshooting.  However
-debug message printing is handled differently than printing other non-debug
-messages.  While the other pr_XXX() functions print unconditionally,
-pr_debug() does not; it is compiled out by default, unless either DEBUG is
-defined or CONFIG_DYNAMIC_DEBUG is set.  That is true for dev_dbg() also,
-and a related convention uses VERBOSE_DEBUG to add dev_vdbg() messages to
-the ones already enabled by DEBUG.
-
-Many subsystems have Kconfig debug options to turn on -DDEBUG in the
-corresponding Makefile; in other cases specific files #define DEBUG.  And
-when a debug message should be unconditionally printed, such as if it is
-already inside a debug-related #ifdef section, printk(KERN_DEBUG ...) can be
-used.
+## 13) 打印内核消息
+不要使用`dont`，使用`do not`或`don't`，使消息简洁，清晰 ，明确。
+内核消息不必以句号结尾。
+Printing numbers in parentheses (%d) adds no value and should be avoided.【？？？】
+你应该使用<linux/device.h>中的`驱动程序模型诊断宏`来确保消息与正确的设备和驱动程序匹配，并使用正确的级别标记：`dev_err(), dev_warn(), dev_info()`
+对于与特定设备无关的消息，在<linux/printk.h>中定义：`pr_notice(), pr_info(), pr_warn(), pr_err()`等。
+提供良好的调试信息可能是一个很大的挑战；一旦你拥有他们，它们可以为远程故障排除提供巨大的帮助。但是调试消息打印的处理方式与打印其他非调试消息的方式不同。
+当其他`pr_xxx()`无条件打印是，`pr_debug()`不会；默认情况下调试信息不会被编译进来，除非定义了`DEBUG`或者设置了`CONFIG_DYNAMIC_DEBUG`。对于`dev_dbg()`也是如此。并且相关约定使用VERBOSE_DEBUG将dev_vdbg()消息添加到已由DEBUG启用的消息中。
+许多子系统都有Kconfig调试选项，可以再响应的Makefile中打开`-DDEBUG`；在其他情况在特定文件中`#define DEBUG`。
+当一条debug消息应该被无条件打印时，例如，如果它已经在调试相关的`#ifdef`中，可以使用`printk(KERN_DEBUG...)`。
 
 
 14) Allocating memory
