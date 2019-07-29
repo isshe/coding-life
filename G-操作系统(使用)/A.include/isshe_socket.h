@@ -52,4 +52,8 @@ int open_listen_fd(char *port);
 int isshe_open_client_fd(char *hostname, char *port);
 int isshe_open_listen_fd(char *port);
 
+ssize_t isshe_sendto(int sockfd, const void *buf, size_t len, int flags,
+              const struct sockaddr *dest_addr, socklen_t addrlen);
+ssize_t isshe_recvfrom(int sockfd, void *buf, size_t len, int flags,
+                struct sockaddr *src_addr, socklen_t *addrlen);
 #endif

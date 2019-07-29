@@ -10,18 +10,26 @@
 #include "isshe_error.h"
 #include "isshe_common.h"
 
-char *isshe_gf_time(void)
+int isshe_gettimeofday(struct timeval *tv, struct timezone *tz)
 {
-    struct timeval	tv;
-    static char		str[30];
-    char			*ptr;
+    int rc;
 
-    if (gettimeofday(&tv, NULL) < ISSHE_SUCCESS) {
+    if ((rc = gettimeofday(tv, tz)) < ISSHE_SUCCESS) {
         isshe_sys_error_exit("gettimeofday error");
     }
 
+    return rc;
+}
+
+char *isshe_gf_time(void)
+{
+    struct timeval  tv;
+    static char     str[30];
+    char            *ptr;
+
+    isshe_gettimeofday(&tv, NULL);
+
     ptr = ctime(&tv.tv_sec);
-    printf("ptr = %s\n", ptr);
     strcpy(str, &ptr[11]);
         /* Fri Sep 13 00:00:00 1986\n\0 */
         /* 0123456789012345678901234 5  */

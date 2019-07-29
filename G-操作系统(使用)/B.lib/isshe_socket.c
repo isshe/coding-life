@@ -244,3 +244,27 @@ int isshe_open_listen_fd(char *port)
     return rc;
 }
 
+ssize_t isshe_sendto(int sockfd, const void *buf, size_t len, int flags,
+              const struct sockaddr *dest_addr, socklen_t addrlen)
+{
+    ssize_t rc;
+
+    if ((rc = sendto(sockfd, buf, len, flags, dest_addr, addrlen)) < 0) {
+        isshe_sys_error_exit("sendto error");
+    }
+
+    return rc;
+}
+
+ssize_t isshe_recvfrom(int sockfd, void *buf, size_t len, int flags,
+                struct sockaddr *src_addr, socklen_t *addrlen)
+{
+    ssize_t rc;
+
+    if ((rc = recvfrom(sockfd, buf, len, flags, src_addr, addrlen)) < 0) {
+        isshe_sys_error_exit("recvfrom error");
+    }
+
+    return rc;
+}
+
