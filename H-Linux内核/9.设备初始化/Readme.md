@@ -12,7 +12,7 @@
 * 轮询（polling）：由内核端驱动。
 * 中断（interrupt）：由设备端驱动。
 
-## 1. 资源分配
+## 1.资源分配
 设备驱动程序与内核通信的资源：
 * IRQ线：设备用中断来通知内核一些事情。
     * 虚拟设备不需要分派一个IRQ，如回环设备。
@@ -20,3 +20,12 @@
     * 相关函数：request_irq()/free_irq()
 * I/O端口和内存注册：通常是将设备内存映射到系统内存，以方便读写。
     * 相关函数：request_region()/release_region()
+
+## 2.虚拟设备分类
+* 绑定（bonding）：绑定一组物理设备，使其如同单一设备。
+* 802.1Q: 以VLAN报头扩充802.3/Ethernet帧头，因而得以建立VLAN。
+* 桥接（bridging）：网桥的虚拟代表。
+* 别名接口(aliasing interface): 支持单物理接口多IP。（现在代码改进，不用这个也能实现多IP）
+* 普通均衡器（true equalizer, TEQL）: 这是队列规则，用于流量控制。其实现需要建立一个特殊设备。TEQL背后的思想有点类似Bonding。
+* 隧道接口（tunnel interface）：IP-over-IP(IPIP)隧道以及GRE（Generalized Routing Encapsulation，通用路由封装）协议的实现基础是虚拟设备的建立。
+

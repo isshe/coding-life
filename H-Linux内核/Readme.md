@@ -27,6 +27,10 @@ do_something：是__do_something的包裹函数。增加了额外的合理性检
 __do_something：实际做事的函数。
 
 
+## 2.注意
+* 内核参数已逐渐从/proc中移出，移进一个名为/sys的目录。
+
+
 # A.TODO
 * 进程的实现？
 * 进程的调度？
