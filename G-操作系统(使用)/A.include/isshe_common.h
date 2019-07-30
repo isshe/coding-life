@@ -14,6 +14,7 @@
 #include <sys/socket.h>
 #include <netdb.h>
 #include <arpa/inet.h>
+#include <stdbool.h>        // For bool type
 
 #if defined(__bsdi__) || defined(__APPLE__)
 #include <sys/syslimits.h>  // for OPEN_MAX
