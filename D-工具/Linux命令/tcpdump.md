@@ -300,7 +300,6 @@ tcpdump [ -AbdDefhHIJKlLnNOpqStuUvxX# ] [ -B buffer_size ]
 ### 指定接口+主机，写到文件
 > tcpdump -i br-lan1 -w x_xxxx.cap -v host xx.xx.xx.xx
 
-
 ### 指定端口范围
 > tcpdump -i ens33 udp portrange 67-68 -v
 
@@ -335,9 +334,6 @@ tcpdump [ -AbdDefhHIJKlLnNOpqStuUvxX# ] [ -B buffer_size ]
 
 ### 打印所有不是回应请求/回复的ICMP数据包（即不ping数据包）
 > tcpdump 'icmp[icmptype] != icmp-echo and icmp[icmptype] != icmp-echoreply'
-
-
-## 疑问
 
 ## 参考
 > https://www.tcpdump.org/manpages/tcpdump.1.html
