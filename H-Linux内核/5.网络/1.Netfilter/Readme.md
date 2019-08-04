@@ -93,7 +93,6 @@ enum nf_ip_hook_priorities {
     * 每个chain最终都会回到一个终止目标，但是在这之前可以执行任意多的非终止目标。
 * 当chain被调用的时候，包会依次匹配chain里面的规则，规则优先级从上到下(`iptables -t filter -L`可以看到)。
 
-
 # 4. 连接跟踪
 * 构建在netfilter上的连接跟踪系统。
 * 连接跟踪在包进入协议栈之后很快就会开始工作。

@@ -10,7 +10,7 @@ NIC可用之前，相关联的net_device数据结构必须先初始化，添加�
 * 加载NIC设备驱动程序：内建在内核，则引导期间初始化；模块形式，则在运行期间初始化。
     * 例如，注册PCI设备驱动程序时，会导致`pci_driver->probe`被调用。
 * 插入可热插拔网络设备：内核通知其驱动程序，驱动程序注册该设备。
-注册流程：以ethernet设备为例，流程都是一样，只是细节不同
+注册流程：以ethernet设备为例，流程都是一样，只是细节不同。
 > 示例可见：drivers/net/ethernet/intel/e100.c
 ```c
 xxx_probe/module_init
@@ -35,7 +35,7 @@ xxx_probe/module_init
 触发网络设备`注销`的情况：
 * 卸载NIC去而被驱动程序：模块形式的设备驱动程序被卸载，相关联的NIC都需要被注销。
     * 例如，卸载PCI设备驱动程序时，会导致`pci_driver->remove`被调用。
-* 删除可热拔插网络设备
+* 删除可热拔插网络设备。
 注销流程：
 ```c
 xxx_remove(_one)/module_exit
@@ -47,6 +47,10 @@ xxx_remove(_one)/module_exit
     |
     +---> free_netdev(dev)
 ```
+* 注销总是会调用`unregister_netdevice`和`free_netdev`。
+    * 有时显式调用free_netdev，有时则通过`dev->destructor`间接调用。
+        * 只有少数虚拟设备的设备驱动程序采用这种方法，如，net/8021q/vlan.c
+
 
 
 ## A.问题
