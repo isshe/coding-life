@@ -18,7 +18,7 @@
 根据设备名称和设备索引搜寻net_device的hash表：
 ![](./hash_about_net_device.png)
 
-net_device结构有些值得注意的方面，如：
+net_device结构一些值得注意的方面，如：
 * 调用alloc_netdev分配net_device结构时，会把驱动程序的私有数据区块的大小传进去。
     * alloc_netdev会把私有数据附加到net_device结构中。
     * 私有数据的大小及内容随设备类型不同而不同。
@@ -122,4 +122,34 @@ void rtnl_unlock(void)
 * 任何时刻，只有一个CPU可以执行`net_run_todo()`，串行化是通过`net_todo_run_mutex`互斥体实现的。
     * **`net_todo_run_mutex`在`4.19.60`中已找不到，应该是删掉了！**
 * `netdev_run_todo()`处理任务时，不用持有锁，因此此函数可以安全进入休眠状态。
+
+### 设备注册/注销状态通知
+内核组件和用户控件应用程序，可能都想直到什么时候发生了`设备注册、注销、关闭、打开`等事情。这类通知有两种方式：
+* netdev_chain: 内核组件可以注册此类通知链。
+* Netlink的`PTMGRP_LINK`多播群组：用户控件应用程序可以注册Rtnetlink的RTMGRP_LINK多播群组。
+
+#### netdev_chain通知链
+> 通知链详见：[通知链](../../8.通知链/Readme.md) 和 《深入理解Linux网络技术内幕》第4章
+
+netdev_chain通知链，定义在`net/core/dev.c`中，内核组件可以通过`register_netdevice_noitifier`和`unregister_netdevice_notifier`对该链进行注册和注销。
+netdev_chain报告的事件类型：`NETDEV_XXX`，详见`include/linux/netdevice.h`，已进行部分注释。
+**注意：**
+* 向链注册(感兴趣事件？)时，`register_netdevice_notifier`会(仅对新注册者)重放当前系统已注册设备所有过去的`NETDEV_REGISTER`和`NETDEV_UP`通知信息。
+    * 这样可以给新注册者有个已注册设备当前状态的清晰图像。
+注册`netdev_chain`的一些内核组件：
+* 路由
+* 防火墙
+* 协议代码：ARP、IP等
+* 虚拟设备
+* RTnetlink
+
+#### Rtnetlink链接通知
+当设备的状态和配置有变更时，(内核？)就会用`rtmsg_ifinfo`（内核接口）把通知信息传送给Netlink多播群组`RTMGRP_LINK`。
+`netplugd`是会监听通知信息的守护进程。事件发生后，会根据用户配置进行反应。详见 netplugs man page。
+
+## 参考
+* 《深入理解Linux网络技术内幕》
+* 《Linux 4.19.60》
+
+
 
