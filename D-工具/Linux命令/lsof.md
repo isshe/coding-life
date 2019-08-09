@@ -1,7 +1,7 @@
 [TOC]
 
 # lsof
-lsof: list open file——打开文件列表。
+lsof: list open file（打开文件列表）。
 作用：
 * 查看进程打开的文件；
 * 查看打开文件的进程；
