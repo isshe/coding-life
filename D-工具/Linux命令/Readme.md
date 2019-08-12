@@ -79,4 +79,5 @@ find ./ -name "*.o" | xargs rm -rf
 ```bash
 sudo lsof -i:53
 netstat -tuanp | grep 53
+fuser 80/tcp
 ```
