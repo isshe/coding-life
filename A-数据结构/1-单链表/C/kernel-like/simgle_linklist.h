@@ -16,14 +16,5 @@ struct list_head
 void list_add(struct list_head *pre_node, struct list_head *new_node);
 void list_del(struct list_head *head_node, struct list_head *del_node);
 
-struct something 
-{
-    int val;
-    struct list_head list;
-};
-
-void print_something(struct list_head *head);
-
-
 
 #endif

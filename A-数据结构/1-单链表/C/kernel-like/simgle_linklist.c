@@ -25,6 +25,14 @@ void list_del(struct list_head *head_node, struct list_head *del_node)
     }
 }
 
+/*********************test************************/
+
+struct something
+{
+    int val;
+    struct list_head list;
+};
+
 void print_something(struct list_head *head)
 {
     struct list_head *pre_node = head;
