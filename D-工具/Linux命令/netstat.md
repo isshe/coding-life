@@ -1,10 +1,12 @@
 [TOC]
 
-# netstat
+netstat
+---
+
 显示当前的连接情况。（UDP、TCP、UNIX、ICMP等）
 显示路由表、网络接口列表、网络统计信息、多播信息、伪装连接等。
-## 1. 介绍
-### 1.1 用法
+# 1. 介绍
+## 1.1 用法
 ```bash
 netstat [-vWeenNcCF] [<Af>] -r
 netstat {-V|--version|-h|--help}
@@ -12,7 +14,7 @@ netstat [-vWnNcaeol] [<Socket> ...]
 netstat { [-vWeenNac] -i | [-cWnNe] -M | -s }
 ```
 
-### 1.2 选项
+## 1.2 选项
 ```shell
 -r, --route              显示路由表
 -i, --interfaces         显示接口列表
@@ -53,37 +55,37 @@ netstat { [-vWeenNac] -i | [-cWnNe] -M | -s }
     x25 (CCITT X.25) 
 ```
 
-## 2. 示例
-### 查看端口是否被占用
+# 2. 示例
+## 查看端口是否被占用
 ```bash
 netstat -tuanp | grep 53
 ```
 
-### 获取进程ID/进程名
+## 获取进程ID/进程名
 ```bash
 netstat -ap
 ```
 
-### 显示网络统计数据
+## 显示网络统计数据
 ```bash
 netstat -s
 ```
 
-### 显示路由表
+## 显示路由表
 ```bash
 netstat -r
 ```
 
-### 显示网络接口
+## 显示网络接口
 ```bash
 netstat -i
 netstat -ie
 ```
 
-### 显示LISTENING(监听)状态的连接
+## 显示LISTENING(监听)状态的连接
 ```bash
 netstat -l
 ```
 
-## 3. 疑问
-### masqueraded connections是什么？
+# 3. 疑问
+## masqueraded connections是什么？

@@ -1,6 +1,8 @@
 [TOC]
 
-# fuser
+fuser
+---
+
 fuser - 报告进程使用的文件和套接字。
 fuser使用指定的文件或文件系统显示进程的PID。在默认显示模式下，每个文件名后跟一个表示访问类型的字母：
 * c: 当前目录——指示进程的工作目录。
@@ -12,14 +14,14 @@ fuser使用指定的文件或文件系统显示进程的PID。在默认显示模
 如果未访问任何指定的文件或发生致命错误，fuser将返回非零返回值。如果至少找到一个访问权限，则fuser返回0。
 要使用TCP和UDP套接字查找进程，必须使用-n选项选择相应的名称空间。
 
-## 用法
+# 用法
 ```bash
 fuser [-fuv] [-a|-s] [-4|-6] [-c|-m|-n space] [ -k [-i] [-M] [-w] [-SIGNAL] ] name ...
 fuser -l
 fuser -V
 ```
 
-## 选项
+# 选项
 ```bash
        -a, --all
               显示命令行中指定的所有文件。默认情况下，仅显示至少一个进程访问的文件。
@@ -90,20 +92,20 @@ fuser -V
        -      重置所有选项并将信号设置回SIGKILL。
 ```
 
-## 示例
-### 显示进程的用户名
+# 示例
+## 显示进程的用户名
 > fuser /home/isshe -u
 
-### 详细模式
+## 详细模式
 > fuser /home/isshe -u -v
 
-### 杀死以任意方式访问`某文件系统或目录`的所有进程
+## 杀死以任意方式访问`某文件系统或目录`的所有进程
 > fuser -km /home
 > fuser -k -m /home
 > fuser -k -x -u -c /dev/hd1 
 > 
 
-### 判断是否有进程正在访问某文件
+## 判断是否有进程正在访问某文件
 ```bash
 if fuser -s /home/isshe;
 then:
@@ -113,13 +115,13 @@ else
 fi
 ```
 
-### 显示占用某个端口的所有进程
+## 显示占用某个端口的所有进程
 > fuser telnet/tcp
 > fuser 80/tcp
 > sudo fuser ssh/tcp -u
 
-## 疑问
+# 疑问
 
-## 参考
+# 参考
 * Linux man page
 * https://man.linuxde.net/fuser

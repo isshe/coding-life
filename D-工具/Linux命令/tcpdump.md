@@ -1,9 +1,11 @@
 [TOC]
 
-# tcpdump
+tcpdump
+---
+
 tcpdump - dump traffic on a network（转储网络上的流量）。
 
-## 用法
+# 用法
 ```bash
 tcpdump [ -AbdDefhHIJKlLnNOpqStuUvxX# ] [ -B buffer_size ]
        [ -c count ]
@@ -19,7 +21,7 @@ tcpdump [ -AbdDefhHIJKlLnNOpqStuUvxX# ] [ -B buffer_size ]
        [ expression ]
 ```
 
-## 选项
+# 选项
 ```bash
        -A     以ASCII格式打印每个数据包（减去其链接级别标题）。方便捕获网页。
 
@@ -296,45 +298,45 @@ tcpdump [ -AbdDefhHIJKlLnNOpqStuUvxX# ] [ -B buffer_size ]
               而不是转义Shell元字符。在解析之前，多个参数与空格连接在一起。
 ```
 
-## 示例
-### 指定接口+主机，写到文件
+# 示例
+## 指定接口+主机，写到文件
 > tcpdump -i br-lan1 -w x_xxxx.cap -v host xx.xx.xx.xx
 
-### 指定端口范围
+## 指定端口范围
 > tcpdump -i ens33 udp portrange 67-68 -v
 
-### 捕获和指定主机相关的数据包
+## 捕获和指定主机相关的数据包
 > tcpdump host sundown
 
-### 打印指定主机间的流量
+## 打印指定主机间的流量
 > tcpdump host helios and \( hot or ace \)
 * helios 和 hot 、 helios 和 ace之间的流量。
 
-### 打印所有本地主机和Berkeley主机间的流量
+## 打印所有本地主机和Berkeley主机间的流量
 > tcpdump net ucb-ether
 
-### 通过互联网网关snup打印所有ftp流量(请注意，引用该表达式是为了防止shell（错误地）解释括号）
+## 通过互联网网关snup打印所有ftp流量(请注意，引用该表达式是为了防止shell（错误地）解释括号）
 > tcpdump 'gateway snup and (port ftp or ftp-data)'
 
-### 要打印既不是来自本地主机也不是发往本地主机的流量(如果你通往另一个网络，那么这些东西永远不应该进入你的本地网络)
+## 要打印既不是来自本地主机也不是发往本地主机的流量(如果你通往另一个网络，那么这些东西永远不应该进入你的本地网络)
 > tcpdump ip and not net localnet
 
-### 打印涉及非本地主机的每个TCP对话的`开始`和`结束`数据包（SYN和FIN数据包）
+## 打印涉及非本地主机的每个TCP对话的`开始`和`结束`数据包（SYN和FIN数据包）
 > tcpdump 'tcp[tcpflags] & (tcp-syn|tcp-fin) != 0 and not src and dst net localnet'
 
-### 打印与端口80之间的所有IPv4 HTTP数据包
+## 打印与端口80之间的所有IPv4 HTTP数据包
 > 仅打印包含数据的数据包，而不打印例如SYN和FIN数据包以及仅ACK数据包
 > tcpdump 'tcp port 80 and (((ip[2:2] - ((ip[0]&0xf)<<2)) - ((tcp[12]&0xf0)>>2)) != 0)'
 
-### 打印通过网关snup发送的长度超过576字节的IP数据包
+## 打印通过网关snup发送的长度超过576字节的IP数据包
 > tcpdump 'gateway snup and ip[2:2] > 576'
 
-### 打印未通过以太网广播或多播发送的IP广播或多播数据包
+## 打印未通过以太网广播或多播发送的IP广播或多播数据包
 > tcpdump 'ether[0] & 1 = 0 and ip[16] >= 224'
 
-### 打印所有不是回应请求/回复的ICMP数据包（即不ping数据包）
+## 打印所有不是回应请求/回复的ICMP数据包（即不ping数据包）
 > tcpdump 'icmp[icmptype] != icmp-echo and icmp[icmptype] != icmp-echoreply'
 
-## 参考
+# 参考
 > https://www.tcpdump.org/manpages/tcpdump.1.html
 > linux man page

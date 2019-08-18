@@ -1,6 +1,9 @@
 
 [TOC]
-# modprobe
+
+modprobe
+---
+
 modprobe - 向Linux内核添加或从内核移除模块。
 
 modprobe智能地从Linux内核添加或删除模块：
@@ -12,7 +15,7 @@ modprobe智能地从Linux内核添加或删除模块：
 * 如果在modulename之后给出了任何参数，它们将被传递给内核。
     * 除了配置文件中列出的选项。
 
-## 用法
+# 用法
 ```bash
 modprobe [-v] [-V] [-C config-file] [-n] [-i] [-q] [-b] [modulename] [module parameters...]
 
@@ -23,7 +26,7 @@ modprobe [-c]
 modprobe [--dump-modversions] [filename]
 ```
 
-## 选项
+# 选项
 ```bash
 -a, --all
    加载命令行中指定的所有模块。
@@ -120,14 +123,14 @@ modprobe [--dump-modversions] [filename]
    此选项通过安装或删除命令传递给MODPROBE_OPTIONS环境变量中的其他modprobe命令。
 
 ```
-## 示例
-### 加载模块
+# 示例
+## 加载模块
 > modprobe vfat
 
-### 卸载模块
+## 卸载模块
 > modprobe -r vfat
 
-### 查看模块的配置文件
+## 查看模块的配置文件
 > modprobe -r
 
 输出类似：
@@ -139,14 +142,14 @@ alias symbol:ct_sip_parse_request nf_conntrack_sip
 ```
 * symbol：应该是说这个是`nf_conntrack`中的符号（也就是函数）。【？？？】
 
-## 疑问
+# 疑问
 * modprobe -r输出的含义？
 
-## 相关
+# 相关
 * modprobe.d
 * insmod
 * rmmod
 * lsmod
 * modinfo
 
-## 参考
+# 参考

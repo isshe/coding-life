@@ -1,6 +1,8 @@
 [TOC]
 
-# lsof
+lsof
+---
+
 lsof: list open file（打开文件列表）。
 作用：
 * 查看进程打开的文件；
@@ -10,9 +12,9 @@ lsof: list open file（打开文件列表）。
 
 > *nix中一切皆文件
 
-## 1.介绍
+# 1.介绍
 
-### 1.1 用法
+## 1.1 用法
 ```bash
 lsof [ -?abChKlnNOPRtUvVX ] [ -A A ] [ -c c ] [ +c c ] [ +|-d d ] [ +|-D D ] 
 [ +|-e s ] [ +|-E ] [ +|-f [cfgGn] ] [ -F [f] ] [ -g [s] ] [ -i [i] ] [ -k k ] 
@@ -20,7 +22,7 @@ lsof [ -?abChKlnNOPRtUvVX ] [ -A A ] [ -c c ] [ +c c ] [ +|-d d ] [ +|-D D ]
 [ -S [t] ] [ -T [t] ] [ -u s ] [ +|-w ] [ -x [fl] ] [ -z [z] ] [ -Z [Z] ] [ -- ] [names]
 ```
 
-### 1.2 选项
+## 1.2 选项
 ```bash
 -a：条件与（列表选择以and为条件，默认是or）
 -g：列出GID号进程详情；
@@ -40,8 +42,8 @@ lsof [ -?abChKlnNOPRtUvVX ] [ -A A ] [ -c c ] [ +c c ] [ +|-d d ] [ +|-D D ]
 ```
 
 
-## 2.示例
-### 列出所有打开的文件
+# 2.示例
+## 列出所有打开的文件
 ```bash
 lsof
 ```
@@ -53,17 +55,17 @@ lsof
 sudo lsof -i:53
 ```
 
-### 显示使用文件的进程
+## 显示使用文件的进程
 ```bash
 lsof /path/to/file1
 lsof /path/to/file1 /path/to/file2
 ```
-### 显示某个设备中所有打开的文件
+## 显示某个设备中所有打开的文件
 ```bash
 lsof /dev/hd4
 ```
 
-### 显示一个或多个用户打开的所有文件
+## 显示一个或多个用户打开的所有文件
 ```bash
 lsof -u isshe
 lsof -u ^isshe # 非isshe的
@@ -71,82 +73,82 @@ lsof -u isshe, pete
 lsof -u isshe -u pete
 ```
 
-### 列出指定进程打开的文件
+## 列出指定进程打开的文件
 ```bash
 lsof -p 123,456
 lsof -p 123,456 -u 6464,ashley  # 默认是or
 ```
 
-### 列出指定PID和协议类型(IPV4/6)打开的文件
+## 列出指定PID和协议类型(IPV4/6)打开的文件
 ```bash
 lsof -i 4 -a -p 1234
 ```
 
-### 只列出IPV6的网络文件(有些需要sudo才能显示)
+## 只列出IPV6的网络文件(有些需要sudo才能显示)
 ```bash
 sudo lsof -i 6
 sudo lsof -i
 ```
 
-### 查看以某字符串开头的进程打开的文件
+## 查看以某字符串开头的进程打开的文件
 ```bash
 lsof -c apache
 ```
 
-### 列出指定域名打开的文件
+## 列出指定域名打开的文件
 ```bash
 lsof -i @ss64.com
 lsof -i @ss64.com:513-515   # 指定端口
 ```
 
-### 定时显示
+## 定时显示
 ```bash
 lsof -i :80 -r 2
 ```
 
-### 列出具有特殊值mem的内存映射文件
+## 列出具有特殊值mem的内存映射文件
 ```bash
 lsof -d mem
 ```
 
-### 列出加载到内存中并使用特殊值txt执行的程序
+## 列出加载到内存中并使用特殊值txt执行的程序
 ```bash
 lsof -d txt
 ```
 
-### 列出打开指定文件的进程
+## 列出打开指定文件的进程
 ```bash
 lsof -t /u/abe/bar
 ```
 
-### 发送指定信号给打开指定文件的进程
+## 发送指定信号给打开指定文件的进程
 ```bash
 kill -HUP 'lsof -t /u/abe/bar'
 ```
 
-### 列出文件的打开信息
+## 列出文件的打开信息
 ```bash
 lsof /dev/log
 ```
 
-### NFS相关
+## NFS相关
 要在名为`/nfs/mount/point`且服务器不可访问的NFS文件系统上查找具有打开文件的进程
 ```bash
 lsof -b /nfs/mount/point
 lsof -bw /nfs/mount/point   # 禁用警告信息
 ```
 
-### 忽略设备缓存文件
+## 忽略设备缓存文件
 ```bash
 lsof -Di
 ```
 
-### 找IPv4套接字文件
+## 找IPv4套接字文件
 ```bash
 lsof -i@128.210.15.17
 ```
 
-### 找IPv6套接字文件
+## 找IPv6套接字文件
 ```bash
 lsof -i@[0:1:2:3:4:5:6:7]
 lsof -i@[::1]

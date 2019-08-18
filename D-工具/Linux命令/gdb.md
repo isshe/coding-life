@@ -1,6 +1,8 @@
 [TOC]
 
-# gdb
+gdb
+---
+
 gdb - GNU调试器。
 
 调试器(如GDB)的目的是允许你查看其他程序在执行时的"内部"的内容，或者程序奔溃的时候正在做什么。
@@ -76,14 +78,14 @@ quit
 ```
 有关GDB的完整详细信息，请参阅：A Guide to the GNU Source-Level Debugger
 
-## 用法
+# 用法
 ```bash
 gdb [-help] [-nh] [-nx] [-q] [-batch] [-cd=dir] [-f] [-b bps]
    [-tty=dev] [-s symfile] [-e prog] [-se prog] [-c core] [-p procID]
    [-x cmds] [-d dir] [prog|prog procID|prog core]
 ```
 
-## 选项
+# 选项
 选项之外的任何参数都需要指定可执行文件和核心文件（或进程ID）。
 所有选项和命令行参数都按顺序处理。使用' -x '选项时，顺序会有所不同。
 
@@ -150,23 +152,31 @@ gdb [-help] [-nh] [-nx] [-q] [-batch] [-cd=dir] [-f] [-b bps]
     使用device运行程序的标准输入和输出。
 ```
 
-## 示例
-### 编译并跟踪
+# 示例
+## 编译并跟踪
 ```bash
 gcc test.c -o test -g
 gdb test
     <gdb命令> 
     <b main>: 断点
+    <b 10>: 第10行设置断点
+    <d 10>: 删除第10行的断点
+    <info b>: 查看断点信息
+    <c>: 继续
+    <n>: 下一行
+    <s>: 下一行，进入函数。
     <r>: 执行
     <c>: 继续执行
     <i r>: 显示寄存器的信息
+    <bt>: 显示堆栈
+    <list 10>: 从第10行开始显示代码
 ```
 
-## 疑问
+# 疑问
 
-## 拓展
+# 拓展
 * shell命令：info gdb
 * [gdb在线文档](https://sourceware.org/gdb/current/onlinedocs/gdb/)
     * [A Guide to the GNU Source-Level Debugger](http://mermaja.act.uji.es/docencia/is37/data/gdb.pdf)
-## 参考
+# 参考
 * https://man.linuxde.net/gdb

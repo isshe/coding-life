@@ -1,5 +1,8 @@
 [TOC]
-# ip
+
+ip
+---
+
 显示/操纵路由、设备、策略路由、隧道。
 
 ## 概要
@@ -31,7 +34,7 @@ OBJECT:
 * tuntap    - 管理 TUN/TAP 设备。
 * xfrm      - 管理 IPSec 策略。         （缩写：x）
 
-## 选项
+# 选项
 ```bash
 -V, -Version
     打印ip实用工具/iproute2的版本。
@@ -92,78 +95,78 @@ OBJECT:
     使用monitor选项时显示当前时间。
 ```
 
-## 示例
-### 查看详细的接口信息
+# 示例
+## 查看详细的接口信息
 > ip -c -d -s -s link show
 > ip -c -d -s -s link show ens33
 
-### 查看接口地址
+## 查看接口地址
 > ip addr shwo ens33
 > ip -4 addr show ens33
 > ip -6 addr show ens33
 
-### 为接口添加地址
+## 为接口添加地址
 > ip addr add <IP 地址/前缀长度> [broadcast <广播地址>] dev <接口名>
 > ip addr add 192.168.2.102/24 dev ens33
 > IPv6地址加`-6`即可。
 
-### 删除接口地址
+## 删除接口地址
 > sudo ip addr del 192.168.2.102/24 dev ens33
 
-### 启用接口
+## 启用接口
 > ip link set ens33 up
 
-### 禁用接口
+## 禁用接口
 > ip link set ens33 down
 
-### 设置接口MAC地址
+## 设置接口MAC地址
 设置前需要先禁用接口
 > ip link set ens33 address 00:0c:29:a5:ce:35
 
-### 设置接口MTU
+## 设置接口MTU
 > ip link set ens33 mtu 1500
 
-### 添加802.1Q VLAN接口
+## 添加802.1Q VLAN接口
 > ip link add link <接口名> name <子接口名> type vlan id <VLAN ID>
 > sudo ip link add link ens33 name ens33.1 type vlan id 10
 
-### 删除一个接口
+## 删除一个接口
 > sudo ip link del ens33.1
 
-### 查看路由表
+## 查看路由表
 > sudo ip route show
 
-### 查看指定目标地址用的那条路由规则
+## 查看指定目标地址用的那条路由规则
 > ip route get 192.168.2.103
 
-### 添加默认路由
+## 添加默认路由
 > ip route add default via <默认网关> [dev <出接口>]
 
-### 添加路由表项
+## 添加路由表项
 > ip route add <目标 IP 地址/前缀长度> via <下一跳> [dev <出接口>]
 > sudo ip route add 192.168.2.0/24 via 192.168.2.1 dev ens33
 
-### 删除路由表项
+## 删除路由表项
 > sudo ip route del 192.168.3.0/24 dev ens33
 
-### 查看ARP表
+## 查看ARP表
 > ip neigh show dev ens33
 
-### 添加永久ARP条目
+## 添加永久ARP条目
 > ip neigh add <IP 地址> lladdr <以冒号分割的 MAC 地址> dev <接口名> nud permanent
 > ip neigh add 192.168.2.149 lladdr e0:d5:5e:a1:d0:d1 dev ens33 nud permanent
 
-### 把动态ARP条目转换为永久ARP条目
+## 把动态ARP条目转换为永久ARP条目
 > ip neigh change <IP 地址> dev <接口名> nud permanent
 
-### 删除ARP条目
+## 删除ARP条目
 > ip neigh del <IP 地址> dev <接口名>
 > ip neigh del 192.168.2.149 dev ens33
 
-### 清空ARP表（不影响永久条目）
+## 清空ARP表（不影响永久条目）
 > ip neigh flush all
 
-## 参考
+# 参考
 * https://zhuanlan.zhihu.com/p/28155886
 * https://ss64.com/bash/ip.html
 * linux man page
