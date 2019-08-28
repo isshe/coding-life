@@ -2,6 +2,8 @@
 个人代码仓库
 个人笔记仓库
 
+> 详见: https://mubu.com/doc/18cYLDcne8
+
 ## 1. Done
 
 ## 2. Doing
@@ -11,8 +13,8 @@
 * 
 
 
-> keep reading
-> keep writing
-> keep coding
+> keep reading  
+> keep writing  
+> keep coding  
 
 
