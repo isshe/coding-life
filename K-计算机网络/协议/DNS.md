@@ -1,7 +1,9 @@
 
 [TOC]
 
-# DNS
+DNS
+---
+
 DNS - 域名系统（Domain Name System）。
 * 是一个将`域名`和`IP地址`进行映射的`分布式数据库`。
 * DNS是应用层协议，使用TCP和UDP的53端口。

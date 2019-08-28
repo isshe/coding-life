@@ -13,7 +13,9 @@ top: false
 
 [TOC]
 
-# DHCP
+DHCP
+---
+
 DHCP - 动态主机设置协议（Dynamic Host Configuration Protocol）。
 DHCP是一个应用层协议。基于`UDP`。
 
