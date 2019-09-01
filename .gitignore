@@ -58,3 +58,5 @@ dkms.conf
 
 # isshe
 *.temp
+a.out.dSYM/
+a.out
