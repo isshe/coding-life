@@ -67,6 +67,10 @@ docker pull ubuntu:18.04
 `<镜像>`可以是`镜像短ID`、`镜像长ID`、`镜像名`或者`镜像摘要`.
 删除行为分为两类，一类是`Untagged`，另一类是`Deleted`; 镜像可以拥有多个tag,因此只有所有tag都被删除后,才会delete.
 
+## 构建镜像
+> docker build [OPTIONS] PATH | URL | -
+示例：`docker build -t nginx:v3 .`
+
 # 容器相关
 
 ## 运行镜像/容器

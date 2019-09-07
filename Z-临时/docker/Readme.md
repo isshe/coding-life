@@ -6,7 +6,9 @@ Docker
 # Docker是什么？
 * Docker是一个开源项目。详见[Github](https://github.com/moby/moby)
 * Docker使用Go语言开发，基于Linux内核的`cgroup`和`namespace`, 以及AUFS类的Union FS技术, 对进程进行隔离, 属于`操作系统层面的虚拟化技术`.
-* 容器: 由于隔离的进程独立于宿主和其他隔离的进程, 因此也称其为`容器`.
+* 容器: 由于隔离的进程独立于宿主和其他隔离的进程, 因此也称其为`容器`。
+* Docker不是虚拟机，容器就是进程。
+* Docker不是虚拟机，容器中的应用都应该以前台执行。
 * Docker的架构
 ![](./docker-on-linux.png)
 
@@ -45,6 +47,8 @@ Docker
 VS
 ![](docker.png)
 
+# 注意
+* **需要超级用户时，使用`gosu`，不用`su`或`sudo`。**
 
 # 拓展
 * Linux内核cgroup?
