@@ -4,12 +4,15 @@ Docker
 此文档简单介绍Docker, 并且只介绍一些比较核心的. 更多信息参考[docker-detail](./docker-detail.md)
 
 # Docker是什么？
+* 基本概念
+    * 镜像: Image，一个特殊的文件系统, 一组分层的文件系统的集合。
+    * 容器: Container，镜像和容器,类似与类与实例, 以及类似于程序与进程。
+    * 仓库: Repository，存镜像的地方。
 * Docker是一个开源项目。详见[Github](https://github.com/moby/moby)
 * Docker使用Go语言开发，基于Linux内核的`cgroup`和`namespace`, 以及AUFS类的Union FS技术, 对进程进行隔离, 属于`操作系统层面的虚拟化技术`.
-* 容器: 由于隔离的进程独立于宿主和其他隔离的进程, 因此也称其为`容器`。
 * Docker不是虚拟机，容器就是进程。
 * Docker不是虚拟机，容器中的应用都应该以前台执行。
-* Docker的架构
+* Docker的架构:
 ![](./docker-on-linux.png)
 
 # Docker有什么用？

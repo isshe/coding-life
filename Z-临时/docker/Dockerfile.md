@@ -112,6 +112,39 @@ USER redis
 RUN [ "redis-server" ]
 ```
 
-# 
+# HEALTHCHECK
+HEALTHCHECK——健康检查。告诉Docker应该如何判断容器的状态是否正常。
+> `HEALTHCHECK [选项] CMD <命令>`：设置检查容器健康状况的命令
+> `HEALTHCHECK NONE`：如果基础镜像有健康检查指令，使用这行可以屏蔽掉其健康检查指令
 
+HEALTHCHECK选项：
+```
+--interval=<间隔>：两次健康检查的间隔，默认为 30 秒；
+--timeout=<时长>：健康检查命令运行超时时间，如果超过这个时间，本次健康检查就被视为失败，默认 30 秒；
+--retries=<次数>：当连续失败指定次数后，则将容器状态视为 unhealthy，默认 3 次。
+```
+和`CMD/ENTRYPOINT`一样，`HEALTHCHECK`只可以出现一次，如果写了多个，只有最后一个生效。
+示例：
+```
+# Dockerfile
+FROM nginx
+RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
+HEALTHCHECK --interval=5s --timeout=3s \
+  CMD curl -fs http://localhost/ || exit 1
+
+# 构建镜像
+docker build -t myweb:v1 .
+
+# 启动容器
+docker run -d --name web -p 80:80 myweb:v1
+
+# 查看容器状态
+docker container ls
+
+# 排障
+docker inspect --format '{{json .State.Health}}' web | python -m json.tool
+```
+
+# ONBUILD
+ONBUILD：后面跟的指令在当前镜像构建中不会被执行，在作为基础镜像被构建时，才会执行。
 
