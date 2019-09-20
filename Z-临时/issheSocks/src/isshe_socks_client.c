@@ -1,5 +1,5 @@
 #include "isshe_socks_client.h"
-#include "socks.h"
+#include "standard_socks.h"
 
 #include <string.h>
 #include <errno.h>
