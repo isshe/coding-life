@@ -1,5 +1,5 @@
-#ifndef _ISSHE_SOCKS_H_
-#define _ISSHE_SOCKS_H_
+#ifndef _STANDARD_SOCKS_H_
+#define _STANDARD_SOCKS_H_
 
 #include <stdint.h>
 
@@ -56,6 +56,15 @@ struct socks_reply {
     uint8_t atype;
     uint32_t addr;
     uint16_t port;
+};
+
+struct socks_domain_request {
+    uint8_t version;
+    uint8_t cmd;
+    uint8_t rsv;
+    uint8_t atype;
+    uint8_t dn_len;
+    uint8_t dn[0];
 };
 
 #endif

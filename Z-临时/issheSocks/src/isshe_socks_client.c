@@ -1,5 +1,6 @@
 #include "isshe_socks_client.h"
 #include "standard_socks.h"
+#include "isshe_socks.h"
 
 #include <string.h>
 #include <errno.h>
@@ -43,27 +44,41 @@ socks_client_init(struct socks_client *client,
     client->status = SOCKS_CLIENT_STATUS_WAITING_SELECTION_MSG;
 }
 
+static void print_buffer(char *buf, int buf_len, int print_len)
+{
+    size_t n;
+    size_t i;
+
+    n = buf_len > print_len ? print_len : buf_len;
+    for (i=0; i<n; ++i) {
+        printf("%d(%c), ", buf[i], buf[i]);
+    }
+}
+
+// TODO: 重构这个函数：socks服务器相关的内容放到"standard_socks.*"中
 void
 proxy_readcb(struct bufferevent *bev, void *arg)
 {
     printf("proxy_readcb\n");
     // 对数据进行读取
-    char buf[BUFFER_LEN] = {0};
     size_t n;
-    size_t i;
+    char buf[BUFFER_LEN] = {0};
+    char domain_name[MAX_DOMAIN_NAME] = {0};
     struct socks_server_selection_msg smsg;
     struct socks_request sreq;
     struct socks_client *client = (struct socks_client*)arg;
-    
+    struct socks_domain_request *sdreq;
+    int len;
+
     while (1) {
         memset(buf, 0, sizeof(buf));
         n = bufferevent_read(bev, buf, sizeof(buf));
         if (n <= 0) {
             break;
         }
-        for (i=0; i<n; ++i) {
-            printf("%d(%c), ", buf[i], buf[i]);
-        }
+        // debug!
+        print_buffer(buf, n, 10);
+        
         printf("\n");
         switch (client->status)
         {
@@ -73,6 +88,18 @@ proxy_readcb(struct bufferevent *bev, void *arg)
                 break;
             case SOCKS_CLIENT_STATUS_WAITING_REQUEST:
                 printf("---isshe---: SOCKS_CLIENT_STATUS_WAITING_REQUEST---\n");
+                // TODO: 进行一些sock5字段校验, 这里应该是域名解析
+                sdreq = (struct socks_domain_request*)buf;
+                if (sdreq->cmd == SOCKS_ADDR_TYPE_DNS) {
+                    len = sdreq->dn_len > MAX_DOMAIN_NAME ? MAX_DOMAIN_NAME : sdreq->dn_len;
+                    memset(domain_name, 0, sizeof(domain_name));
+                    memcpy(domain_name, sdreq->dn, len);
+                    printf("domain name len = %d\n", len);
+                    isshe_domain_name_resolution(domain_name, &client->addr_info);
+                    print_addr(client->addr_info);
+                    // 建立协商、建立隧道
+                }
+
                 memset(&sreq, 0, sizeof(sreq));
                 sreq.version = DEFAULT_SOCKS_VERSION;
                 sreq.atype = SOCKS_ADDR_TYPE_IPV4;
@@ -80,7 +107,8 @@ proxy_readcb(struct bufferevent *bev, void *arg)
                 client->status = SOCKS_CLIENT_STATUS_CONNECTED;
                 break;
             case SOCKS_CLIENT_STATUS_WAITING_SELECTION_MSG:
-                printf("---isshe---: SOCKS_CLIENT_STATUS_WAITING_REQUEST---\n");
+                printf("---isshe---: SOCKS_CLIENT_STATUS_WAITING_SELECTION_MSG---\n");
+                // TODO: 进行一些sock5字段校验
                 memset(&smsg, 0, sizeof(smsg));
                 smsg.version = DEFAULT_SOCKS_VERSION;
                 bufferevent_write(bev, &smsg, sizeof(smsg));

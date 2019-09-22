@@ -2,6 +2,7 @@
 #define _ISSHE_SOCKS_CLIENT_H_
 
 #define BUFFER_LEN 1500
+#define MAX_DOMAIN_NAME 64      // 63 + '\0'
 
 enum socks_client_status {
     SOCKS_CLIENT_STATUS_UNKNOWN = 0,
@@ -13,8 +14,9 @@ enum socks_client_status {
 struct socks_client {
     int proxy_fd;
     int tunnel_fd;
-    struct event_base *base;
     int status;
+    struct event_base *base;
+    struct addrinfo *addr_info;
 };
 
 struct socks_client_config {
