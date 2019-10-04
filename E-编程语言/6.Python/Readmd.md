@@ -91,6 +91,9 @@ list = ["isshe", "chudai"]
 list.remove("chudai")
 ```
 
+# 用户输入
+* python 3: `input()`
+* python 2.7: `raw_input()`
 
 
 
