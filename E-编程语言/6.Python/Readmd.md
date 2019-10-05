@@ -96,4 +96,45 @@ list.remove("chudai")
 * python 2.7: `raw_input()`
 
 
+# 函数
+## 编写函数指南
+* 应给函数指定描述性名称
+* 每个函数应包含简要的阐述其功能的注释
+* 函数间可以使用两个空行将其隔开
 
+# 类
+> 面向对象编程是最有效的软件编写方法之一。
+
+## 创建类
+```python
+class ClassName(ParentClassName):
+    """一些注释"""
+    def __init__(self, args):
+        # python 2.7
+        # super(ClassName, self).__init__(args)
+        args = args
+```
+* 类中的函数称为`方法`。
+* `Python 3`和`Python 2.7`不同，具体见注释。
+
+> 解决问题时，你从较高的逻辑层面（而不是语法层 面）考虑；你考虑
+> 不是Python，而是如何使用代码来表示实物。
+
+# 导入
+```python
+# 导入模块
+import module_name
+import module_name as new_module_name
+# 导入函数
+from module_name import function_name
+from module_name import function_name as new_function_name
+# 导入类
+from module_name import ClassName
+from module_name import ClassName as NewClassName
+from module_name import Class1, Class2
+
+# 导入所有类(不推荐使用)
+# 1.这样导入不清楚导入了什么东西
+# 2.容易导致冲突
+from module_name import *
+```
