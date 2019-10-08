@@ -60,3 +60,5 @@ dkms.conf
 *.temp
 a.out.dSYM/
 a.out
+__pycache__/
+*.pyc
