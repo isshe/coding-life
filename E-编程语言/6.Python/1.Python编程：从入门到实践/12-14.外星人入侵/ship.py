@@ -7,7 +7,7 @@ class Ship:
         self.ai_settings = ai_settings
         self.screen = screen
 
-        self.image = pygame.image.load("resources/ship_purple.bmp")
+        self.image = pygame.image.load("resources/ship.bmp")
         self.rect = self.image.get_rect()
         self.screen_rect = screen.get_rect()
 
@@ -19,7 +19,7 @@ class Ship:
         self.moving_left = False
 
         self.center = float(self.rect.centerx)
-    
+
     def update(self):
         """根据标记移动飞船"""
         if self.moving_right and self.rect.right < self.screen_rect.right:
@@ -28,7 +28,9 @@ class Ship:
             self.center -= self.ai_settings.ship_speed_factor
         self.rect.centerx = self.center
 
-
     def blit_me(self):
         """在指定位置绘制飞船"""
         self.screen.blit(self.image, self.rect)
+
+    def center_ship(self):
+        self.center = self.screen_rect.centerx
