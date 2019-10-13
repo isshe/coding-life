@@ -115,6 +115,7 @@ def ship_hit(ai_settings, stats, screen, ship, aliens, bullets):
         sleep(0.5)
     else:
         stats.game_active = False
+        pygame.mouse.set_visible(True)
 
 
 def check_aliens_bottom(ai_settings, stats, screen, ship, aliens, bullets):
@@ -128,7 +129,10 @@ def check_aliens_bottom(ai_settings, stats, screen, ship, aliens, bullets):
 
 def check_play_button(ai_settings, screen, stats, play_button, ship, aliens, bullets, mouse_x, mouse_y):
     """检查是否按了开始游戏按钮"""
-    if play_button.rect.collidepoint(mouse_x, mouse_y):
+    button_clicked = play_button.rect.collidepoint(mouse_x, mouse_y)
+    if button_clicked and not stats.game_active :
+        # 隐藏光标
+        pygame.mouse.set_visible(False)
         # 重置统计信息
         stats.reset_stats()
         stats.game_active = True
