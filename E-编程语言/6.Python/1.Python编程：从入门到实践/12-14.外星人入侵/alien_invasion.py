@@ -1,3 +1,4 @@
+# coding=utf-8
 import sys
 
 import pygame
@@ -31,7 +32,7 @@ def run_game():
     # 开始游戏主循环
     while True:
         # 监听键盘和鼠标事件
-        gf.check_events(ai_settings, screen, stats, play_button, ship, bullets)
+        gf.check_events(ai_settings, screen, stats, play_button, ship, aliens, bullets)
         if stats.game_active:
             ship.update()
             gf.update_bullets(ai_settings, screen, ship, aliens, bullets)

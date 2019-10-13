@@ -1,3 +1,4 @@
+# coding=utf-8
 class Settings:
     """存储所有配置的类"""
 

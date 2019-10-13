@@ -1,3 +1,4 @@
+# coding=utf-8
 import sys
 import pygame
 from bullet import Bullet
@@ -125,13 +126,24 @@ def check_aliens_bottom(ai_settings, stats, screen, ship, aliens, bullets):
             break
 
 
-def check_play_button(stats, play_button, mouse_x, mouse_y):
+def check_play_button(ai_settings, screen, stats, play_button, ship, aliens, bullets, mouse_x, mouse_y):
     """检查是否按了开始游戏按钮"""
     if play_button.rect.collidepoint(mouse_x, mouse_y):
+        # 重置统计信息
+        stats.reset_stats()
         stats.game_active = True
 
+        # 清空外星人和子弹列表
+        aliens.empty()
+        bullets.empty()
 
-def check_events(ai_settings, screen, stats, play_button, ship, bullets):
+        # 创建外星人，让飞船居中
+        create_fleet(ai_settings, screen, ship, aliens)
+        ship.center_ship()
+
+
+
+def check_events(ai_settings, screen, stats, play_button, ship, aliens, bullets):
     """响应鼠标事件"""
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -143,7 +155,7 @@ def check_events(ai_settings, screen, stats, play_button, ship, bullets):
             check_keyup_event(event, ship)
         elif event.type == pygame.MOUSEBUTTONDOWN:
             mouse_x, mouse_y = pygame.mouse.get_pos()
-            check_play_button(stats, play_button, mouse_x, mouse_y)
+            check_play_button(ai_settings, screen, stats, play_button, ship, aliens, bullets, mouse_x, mouse_y)
 
 
 def update_screen(ai_settings, stats, screen, ship, aliens, bullets, play_button):
