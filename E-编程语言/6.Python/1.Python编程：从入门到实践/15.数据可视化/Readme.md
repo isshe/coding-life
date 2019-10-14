@@ -89,3 +89,7 @@ plt.axes().get_yaxis().set_visible(False)
 # figsize: 绘图窗口尺寸，单位英寸
 plt.figure(dpi=128, figsize=(10, 6))
 ```
+
+# Pygal
+> 图表类型画廊: http://www.pygal.org/
+
