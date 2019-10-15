@@ -138,3 +138,32 @@ from module_name import Class1, Class2
 # 2.容易导致冲突
 from module_name import *
 ```
+
+# 解析csv文件
+```python
+import csv
+
+filename = "xxx.csv"
+with open(filename) as f:
+    reader = csv.reader(f)
+    header_row = next(reader)   # 第一行
+    for row in reader:
+        pass
+```
+
+# 画折线图
+```python
+from matplotlib import pyplot as plt
+
+x_values = []
+y_values = []
+fig = plt.figure(dpi=64, figsize=(10, 6))
+plt.plot(x_values, y_values, c='blue')
+plt.title("Title", fontsize=24)
+plt.xlabel('XValue', fontsize=14)
+# plt.autofmt_xdate()   # 是日期的时候
+plt.ylabel('YValue', fontsize=14)
+plt.tick_params(axis='both', which='major', labelsize=16)
+
+plt.show()
+```

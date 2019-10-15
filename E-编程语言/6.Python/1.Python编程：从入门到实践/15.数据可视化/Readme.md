@@ -90,6 +90,14 @@ plt.axes().get_yaxis().set_visible(False)
 plt.figure(dpi=128, figsize=(10, 6))
 ```
 
+## 着色
+* fill_between()
+> 见16章示例<1.highs_lows.py>
+
+```python
+plt.fill_between(dates, highs, lows, facecolor='blue', alpha=0.1)
+```
+
 # Pygal
 > 图表类型画廊: http://www.pygal.org/
 

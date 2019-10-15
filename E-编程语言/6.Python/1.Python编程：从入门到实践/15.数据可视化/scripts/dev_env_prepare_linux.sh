@@ -9,3 +9,5 @@ sudo apt-get install python3.5-dev python3.5-tk tk-dev
 sudo apt-get install libfreetype6-dev g++
 
 pip3 install --user matplotlib
+pip3 install pygal
+pip3 install pygal_maps_world
