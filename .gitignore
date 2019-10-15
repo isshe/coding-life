@@ -63,3 +63,5 @@ a.out
 __pycache__/
 *.pyc
 venv/
+*_tmp.svg
+*_temp.svg

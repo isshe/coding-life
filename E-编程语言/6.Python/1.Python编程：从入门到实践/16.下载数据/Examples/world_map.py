@@ -14,7 +14,7 @@ def americas():
     wm.add('South America', ['ar', 'bo', 'br', 'cl', 'co', 'ec', 'gf',
                              'gy', 'pe', 'py', 'sr', 'uy', 've'])
 
-    wm.render_to_file('americas.svg')
+    wm.render_to_file('americas_tmp.svg')
 
 
 def china():
@@ -23,7 +23,7 @@ def china():
 
     wm.add('China', {'cn': 1400000000, 'hk': 8000000, 'tw': 23000000})
 
-    wm.render_to_file('china.svg')
+    wm.render_to_file('china_tmp.svg')
 
 
 def load_world_data():
@@ -53,7 +53,7 @@ def world():
 
     wm.add('2010', cc_populations)
 
-    wm.render_to_file('world.svg')
+    wm.render_to_file('world_tmp.svg')
 
 
 if __name__ == "__main__":
