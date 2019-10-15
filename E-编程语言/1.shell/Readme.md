@@ -80,5 +80,9 @@ done
 basepath=$(cd `dirname $0`; pwd)
 ```
 
+# 排序、去重
+```
+ls abc/*/softwares/*.json | xargs -n 1 basename | sort -n | uniq
+```
 
 

@@ -167,3 +167,10 @@ plt.tick_params(axis='both', which='major', labelsize=16)
 
 plt.show()
 ```
+
+# 读写json文件
+```python
+filename = 'xxx.json'
+with open(filename) as f:
+    json_data = json.load(f)
+```
