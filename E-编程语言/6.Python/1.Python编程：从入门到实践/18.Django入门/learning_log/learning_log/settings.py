@@ -1,3 +1,4 @@
+# coding=utf-8
 """
 Django settings for learning_log project.
 
@@ -38,8 +39,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    # 第三方
+    'bootstrap3',
+
     # isshe
-    'learning_log',
+    'learning_logs',
+    "users",
 ]
 
 MIDDLEWARE = [
@@ -121,3 +126,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# isshe
+LOGIN_URL = "/users/login/"
+
+# django-bootstrap3
+BOOTSTRAP3 = {
+    'include_jquery': True,
+}
