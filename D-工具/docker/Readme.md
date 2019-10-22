@@ -13,7 +13,7 @@ Docker
 * Docker不是虚拟机，容器就是进程。
 * Docker不是虚拟机，容器中的应用都应该以前台执行。
 * Docker的架构:
-![](./docker-on-linux.png)
+![](docker-on-linux.png)
 
 # Docker有什么用？
 * 作为一种新兴的虚拟化方式.
