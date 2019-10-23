@@ -1,14 +1,17 @@
+# coding=utf-8
 import zipfile
 import optparse
+import sys
 
 from threading import Thread
 
 
-def extract_file(zfile, password=None):
+def extract_file(zfile, password):
     try:
-        zfile.extractall(pwd=password)
+        zfile.extractall(pwd=password.encode("ascii"))
         print("[+] Found password " + password + "\n")
     except:
+        #print("Unexpected error: ", sys.exc_info())
         pass
 
 
@@ -24,14 +27,17 @@ def main():
     else:
         zname = options.zname
         dname = options.dname
-        print("zname = " + zname + ", dname = " + dname)
 
         zfile = zipfile.ZipFile(zname)  # 示例
+        #print(zfile.infolist())
         pass_file = open(dname)
         for line in pass_file.readlines():
             password = line.strip('\n')
             t = Thread(target=extract_file, args=(zfile, password))
             t.start()
+
+        # 多线程，会出错            
+        #zfile.close()
 
 
 if __name__ == '__main__':
