@@ -65,3 +65,5 @@ __pycache__/
 venv/
 *_tmp.svg
 *_temp.svg
+*.tmp
+*.temp

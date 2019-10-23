@@ -174,3 +174,56 @@ filename = 'xxx.json'
 with open(filename) as f:
     json_data = json.load(f)
 ```
+
+# 常用操作
+## 遍历目录
+```python
+import os
+files = os.listdir(path)
+for file in files:
+    pass
+```
+
+## 判断文件类型
+```python
+import os
+os.path.isdir()
+os.path.isfile()
+os.path.islink()
+```
+
+## 按行读取文件
+```python
+with open(filename, mode) as f:
+    for line in f.readlines():
+        pass
+```
+
+## 多线程
+```python
+from threading import Thread
+
+def thread_func(a, b, c):
+    pass
+
+t = Thread(target=thread_func, args=(a, b, c))
+t.start()
+
+```
+
+## 命令行参数解析
+```python
+parser = optparse.OptionParser("Usage%prog " + "-f <zipfile> -d <dictionary>")
+parser.add_option('-f', dest='zname', type='string', help='specify zip file')
+parser.add_option('-d', dest='dname', type='string', help='specify dictionary file')
+
+(options, args) = parser.parse_args()
+if options.zname == None | options.dname == None:
+    print(parser.usage)
+    exit(0)
+else:
+    zname = options.zname
+    dname = options.dname
+```
+
+
