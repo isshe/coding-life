@@ -1,0 +1,25 @@
+# Common make definitions, customized for each platform
+
+# Definitions required in all program directories to compile and link
+# C programs using gcc.
+
+ISSHE_LIB_DIR=../../G-操作系统\(使用\)/B.lib
+ISSHE_INC_DIR=../../G-操作系统\(使用\)/A.include
+CC=gcc
+# COMPILE.c=$(CC) $(CFLAGS) $(CPPFLAGS) -c
+COMPILE.c=$(CC) $(CFLAGS) -c
+LINK.c=$(CC) $(CFLAGS) $(CPPFLAGS) $(LDFLAGS)
+LDFLAGS=
+LDDIR=-L$(ROOT)/$(ISSHE_LIB_DIR)
+LDLIBS=$(LDDIR) -lisshe $(EXTRALIBS)
+# CFLAGS=-I$(ROOT)/$(ISSHE_INC_DIR) -Wall -Werror -DMACOS -D_DARWIN_C_SOURCE -g
+CFLAGS=-I$(ROOT)/$(ISSHE_INC_DIR) -Wall -DMACOS -D_DARWIN_C_SOURCE
+RANLIB=ranlib
+AR=ar
+AWK=awk
+LIBISSHE=$(ROOT)/$(ISSHE_LIB_DIR)/libisshe.a
+RM=rm
+RMFLAGS = -rf
+
+# Common temp files to delete from each directory.
+TEMPFILES=core core.* *.o temp.* *.out *.out.dSYM
