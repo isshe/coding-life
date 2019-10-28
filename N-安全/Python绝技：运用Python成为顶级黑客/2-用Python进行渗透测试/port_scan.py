@@ -3,7 +3,8 @@ import optparse
 from socket import *
 from threading import *
 
-screen_lock = Semaphore(value=1)    # 信号量初始化为1，互斥量
+screen_lock = Semaphore(value=1)  # 信号量初始化为1，互斥量
+
 
 def conn_scan(tgt_host, tgt_port):
     try:
@@ -22,13 +23,14 @@ def conn_scan(tgt_host, tgt_port):
         screen_lock.release()
         conn_skt.close()
 
+
 def port_scan(tgt_host, tgt_ports):
     try:
         tgt_ip = gethostbyname(tgt_host)
     except:
-        print("[-] Cannot resolve '%s': Unknown host"%tgt_host)
+        print("[-] Cannot resolve '%s': Unknown host" % tgt_host)
         return
-    
+
     try:
         tgt_name = gethostbyaddr(tgt_ip)
         print("\n[+] Scan Results for: " + tgt_name[0])
@@ -39,6 +41,7 @@ def port_scan(tgt_host, tgt_ports):
     for tgt_port in tgt_ports:
         t = Thread(target=conn_scan, args=(tgt_host, int(tgt_port)))
         t.start()
+
 
 def main():
     parser = optparse.OptionParser("Usage%prog " + "-H <target host> -p <target port>")
@@ -51,7 +54,7 @@ def main():
     if (tgt_host is None) | (tgt_ports[0] is None):
         print(parser.usage)
         exit(0)
-    
+
     port_scan(tgt_host, tgt_ports)
 
 
