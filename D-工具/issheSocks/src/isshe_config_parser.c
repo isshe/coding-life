@@ -1,6 +1,8 @@
 
 #include "isshe_config_parser.h"
 
+#include <stdio.h>
+
 void
 config_parse(struct isshe_socks_config *config)
 {

@@ -1,7 +1,11 @@
 
 #include "isshe_socks_parser.h"
+#include "isshe_config_parser.h"
 
 #include <arpa/inet.h>
+#include <unistd.h>
+#include <string.h>
+#include <stdlib.h>
 
 void
 socks_parser_init(struct socks_parser *parser, struct isshe_socks_config *config)
@@ -11,7 +15,7 @@ socks_parser_init(struct socks_parser *parser, struct isshe_socks_config *config
     parser->config = config;
 }
 
-int
+void
 socks_parser_uninit(struct socks_parser *parser)
 {
     evconnlistener_free(parser->evlistener);
@@ -34,6 +38,9 @@ socks_parser_listerner_cb(struct evconnlistener *listener, evutil_socket_t fd,
     struct sockaddr *sa, int socklen, void *user_data)
 {
     // 打印对端的信息
+    printf("addr:%s, port:%d\n",
+    inet_ntoa(((struct sockaddr_in*)sa)->sin_addr),
+    ntohs(((struct sockaddr_in*)sa)->sin_port));
 }
 
 void

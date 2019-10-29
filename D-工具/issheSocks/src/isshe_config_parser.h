@@ -1,6 +1,8 @@
 #ifndef _ISSHE_CONFIG_PARSER_H_
 #define _ISSHE_CONFIG_PARSER_H_
 
+#include <stdint.h>
+
 struct isshe_socks_config
 {
     uint16_t socks_parser_port;
