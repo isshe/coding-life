@@ -2,21 +2,19 @@ ROOT=..
 PLATFORM=$(shell $(ROOT)/systype.sh)
 include $(ROOT)/Make.defines.$(PLATFORM)
 
-SUFFIX = .out
+PROGS =	isshe_socks_parser.out
 
-PROGS =	isshe_socks_parser
-
-ISSHE_SOCK_CLIENT_OBJ = isshe_config_parser.o isshe_socks_parser.o
+ISSHE_SOCKS_PARSER_OBJ = isshe_config_parser.o isshe_socks_parser.o
 
 FDPASS =
 LDLIBS += -lpthread -levent
 
 all:	$(PROGS) $(FDPASS)
 %:	%.c $(LIBAPUE)
-	$(CC) $(CFLAGS) $@.c -o $@$(SUFFIX) $(LDFLAGS) $(LDLIBS)
+	$(CC) $(CFLAGS) $@.c -o $@ $(LDFLAGS) $(LDLIBS)
 
-isshe_socks_parser: $(ISSHE_SOCK_CLIENT_OBJ)
-	${CC} ${CFLAGS} -o $@$(SUFFIX) $(ISSHE_SOCK_CLIENT_OBJ) \
+isshe_socks_parser.out: $(ISSHE_SOCKS_PARSER_OBJ)
+	${CC} ${CFLAGS} -o $@ $(ISSHE_SOCKS_PARSER_OBJ) \
 		${LIBS} ${LIBS_RPC} $(LDFLAGS) $(LDLIBS)
 
 clean:

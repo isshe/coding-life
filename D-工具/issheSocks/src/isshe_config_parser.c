@@ -12,7 +12,7 @@ config_parse(struct isshe_socks_config *config)
 void
 config_print(struct isshe_socks_config *config)
 {
-    printf("-------------isshe socks config--------------");
+    printf("-------------isshe socks config--------------\n");
     printf("socks parser port: %d\n", config->socks_parser_port);
-    printf("---------------------------------------------");
+    printf("---------------------------------------------\n");
 }
