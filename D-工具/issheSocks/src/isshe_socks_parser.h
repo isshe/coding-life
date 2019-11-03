@@ -77,6 +77,7 @@ struct socks_connection
 {
     int fd;
     int status;
+    int next_fd;
     // evtimer: 定时清理状态没有转换的连接
 };
 
