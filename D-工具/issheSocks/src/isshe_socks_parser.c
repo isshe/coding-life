@@ -10,6 +10,7 @@
 
 #include "isshe_socks_parser.h"
 #include "isshe_config_parser.h"
+#include "isshe_socks_common.h"
 
 void
 socks_parser_init(struct socks_parser *parser, struct isshe_socks_config *config)
@@ -24,16 +25,6 @@ socks_parser_uninit(struct socks_parser *parser)
 {
     evconnlistener_free(parser->evlistener);
     event_base_free(parser->evbase);
-}
-
-void
-socks_parser_event_new(struct socks_parser *parser)
-{
-    parser->evbase = event_base_new();
-    if (!parser->evbase) {
-        fprintf(stderr, "Could not initialize libevent!\n");
-        exit(1);
-    }
 }
 
 static void print_buffer(char *buf, int buf_len, int print_len)
@@ -59,10 +50,21 @@ int is_socks_request(struct socks_request *req)
     return 1;
 }
 
+void 
+read_and_drop_all(struct bufferevent *bev, struct evbuffer *evb)
+{
+    char temp;
+    while(evbuffer_get_length(evb)) {
+        //printf("len: %d\n", evbuffer_get_length(evb));
+        bufferevent_read(bev, &temp, sizeof(temp));
+    }
+}
+
 int scs_selction_msg_process(struct bufferevent *bev)
 {
     printf("---isshe---: scs_selction_msg_process---\n");
-    int len = evbuffer_get_length(bufferevent_get_input(bev));
+    struct evbuffer *inevb = bufferevent_get_input(bev);
+    int len = evbuffer_get_length(inevb);
     struct socks_selection_msg msg;
     printf("len = %d, sizeof(msg) = %lu\n", len, sizeof(msg));
     if (len < sizeof(msg)) {
@@ -75,7 +77,8 @@ int scs_selction_msg_process(struct bufferevent *bev)
         return 0;
     }
 
-    // TODO: 剩下的全部读出来
+    // 剩下的全部读出来
+    read_and_drop_all(bev, inevb);
 
     struct socks_selection_msg_reply reply;
     memset(&reply, 0, sizeof(reply));
@@ -91,7 +94,7 @@ int scs_request_process(struct bufferevent *bev)
     int len = evbuffer_get_length(bufferevent_get_input(bev));
     struct socks_request request;
     struct socks_reply reply;
-    printf("len = %d, sizeof(msg) = %lu\n", len, sizeof(request));
+    printf("len = %d, sizeof(request) = %lu\n", len, sizeof(request));
     if (len < sizeof(request)) {
         return 0;
     }
@@ -101,7 +104,9 @@ int scs_request_process(struct bufferevent *bev)
         printf("scs_request_process: 有问题\n");
         return 1;
     }
-    // TODO: 剩下的全部读出来
+
+    // TODO: 不丢弃，进行校验，然后准确返回
+    read_and_drop_all(bev, bufferevent_get_input(bev));
     /*
     switch (request.cmd) {
 
@@ -124,6 +129,28 @@ void temp_receive_and_print_buf(struct bufferevent *bev)
         return;
     }
     print_buffer(buf, n, 10);
+}
+
+void
+socks_connection_free(struct socks_connection *sc)
+{
+    if (sc) {
+        free(sc);
+    }
+}
+
+struct socks_connection *
+socks_connection_new(int fd)
+{
+   struct socks_connection *sc = malloc(sizeof(struct socks_connection));
+    if (!sc) {
+        printf("can not malloc socks connection, return\n");
+        return NULL;
+    }
+
+    sc->fd = fd;
+    sc->status = SCS_WAITING_SELECTION_MSG;
+    return sc;
 }
 
 void
@@ -168,21 +195,10 @@ socks_data_event_process(struct bufferevent *bev, short what, void *ctx)
         }
 
         bufferevent_free(bev);
+        socks_connection_free((struct socks_connection*)ctx);
     }
 }
 
-struct socks_connection *socks_connection_new(int fd)
-{
-   struct socks_connection *sc = malloc(sizeof(struct socks_connection));
-    if (!sc) {
-        printf("can not malloc socks connection, return\n");
-        return NULL;
-    }
-
-    sc->fd = fd;
-    sc->status = SCS_WAITING_SELECTION_MSG;
-    return sc;
-}
 
 // after accept
 static void
@@ -194,6 +210,9 @@ socks_parser_accept_cb(struct evconnlistener *listener, evutil_socket_t fd,
     printf("\nfd: %d, addr:%s, port:%d\n", fd,
     inet_ntoa(((struct sockaddr_in*)sa)->sin_addr),
     ntohs(((struct sockaddr_in*)sa)->sin_port));
+
+    // TODO: 连接到下一跳
+    // int next_fd = 
 
     struct socks_connection *sc = socks_connection_new(fd);
     if (!sc) {
@@ -214,24 +233,6 @@ socks_parser_accept_cb(struct evconnlistener *listener, evutil_socket_t fd,
     bufferevent_enable(bev_in, EV_READ|EV_WRITE);
 }
 
-void
-socks_parser_listerner_new_bind(struct socks_parser *parser)
-{
-    struct sockaddr_in sin;
-
-    memset(&sin, 0, sizeof(sin));
-    sin.sin_family = AF_INET;
-    sin.sin_port = htons(parser->config->socks_parser_port);
-
-    parser->evlistener = evconnlistener_new_bind(parser->evbase, socks_parser_accept_cb, (void *)parser,
-        LEV_OPT_REUSEABLE|LEV_OPT_CLOSE_ON_FREE, -1, (struct sockaddr*)&sin, sizeof(sin));
-
-    if (!parser->evlistener) {
-        fprintf(stderr, "Could not create a listener!\n");
-        exit(1);
-    }
-}
-
 
 int
 main(int argc, char *argv[])
@@ -246,10 +247,13 @@ main(int argc, char *argv[])
     config_print(&config);
 
     socks_parser_init(&parser, &config);
-    socks_parser_event_new(&parser);
-    socks_parser_listerner_new_bind(&parser);
+    parser.evbase = isshe_socks_event_new();
+    parser.evlistener = isshe_socks_listerner_new_bind(parser.evbase, 
+        config.sp_config->socks_parser_port, socks_parser_accept_cb, (void *)&parser);
     event_base_dispatch(parser.evbase);
     socks_parser_uninit(&parser);
+
+    config_free(&config);
 
     printf("done\n");
     return 0;

@@ -70,7 +70,9 @@ struct socks_reply {
     uint8_t rep;
     uint8_t rsv;
     uint8_t atype;
-    uint8_t remain[0];
+    //uint8_t remain[0];
+    uint32_t addr;
+    uint16_t port;
 };
 
 struct socks_connection
