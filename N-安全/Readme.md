@@ -11,3 +11,14 @@ Exif(exchange image file format, 交换图像文件格式)：定义了如何存�
 ### Pillow
 图片相关。可以`_getexif`。
 
+### sqlite3
+```python
+import sqlite3
+
+conn = sqlite3.connect(db)
+c = conn.cursor()
+c.execute("SELECT * from xxx")
+for row in c:
+    print(row[0], row[1])
+```
+
