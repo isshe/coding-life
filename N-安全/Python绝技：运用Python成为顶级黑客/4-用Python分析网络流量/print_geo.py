@@ -9,5 +9,5 @@ def print_record2(tgt):
     print(rec)
 
 
-tgt = "173.255.226.98"
+tgt = "14.17.22.45"
 print_record2(tgt)
