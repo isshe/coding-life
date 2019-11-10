@@ -91,15 +91,15 @@ struct socks_parser
 
 struct socks_connection
 {
-    int fd;
     int status;
-    int next_fd;
+    int fd_in;
+    //int fd_out;
     int target_type;
     char *target;
     uint8_t target_len;
     uint16_t target_port;
     struct addrinfo *target_ai;
-    struct bufferevent *bev;
+    struct bufferevent *bev_in;
     struct bufferevent *bev_out;
     struct socks_parser *sp;
     // evtimer: 定时清理状态没有转换的连接

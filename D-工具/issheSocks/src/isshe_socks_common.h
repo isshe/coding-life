@@ -21,4 +21,9 @@ int isshe_domain_name_resolution(
 
 void isshe_print_addrinfo(struct addrinfo *addr_info);
 
+void isshe_print_buffer(char *buf, int buf_len, int print_len);
+
+struct bufferevent *
+isshe_bufferevent_socket_new(struct event_base *base, evutil_socket_t fd);
+
 #endif

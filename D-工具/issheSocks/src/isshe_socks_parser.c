@@ -31,17 +31,6 @@ socks_parser_uninit(struct socks_parser *parser)
     event_base_free(parser->evbase);
 }
 
-static void print_buffer(char *buf, int buf_len, int print_len)
-{
-    size_t n;
-    size_t i;
-
-    n = buf_len > print_len ? print_len : buf_len;
-    for (i=0; i<n; ++i) {
-        printf("%d(%x), ", buf[i], buf[i]);
-    }
-}
-
 int is_socks_selection_msg(struct socks_selection_msg *msg)
 {
     // TODO
@@ -179,7 +168,7 @@ void temp_receive_and_print_buf(struct bufferevent *bev)
     if (n <= 0) {
         return;
     }
-    print_buffer(buf, n, 10);
+    isshe_print_buffer(buf, n, 10);
 }
 
 struct socks_connection *
@@ -192,7 +181,7 @@ socks_connection_new(int fd)
     }
 
     memset(sc, 0, sizeof(struct socks_connection));
-    sc->fd = fd;
+    sc->fd_in = fd;
     sc->status = SCS_WAITING_SELECTION_MSG;
 
     return sc;
@@ -210,9 +199,7 @@ connect_to_next(struct socks_connection *sc)
         return;
     }
     
-    bev_out = bufferevent_socket_new(sc->sp->evbase, -1,
-        BEV_OPT_CLOSE_ON_FREE|BEV_OPT_DEFER_CALLBACKS);
-
+    bev_out = isshe_bufferevent_socket_new(sc->sp->evbase, -1);
     assert(bev_out);
 
     struct sockaddr_in *addr;
@@ -247,8 +234,7 @@ connect_to_next(struct socks_connection *sc)
     sc->bev_out = bev_out;
 
     bufferevent_setcb(bev_out, isshe_forward_data_read_cb, 
-        NULL, isshe_forward_data_event_cb, (void*)sc->bev);
-        //NULL, NULL, (void*)sc->bev);
+        NULL, isshe_forward_data_event_cb, (void*)sc->bev_in);
     bufferevent_enable(bev_out, EV_READ|EV_WRITE);
 }
 
@@ -256,7 +242,7 @@ static void
 socks_data_read_cb(struct bufferevent *bev, void *ctx)
 {
     struct socks_connection *sc = (struct socks_connection *)ctx;
-    printf("fd: %d, ", sc->fd);
+    printf("fd: %d, ", sc->fd_in);
     // TODO: 这个while的内容，放到各个case里面：读取并转发/回复
     //while (evbuffer_get_length(bufferevent_get_input(bev))) {
     // 这里的握手过程还需再捋一下: 
@@ -294,7 +280,7 @@ socks_data_read_cb(struct bufferevent *bev, void *ctx)
 void
 socks_connection_free(struct socks_connection *sc)
 {
-    printf("Debug: free socks connection: %d\n", sc->fd);
+    printf("Debug: free socks connection: %d\n", sc->fd_in);
     if (sc->target) {
         free(sc->target);
         sc->target = NULL;
@@ -322,7 +308,6 @@ socks_data_event_cb(struct bufferevent *bev, short what, void *ctx)
 	}
 }
 
-int count = 0;
 // after accept
 static void
 socks_parser_accept_cb(struct evconnlistener *listener, evutil_socket_t fd,
@@ -330,10 +315,6 @@ socks_parser_accept_cb(struct evconnlistener *listener, evutil_socket_t fd,
 {
     struct bufferevent *bev_in;
     // 打印对端的信息
-    if (count == 1) {
-        return;
-    }
-    //count = 1;
     printf("\nfd: %d, addr:%s, port:%d\n", fd,
     inet_ntoa(((struct sockaddr_in*)sa)->sin_addr),
     ntohs(((struct sockaddr_in*)sa)->sin_port));
@@ -344,16 +325,11 @@ socks_parser_accept_cb(struct evconnlistener *listener, evutil_socket_t fd,
     }
 
     struct socks_parser *parser = (struct socks_parser *)user_data;
-    bev_in = bufferevent_socket_new(parser->evbase, fd, 
-        BEV_OPT_CLOSE_ON_FREE|BEV_OPT_DEFER_CALLBACKS);
-    if (!bev_in) {
-        printf("can not new bufferevent socket, return\n");
-        return ;
-    }
+    bev_in = isshe_bufferevent_socket_new(parser->evbase, fd);
 
     assert(bev_in);
 
-    sc->bev = bev_in;
+    sc->bev_in = bev_in;
     sc->sp = parser;
 
     bufferevent_setcb(bev_in, socks_data_read_cb, 

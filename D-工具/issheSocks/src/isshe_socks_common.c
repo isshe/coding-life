@@ -192,3 +192,26 @@ isshe_print_addrinfo(struct addrinfo *ai)
     }
 }
 
+void
+isshe_print_buffer(char *buf, int buf_len, int print_len)
+{
+    size_t n;
+    size_t i;
+
+    n = buf_len > print_len ? print_len : buf_len;
+    for (i=0; i<n; ++i) {
+        printf("%d(%x), ", buf[i], buf[i]);
+    }
+}
+
+struct bufferevent *
+isshe_bufferevent_socket_new(struct event_base *base, evutil_socket_t fd)
+{
+	struct bufferevent *bev;
+    bev = bufferevent_socket_new(base, fd, 
+        BEV_OPT_CLOSE_ON_FREE|BEV_OPT_DEFER_CALLBACKS);
+    if (!bev) {
+        printf("Error: can not new bufferevent socket\n");
+    }
+	return bev;
+}
