@@ -25,6 +25,8 @@ struct proxy_server_config
 
 struct isshe_socks_config
 {
+    int remote_dns;
+    // char *dns_addrs;
     struct socks_parser_config *sp_config;
     struct tunnel_client_config *tc_config;
     struct tunnel_server_config *ts_config;

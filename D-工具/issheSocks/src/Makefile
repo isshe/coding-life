@@ -12,6 +12,7 @@ ISSHE_PROXY_SERVER_OBJ = $(ISSHE_COMMON_OBJ) isshe_proxy_server.o
 
 FDPASS =
 LDLIBS += -lpthread -levent
+CFLAGS += -g
 
 all:	$(PROGS) $(FDPASS)
 %:	%.c $(LIBAPUE)

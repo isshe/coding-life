@@ -11,9 +11,11 @@
 // 自定义
 #include "isshe_config_parser.h"
 
-#define BUFFER_LEN 1500
+#define BUFFER_LEN              1500
+#define IPV4_ADDR_LEN           4
+#define IPV6_ADDR_LEN           16
 
-#define DEFAULT_SOCKS_VERSION 5
+#define DEFAULT_SOCKS_VERSION   5
 
 #define SOCKS_METHOD_NO_AUTH_REQ        0x00
 #define SOCKS_METHOD_GSSAPI             0x01
@@ -25,8 +27,12 @@
 #define SOCKS_CMD_UDP_ASSOCIATE     0x03
 
 #define SOCKS_ADDR_TYPE_IPV4        0x01
-#define SOCKS_ADDR_TYPE_DNS         0x03
+#define SOCKS_ADDR_TYPE_DOMAIN      0x03
 #define SOCKS_ADDR_TYPE_IPV6        0x04
+
+#define ISSHE_SOCKS_ADDR_TYPE_IPV4      0x01
+#define ISSHE_SOCKS_ADDR_TYPE_IPV6      0x02
+#define ISSHE_SOCKS_ADDR_TYPE_DOMAIN    0x03
 
 #define SOCKS_REPLY_SUCCEEDED               0x00
 #define SOCKS_REPLY_GENERAL_SVR_FAILURE     0x01
@@ -65,14 +71,22 @@ struct socks_request {
     uint8_t remain[0];
 };
 
+#pragma pack(2)
 struct socks_reply {
     uint8_t version;
     uint8_t rep;
     uint8_t rsv;
     uint8_t atype;
-    //uint8_t remain[0];
     uint32_t addr;
     uint16_t port;
+};
+#pragma pack()
+
+struct socks_parser
+{
+    struct event_base *evbase;
+    struct evconnlistener *evlistener;
+    struct isshe_socks_config *config;
 };
 
 struct socks_connection
@@ -80,14 +94,15 @@ struct socks_connection
     int fd;
     int status;
     int next_fd;
+    int target_type;
+    char *target;
+    uint8_t target_len;
+    uint16_t target_port;
+    struct addrinfo *target_ai;
+    struct bufferevent *bev;
+    struct bufferevent *bev_out;
+    struct socks_parser *sp;
     // evtimer: 定时清理状态没有转换的连接
-};
-
-struct socks_parser
-{
-    struct event_base *evbase;
-    struct evconnlistener *evlistener;
-    struct isshe_socks_config *config;
 };
 
 

@@ -40,12 +40,13 @@ config_parse(struct isshe_socks_config *config)
     memset(config, 0, sizeof(struct isshe_socks_config));
 
     sp_config = socks_parser_config_new();
-    sp_config->socks_parser_port = 27758;
+    sp_config->socks_parser_port = 1080;
 
     ps_config = proxy_server_config_new();
     ps_config->proxy_server_port = 27759;
 
     config->sp_config = sp_config;
+    config->ps_config = ps_config;
 }
 
 void config_free(struct isshe_socks_config *config)
