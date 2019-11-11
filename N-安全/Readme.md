@@ -22,6 +22,21 @@ for row in c:
     print(row[0], row[1])
 ```
 
-### geoip
+### dpkt
 
-###
+```python
+eth = dpkt.ethernet.Ethernet(buf)
+ip = eth.data   # 这里是二进制数据
+src = socket.inet_ntoa(ip.src)
+tcp = ip.data
+tcp.port
+```
+
+### geoip2
+```python
+from geoip2 import database
+
+db = database.Reader(deo_db_file_mmdb)
+rec = db.city(ip)
+rec.subdivisions[0].names["zh-CN"]
+```
