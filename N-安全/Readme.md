@@ -40,3 +40,22 @@ db = database.Reader(deo_db_file_mmdb)
 rec = db.city(ip)
 rec.subdivisions[0].names["zh-CN"]
 ```
+
+### scapy: 数据包解析
+```python
+from scapy.all import *
+
+def func:
+    if pkt.haslayer(IP):
+        ipsrc = pkt.getlayer(IP).src
+        ttl = str(pkt.ttl)
+
+sniff(prn=func, store=0)
+```
+
+### IPy: IP信息
+```python
+from IPy import IP as IPTEST
+if IPTEST(ipsrc).iptype() == "PRIVATE":
+    pass
+```
