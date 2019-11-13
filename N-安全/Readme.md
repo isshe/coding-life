@@ -59,3 +59,10 @@ from IPy import IP as IPTEST
 if IPTEST(ipsrc).iptype() == "PRIVATE":
     pass
 ```
+
+### aircrack-ng设置网卡为混杂模式
+```shell
+sudo apt-get install aircrack-ng
+sudo airmon-ng start <interface_name>
+ifconfig 后就能看到mon0之类的新接口
+```
