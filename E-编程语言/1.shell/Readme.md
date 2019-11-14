@@ -85,4 +85,9 @@ basepath=$(cd `dirname $0`; pwd)
 ls abc/*/softwares/*.json | xargs -n 1 basename | sort -n | uniq
 ```
 
+# 字符串替换
+```shell
+sed -i "s/$src/$dst/g" $file
+```
+
 
