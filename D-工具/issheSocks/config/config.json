@@ -1,0 +1,43 @@
+{
+    "id": "ID, 用于生成消息认证码",
+    "socks_parser": [{
+        "port":1080,
+        "dns":"114.114.114.114",
+        "protocol":"sock5"
+    },{
+        "port":1081,
+        "dns":"8.8.8.8",
+        "protocol":"xxx"
+    }],
+    "tunnel_client": [{
+        "port":1180,
+        "addr":"xxx",   // 默认127.0.0.1，但是也可能不是本地
+        "addr_type":xx, // 可以根据addr识别，就不要这个
+        "user_data":"握手包自定义数据, 待考虑",
+        "crypto":"xxx, 指定或者随机选择"
+    }],
+    "tunnel_server": [{
+        "ports":[1280, 1281, 1282], // master ports
+        "addr":"xxx",
+        "dns":"8.8.8.8",
+        "crypto":"yyy, 指定或者随机选择",
+        "disguise":"80, 无法识别的流量，转到80端口"
+    }],
+    "proxy_server": [{
+        "port":[1380, 1381, 1382],  // 各个可以多port的地方，后面再实现，先放TODO
+        "addr":"xxx"
+    }],
+    "direct_list":"强制不走代理的网址/IP",
+    "proxy_list":"强制走代理的网址/IP",
+    "block_list":"丢掉",
+    "users":[{                      // users为空，表示不开启用户管理
+        "id":"abc",
+        "speed_up":"123KB",
+        "speed_down":"123KB",
+        "total_up":"1GB",
+        "total_down":"10GB",
+        "start_date":"",
+        "end_date":"",
+        "repeat":"true/false, 自动算间隔多少天",
+    }, {}]
+}

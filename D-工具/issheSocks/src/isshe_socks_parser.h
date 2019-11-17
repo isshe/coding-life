@@ -45,7 +45,8 @@
 #define SOCKS_REPLY_ATYPE_NOT_SUPPORTED     0x08
 // 0x09-0xff: unassigned
 
-enum socks_connection_status {
+// socks5的连接状态
+enum socks5_connection_status {
     SCS_UNKNOWN = -1,
     SCS_WAITING_SELECTION_MSG = 0,
     SCS_WAITING_REQUEST = 1,
@@ -89,7 +90,7 @@ struct socks_parser
     struct isshe_socks_config *config;
 };
 
-struct socks_connection
+struct socks_parser_connection
 {
     int status;
     int fd_in;

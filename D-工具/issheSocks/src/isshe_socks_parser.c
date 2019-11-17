@@ -15,6 +15,7 @@
 #include "isshe_socks_parser.h"
 #include "isshe_config_parser.h"
 #include "isshe_socks_common.h"
+#include "isshe_socks_protocol.h"
 
 void
 socks_parser_init(struct socks_parser *parser, struct isshe_socks_config *config)
@@ -81,8 +82,11 @@ int scs_selction_msg_process(struct bufferevent *bev)
     return 1;
 }
 
+/*
+ * 处理socks5命令
+ */
 void
-connect_cmd_process(struct socks_connection *sc, 
+connect_cmd_process(struct socks_parser_connection *sc, 
     struct bufferevent *bev, struct socks_request *request)
 {
     switch (request->atype)
@@ -121,7 +125,7 @@ connect_cmd_process(struct socks_connection *sc,
     bufferevent_read(bev, &sc->target_port, sizeof(sc->target_port));
 }
 
-int scs_request_process(struct socks_connection *sc, struct bufferevent *bev)
+int scs_request_process(struct socks_parser_connection *sc, struct bufferevent *bev)
 {
     printf("---isshe---: scs_request_process---\n");
     int len = evbuffer_get_length(bufferevent_get_input(bev));
@@ -171,16 +175,16 @@ void temp_receive_and_print_buf(struct bufferevent *bev)
     isshe_print_buffer(buf, n, 10);
 }
 
-struct socks_connection *
+struct socks_parser_connection *
 socks_connection_new(int fd)
 {
-   struct socks_connection *sc = malloc(sizeof(struct socks_connection));
+   struct socks_parser_connection *sc = malloc(sizeof(struct socks_parser_connection));
     if (!sc) {
         printf("can not malloc socks connection, return\n");
         return NULL;
     }
 
-    memset(sc, 0, sizeof(struct socks_connection));
+    memset(sc, 0, sizeof(struct socks_parser_connection));
     sc->fd_in = fd;
     sc->status = SCS_WAITING_SELECTION_MSG;
 
@@ -188,8 +192,88 @@ socks_connection_new(int fd)
 }
 
 
+void
+socks_parser_from_user_read_cb(struct bufferevent *bev, void *ctx)
+{
+    struct socks_parser_connection *sc = (struct socks_parser_connection *)ctx;
+    uint8_t mac[16] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
+    struct isshe_socks_opt opt;
+    struct bufferevent *partner = sc->bev_out;
+	struct evbuffer *src, *dst;
+	size_t len;
+    uint8_t buf[128];      // temp
+
+	src = bufferevent_get_input(bev);
+	len = evbuffer_get_length(src);
+	if (!partner) {
+		evbuffer_drain(src, len);
+		return;
+	}
+
+	dst = bufferevent_get_output(partner);
+
+    // 添加消息校验码
+    evbuffer_add(dst, mac, sizeof(mac));
+
+    // 添加选项
+    isshe_socks_opt_init(buf);
+    // isshe_socks_opt_add(buf, ISSHE_SOCKS_OPT_ADDR_TYPE, sizeof(sc->target_type), &(sc->target_type));
+    isshe_socks_opt_add(buf, ISSHE_SOCKS_OPT_DOMAIN, sc->target_len, sc->target);
+    isshe_socks_opt_add(buf, ISSHE_SOCKS_OPT_PORT, sizeof(sc->target_port), &(sc->target_port));
+    //evbuffer_add(dst, &opt, isshe_socks_opt_len(buf));
+    evbuffer_add(dst, &opt, sizeof(buf));   // TODO 这里固定128字节了
+
+	evbuffer_add_buffer(dst, src);
+    printf("Debug: %p(%lu) -> %p(%lu)\n", bev, len, partner, evbuffer_get_length(dst));
+}
+
+void
+socks_parser_to_user_read_cb(struct bufferevent *bev, void *ctx)
+{
+    struct socks_parser_connection *sc = (struct socks_parser_connection *)ctx;
+    uint8_t mac[16] = {0};
+    struct isshe_socks_opt opt;
+    struct bufferevent *partner = sc->bev_in;
+	struct evbuffer *src, *dst;
+	size_t len;
+
+	src = bufferevent_get_input(bev);
+	len = evbuffer_get_length(src);
+	if (!partner) {
+		evbuffer_drain(src, len);
+		return;
+	}
+
+    // 读取消息校验码
+    bufferevent_read(bev, mac, sizeof(mac));
+
+    // 读取选项
+    bufferevent_read(bev, &opt, sizeof(opt.type) + sizeof(opt.len));
+
+	dst = bufferevent_get_output(partner);
+	evbuffer_add_buffer(dst, src);
+    printf("Debug: %p(%lu) -> %p(%lu)\n", bev, len, partner, evbuffer_get_length(dst));
+}
+
+void
+socks_parser_from_user_event_cb(struct bufferevent *bev, short what, void *ctx)
+{
+    isshe_common_event_cb(bev, what, ctx);
+}
+
+void
+socks_parser_to_user_event_cb(struct bufferevent *bev, short what, void *ctx)
+{
+    isshe_common_event_cb(bev, what, ctx);
+}
+
+// TODO 拓展为根据配置使用特定的协议进行连接。（当前是TCP）
+/* 
+ * 连接下一级
+ */
+/*
 static void
-connect_to_next(struct socks_connection *sc)
+connect_to_next(struct socks_parser_connection *sc)
 {
     struct bufferevent *bev_out;
 
@@ -219,9 +303,7 @@ connect_to_next(struct socks_connection *sc)
 		//bufferevent_free(bev_in);
 		return;
 	}
-    
-    // disable linger
-    
+        
     int out_fd = bufferevent_getfd(bev_out);
     struct linger linger;
     memset(&linger, 0, sizeof(struct linger));
@@ -232,16 +314,13 @@ connect_to_next(struct socks_connection *sc)
     }
 
     sc->bev_out = bev_out;
-
-    bufferevent_setcb(bev_out, isshe_forward_data_read_cb, 
-        NULL, isshe_forward_data_event_cb, (void*)sc->bev_in);
-    bufferevent_enable(bev_out, EV_READ|EV_WRITE);
 }
+*/
 
 static void
 socks_data_read_cb(struct bufferevent *bev, void *ctx)
 {
-    struct socks_connection *sc = (struct socks_connection *)ctx;
+    struct socks_parser_connection *sc = (struct socks_parser_connection *)ctx;
     printf("fd: %d, ", sc->fd_in);
     // TODO: 这个while的内容，放到各个case里面：读取并转发/回复
     //while (evbuffer_get_length(bufferevent_get_input(bev))) {
@@ -263,22 +342,37 @@ socks_data_read_cb(struct bufferevent *bev, void *ctx)
             // TODO: 删除握手定时器
             // 转发数据
             if (!sc->bev_out) {
-                connect_to_next(sc);
+                //connect_to_next(sc);
+                struct sockaddr_in sin;
+
+                memset(&sin, 0, sizeof(sin));
+                sin.sin_family = AF_INET;
+                sin.sin_addr.s_addr = htonl(INADDR_ANY);
+                
+                sc->bev_out = isshe_socks_connect_to_next(
+                    sc->sp->evbase, (struct sockaddr*)&sin, sizeof(sin), 
+                    sc->sp->config->ps_config->proxy_server_port);
+                if (!sc->bev_out) {
+                    printf("connect to next failed!\n");
+                    exit(1);    // TODO 
+                }
             }
-		    bufferevent_setcb(bev, isshe_forward_data_read_cb, 
-			    NULL, isshe_forward_data_event_cb, sc->bev_out);
-            isshe_forward_data_read_cb(bev, sc->bev_out);
-            //temp_receive_and_print_buf(bev);
-            //printf("\n");
+            socks_parser_from_user_read_cb(bev, sc->bev_out);
+            // 转发完本次的数据后，设置为直接转发数据的函数，不需再进行协议解析
+		    bufferevent_setcb(bev, socks_parser_from_user_read_cb, 
+			    NULL, socks_parser_from_user_event_cb, sc->bev_out);
+
+            bufferevent_setcb(sc->bev_out, socks_parser_to_user_read_cb, 
+                NULL, socks_parser_to_user_event_cb, (void*)sc->bev_in);
+            bufferevent_enable(sc->bev_out, EV_READ|EV_WRITE);
             break;
         default:
             break;
     }
-	//}
 }
 
 void
-socks_connection_free(struct socks_connection *sc)
+socks_connection_free(struct socks_parser_connection *sc)
 {
     printf("Debug: free socks connection: %d\n", sc->fd_in);
     if (sc->target) {
@@ -301,10 +395,10 @@ socks_connection_free(struct socks_connection *sc)
 static void
 socks_data_event_cb(struct bufferevent *bev, short what, void *ctx)
 {
-    struct socks_connection *sc = (struct socks_connection *)ctx;
+    struct socks_parser_connection *sc = (struct socks_parser_connection *)ctx;
     isshe_forward_data_event_cb(bev, what, sc->bev_out);
 	if (what & (BEV_EVENT_EOF|BEV_EVENT_ERROR)) {
-        socks_connection_free((struct socks_connection*)ctx);
+        socks_connection_free((struct socks_parser_connection*)ctx);
 	}
 }
 
@@ -319,7 +413,7 @@ socks_parser_accept_cb(struct evconnlistener *listener, evutil_socket_t fd,
     inet_ntoa(((struct sockaddr_in*)sa)->sin_addr),
     ntohs(((struct sockaddr_in*)sa)->sin_port));
             
-    struct socks_connection *sc = socks_connection_new(fd);
+    struct socks_parser_connection *sc = socks_connection_new(fd);
     if (!sc) {
         return;
     }

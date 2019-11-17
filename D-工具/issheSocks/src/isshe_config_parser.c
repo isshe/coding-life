@@ -31,6 +31,7 @@ proxy_server_config_new()
     return ps_config;
 }
 
+// TODO 配置解析
 void
 config_parse(struct isshe_socks_config *config)
 {

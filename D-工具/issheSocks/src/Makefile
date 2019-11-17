@@ -4,7 +4,7 @@ include $(ROOT)/Make.defines.$(PLATFORM)
 
 PROGS =	isshe_socks_parser.out isshe_proxy_server.out
 
-ISSHE_COMMON_OBJ = isshe_config_parser.o isshe_socks_common.o
+ISSHE_COMMON_OBJ = isshe_config_parser.o isshe_socks_common.o isshe_socks_protocol.o
 
 ISSHE_SOCKS_PARSER_OBJ = $(ISSHE_COMMON_OBJ) isshe_socks_parser.o
 

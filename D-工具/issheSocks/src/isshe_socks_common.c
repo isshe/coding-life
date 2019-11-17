@@ -111,6 +111,18 @@ isshe_close_on_finished_write_cb(struct bufferevent *bev, void *ctx)
 	}
 }
 
+void
+isshe_common_event_cb(struct bufferevent *bev, short what, void *ctx)
+{
+	if (what & (BEV_EVENT_EOF|BEV_EVENT_ERROR)) {
+		if (what & BEV_EVENT_ERROR) {
+			if (errno)
+				perror("connection error");
+		}
+
+		bufferevent_free(bev);
+	}
+}
 
 void
 isshe_forward_data_event_cb(struct bufferevent *bev, short what, void *ctx)
