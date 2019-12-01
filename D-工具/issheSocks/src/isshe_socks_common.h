@@ -7,6 +7,8 @@
 #define MAX_OUTPUT  (512*1024)       // ???!!!
 #define SUCCESS     0
 #define FAILURE     (-1)
+#define FALSE       0
+#define TRUE        1
 
 
 struct event_base *isshe_socks_event_new();

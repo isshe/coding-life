@@ -23,7 +23,10 @@ struct proxy_server
 
 struct proxy_server_connection
 {
-    struct isshe_socks_connection *isc;
+    uint64_t flag;
+    //struct isshe_socks_connection *isc;
+    struct isshe_socks_connection *to_user_conn;
+    struct isshe_socks_connection *from_user_conn;
     struct proxy_server *ps;
 };
 

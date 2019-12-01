@@ -8,6 +8,11 @@
 #include <event2/event.h>
 #include <event2/listener.h>
 
+
+#define ISSHE_SOCKS_FLAG_TO_USER            1
+#define ISSHE_SOCKS_FLAG_FROM_USER          2
+#define ISSHE_SOCKS_FLAG_CONFIG             4
+
 /*
 +----------+---------+---------+
 | 消息验证码 | 协议选项 | 加密数据 |
@@ -28,6 +33,7 @@ enum isshe_socks_opt_type
     ISSHE_SOCKS_OPT_PORT,
     ISSHE_SOCKS_OPT_CRYPTO,         // 指定数据部分加密算法，没有指定就按配置文件的来
     ISSHE_SOCKS_OPT_USER,           // 用户名，可以用于流量统计等
+    ISSHE_SOCKS_OPT_USER_DATA_LEN,
     ISSHE_SOCKS_OPT_END = 255,
 };
 
@@ -36,6 +42,8 @@ enum isshe_socks_connection_status
     ISSHE_SCS_CLOSED = 0,
     ISSHE_SCS_ESTABLISHED = 1,
 };
+
+
 
 struct isshe_socks_opt
 {
@@ -75,14 +83,25 @@ struct isshe_socks_reply
 
 struct isshe_socks_opts
 {
+    uint8_t addr_type;  // 初始化为0， ISSHE_SOCKS_ADDR_TYPE_DOMAIN
     uint32_t ipv4;      // 初始化为0
     uint16_t port;      // 初始化为0
     uint8_t dname_len;  // 初始化为0
     uint8_t ipv6_len;   // 初始化为0
     uint8_t *dname;     // domain name
     uint8_t *ipv6;      // 初始化为NULL
+    uint32_t user_data_len;  // 用户数据长度
 };
 
+struct isshe_socks_connection
+{
+    uint8_t status;
+    int fd;
+    struct bufferevent *bev;
+    struct addrinfo *target_ai;
+    struct isshe_socks_opts *opts;
+};
+/*
 struct isshe_socks_connection
 {
     uint8_t status;
@@ -93,7 +112,7 @@ struct isshe_socks_connection
     struct bufferevent *bev_from_user;  // 出去的流量（用户角度）
     struct bufferevent *bev_to_user;    // 进来的流量（用户角度）
 };
-
+*/
 
 void isshe_socks_opt_init(uint8_t *buf);
 
@@ -102,7 +121,7 @@ void isshe_socks_opt_add(uint8_t *buf,
 
 int isshe_socks_opt_len(uint8_t *buf);
 
-void isshe_socks_opt_parse(uint8_t *buf, 
+void isshe_socks_opt_parse(uint8_t *buf, int buflen, 
     struct isshe_socks_opts *opts);
 
 struct isshe_socks_connection *isshe_socks_connection_new();

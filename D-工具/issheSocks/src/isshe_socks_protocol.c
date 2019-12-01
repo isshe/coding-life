@@ -30,19 +30,24 @@ void isshe_socks_opt_init(uint8_t *buf)
 // TODO 不够健壮，只考虑了正常已初始化的情况
 int isshe_socks_opt_find(uint8_t *buf, uint8_t type)
 {
-    int i;
-    for (i = 0; *(buf + i) != '\0'; ) {
-        if (buf[i] == type) {
+    int i = 0;
+    uint8_t cur_type;
+    uint8_t cur_len;
+
+    while(TRUE) {
+        cur_type = buf[i];
+        cur_len = buf[i + 1];
+        printf("cur_type = %u, cur_len = %u\n", cur_type, cur_len);
+        if (cur_type == type) {
             return i;
+        } else if (cur_type == ISSHE_SOCKS_OPT_END) {
+            break;
         } else {
-            i = i + buf[i + 1] + 2;     // 2 = sizeof(type) + sizeof(len)
-            if (buf[i + 1] == 0) {
-                return FAILURE;              // error
-            }
+            i = i + cur_len + sizeof(cur_len) + sizeof(cur_type);
         }
     }
 
-    return FAILURE;                          // error
+    return FAILURE;
 }
 
 
@@ -61,53 +66,67 @@ int isshe_socks_opt_len(uint8_t *buf)
 void isshe_socks_opt_add(uint8_t *buf, uint8_t type, uint8_t len, const void *data)
 {
     int end_pos = isshe_socks_opt_find_end(buf);
-    if (end_pos == -1) {
+    if (end_pos == FAILURE) {
         printf("find end error!!!\n");
         return ;
     }
 
-    buf = buf + end_pos;
+    buf += end_pos;
     memcpy(buf, &type, sizeof(type));
     buf += sizeof(type);
     memcpy(buf, &len, sizeof(len));
+    buf += sizeof(len);
     if (len && data) {
-        buf += sizeof(len);
         memcpy(buf, data, len);
+        buf += len;
     }
 
     isshe_socks_opt_add_end(buf);
 }
 
-void isshe_socks_opt_parse(uint8_t *buf, struct isshe_socks_opts *opts)
+void isshe_socks_opt_parse(uint8_t *buf, int buflen, struct isshe_socks_opts *opts)
 {
     if (!buf) {
         printf("ERROR: buf is NULL!!!\n");
         return ;
     }
 
-    while(buf) {
-        switch (*buf)
+    int i = 0;
+    uint8_t cur_type;
+    uint8_t cur_len;
+    uint8_t *cur_data;
+    uint8_t end = FALSE;
+
+    while(!end && i < buflen) {
+        cur_type = buf[i];
+        cur_len = buf[i + sizeof(cur_type)];
+        cur_data = buf + i + sizeof(cur_len) + sizeof(cur_type);
+        switch (cur_type)
         {
         case ISSHE_SOCKS_OPT_DOMAIN:
-            buf++;
-            opts->dname_len = *buf++;
-            opts->dname = (uint8_t *)malloc(opts->dname_len);    // TODO: 释放 && 健壮化
+            opts->dname_len = cur_len;
+            opts->dname = (uint8_t *)malloc(opts->dname_len + 1);    // TODO: 释放 && 健壮化
+            memcpy(opts->dname, cur_data, opts->dname_len);
+            opts->dname[opts->dname_len] = '\0';
             printf("opts->dname = %s\n", opts->dname);
-            memcpy(opts->dname, buf, opts->dname_len);
             break;
         case ISSHE_SOCKS_OPT_PORT:
-            buf += 2;                               // TODO
-            opts->port = ntohs(*buf);
-            printf("---isshe---: opts->port = %d\n", opts->port);
+            memcpy(&opts->port, cur_data, sizeof(opts->port));
+            opts->port = ntohs(opts->port);
+            printf("---isshe---: opts->port = %u\n", opts->port);
+            break;
+        case ISSHE_SOCKS_OPT_USER_DATA_LEN:
+            memcpy(&opts->user_data_len, cur_data, sizeof(opts->user_data_len));
+            //opts->user_data_len = opts->user_data_len;
+            printf("---isshe---: opts->user_data_len = %u\n", opts->user_data_len);
             break;
         case ISSHE_SOCKS_OPT_END:
-            buf++;
+            end = TRUE;
             break;
         default:
             break;
         }
-
-        buf += *buf;
+        i += cur_len + sizeof(cur_len) + sizeof(cur_type);
     }
 }
 
@@ -121,6 +140,8 @@ isshe_socks_opts_new()
         return iso;
     }
 
+    memset(iso, 0, sizeof(struct isshe_socks_opts));
+
     return iso;
 }
 
@@ -128,6 +149,20 @@ void
 isshe_socks_opts_free(struct isshe_socks_opts *iso)
 {
     // TODO
+    if (iso) {
+        if (iso->dname) {
+            free(iso->dname);
+            iso->dname = NULL;
+        }
+        if (iso->ipv6) {
+            free(iso->ipv6);
+            iso->ipv6 = NULL;
+        }
+
+        free(iso);
+        iso = NULL;
+    }
+
 }
 
 
@@ -147,10 +182,9 @@ isshe_socks_connection_new()
         printf("malloc isshe_socks_connection failed!\n");
         exit(0);
     }
+    isshe_socks_connection_init(isc);
 
     isc->opts = isshe_socks_opts_new();
-
-    isshe_socks_connection_init(isc);
 
     return isc;
 }
@@ -168,7 +202,13 @@ isshe_socks_connection_free(struct isshe_socks_connection *isc)
             isc->target_ai = NULL;
         }
 
+        if (isc->bev) {
+            bufferevent_free(isc->bev);
+            isc->bev = NULL;
+        }
+
         free(isc);
+        isc = NULL;
     }
 }
 
@@ -193,7 +233,7 @@ isshe_socks_connect_to_next(
     // TODO 修改这个函数，考虑把这部分提成sockaddr_in *
     struct sockaddr_in *addr;
     addr = (struct sockaddr_in*)ai_addr;
-    addr->sin_port = port;
+    addr->sin_port = htons(port);
 
     printf("isshe: connet to: %s(%d):%d\n", 
         inet_ntoa(addr->sin_addr), ai_addrlen, 

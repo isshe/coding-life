@@ -120,7 +120,7 @@ isshe_common_event_cb(struct bufferevent *bev, short what, void *ctx)
 				perror("connection error");
 		}
 
-		bufferevent_free(bev);
+		//bufferevent_free(bev);
 	}
 }
 
@@ -150,11 +150,11 @@ isshe_forward_data_event_cb(struct bufferevent *bev, short what, void *ctx)
 			} else {
 				/* We have nothing left to say to the other
 				 * side; close it. */
-				bufferevent_free(partner);
+				//bufferevent_free(partner);
 			}
 		}
 
-		bufferevent_free(bev);
+		//bufferevent_free(bev);
 	}
 }
 
@@ -212,7 +212,7 @@ isshe_print_buffer(char *buf, int buf_len, int print_len)
 
     n = buf_len > print_len ? print_len : buf_len;
     for (i=0; i<n; ++i) {
-        printf("%d(%x), ", buf[i], buf[i]);
+        printf("%u(%x), ", buf[i], buf[i]);
     }
 }
 
