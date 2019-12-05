@@ -9,16 +9,58 @@ Redis分为服务器(redis-server)和客户端(redis-cli)。
 # 安装
 略
 
+# Redis 通用命令
+* shell
+```
+sudo service redis-server restart
+redis-cli
+```
+
+* redis-cli：
+```
+exist <key>             # 判断key是否存在
+del <key>               # 删除某key
+type <key>              # 获取key的类型
+keys <key-pattern>      # 返回匹配的key列表
+randomkey               # 随机返回一个存在的key，数据库空，则返回空字符串
+clear                   # 情况命令界面
+rename <old_key_name> <new_key_name>    # 重命名key
+renamenx <old_key_name> <new_key_name>  # 新名字存在，则重命名失败
+dbsize                  # 返回key的数量
+expire <key> <seconds>  # 设置/更新key的超时时间，超时后删除
+ttl <key>               # 查询剩余生存时间
+flushdb                 # 清空当前数据库的key
+flushall                # 清空所有数据库的key
+config get <config_name>                # 获取配置
+config set <config_name> <config_value> # 设置配置
+auth                    # 认证
+config resetstat        # 重置数据统计报告
+info                    # 查询信息
+- server：redis server信息
+- client：client连接信息
+- memory：内存占用信息
+- persistence: RDB和AOF信息
+- stats: 常规统计
+- replication: master/slave信息
+- cpu：CPU占用信息
+- cluster: 集群信息
+- keyspace: 数据库信息统计
+- all：所有信息
+- default: 常规设置信息
+```
+
+
 # Redis strings
 Redis字符串是二进制安全的，这意味着Redis字符串能包含任意类型的数据。
 但过大的文件不宜存入redis，一方面系统内存有限，另一个方面字符串类型最懂储存512字节的内容。
 
-## Redis字符串操作
+## Redis strings操作示例
 ```shell
 set mykey somevalue     # 设置mykey，存在会替换
 get mykey
 set mykey newval nx     # nx：不存在才插入
 set mykey newval xx     # xx：不存在也插入
+set mykey abc ex 30     # 设置超时时间
 set counter 100         # 初始化
 incr counter            # +1
 incrby counter 50       # +50
@@ -29,7 +71,7 @@ mget a b c              # 一次获取多个value
 # Redis List
 Redis List：字符串列表，最多能容纳`2^32-1`个元素。
 
-## Redis列表操作
+## Redis List操作示例
 ```shell
 rpush mylist A B        # 右边插入
 lpush mylist C          # 左边插入
@@ -42,8 +84,44 @@ del mylist              # 删除列表
 ```
 
 # Redis Hash
-Redis Hash：字符串字段与字符串值之间的映射。
+Redis Hash：字符串字段与字符串值之间的映射。是展现对象的完美数据类型。
+
+## Redis Hash操作示例
 ```
+hmset <key> <sub_key1> <sub_value1> <sub_key2> <sub_value2> [...]
+hget <key> <sub_key>
+hgetall <key>
+hmget <key> <sub_key1> <sub_key2> [...]
+hincrby <key> <sub_key> <inc num>
+```
+
+# Redis 无序集合(set)
+* 一个无序的字符串集合；
+* 添加/删除/测试存在时间复杂度为O(1);
+* 不允许重复元素；
+
+## Redis无序集合操作示例
+```
+sadd myset 1 2 3 3 2 1  # 添加元素到集合
+smembers myset          # 显示集合内所有元素
+sismember myset 3       # 存在返回1
+```
+
+# Redis 有序集合(set)
+* 有序；
+* 添加/删除/更新时间复杂度O(N)；
+* 不允许重复元素；
+* 可根据权值(score)/次序(position)获取范围内的元素。
+
+## Redis 有序集合操作示例
+```
+# zadd <key> <score> <value>
+zadd zset 1 A           # 添加元素
+zadd zset 10 J          # 添加元素
+zadd zset 5 E           # 添加元素
+zrange zset 0 -1        # 顺序输出
+zrevrange zset 0 -1     # 逆序输出
+zrange zset 0 -1 withscores     # 顺序连同score一起输出
 ```
 
 
@@ -166,4 +244,10 @@ vm-max-threads 4                # 用于执行value对象换入工作的线程�
 ## 如何获取所有key-value？
 ```
 keys *  # 获取所有key
+```
+
+## 如何更新key的生存时间？
+* expire指令既可以设置超时时间，也可以更新超时时间
+```
+expire <key> <seconds>
 ```
