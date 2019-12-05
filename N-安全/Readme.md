@@ -7,6 +7,7 @@ Exif(exchange image file format, 交换图像文件格式)：定义了如何存�
 获取文件信息。
 ### Beautiful Soup
 快速解析HTML和XML文档。
+提取URL。
 
 ### Pillow
 图片相关。可以`_getexif`。
@@ -65,4 +66,8 @@ if IPTEST(ipsrc).iptype() == "PRIVATE":
 sudo apt-get install aircrack-ng
 sudo airmon-ng start <interface_name>
 ifconfig 后就能看到mon0之类的新接口
+```
+
+### Mechanize：对WEB内容进行操作
+```
 ```
