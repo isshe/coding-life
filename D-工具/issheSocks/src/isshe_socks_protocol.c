@@ -166,13 +166,6 @@ isshe_socks_opts_free(struct isshe_socks_opts *iso)
 }
 
 
-void
-isshe_socks_connection_init(struct isshe_socks_connection *isc)
-{
-    // TODO
-    memset(isc, 0, sizeof(struct isshe_socks_connection));
-}
-
 struct isshe_socks_connection *
 isshe_socks_connection_new()
 {
@@ -182,7 +175,8 @@ isshe_socks_connection_new()
         printf("malloc isshe_socks_connection failed!\n");
         exit(0);
     }
-    isshe_socks_connection_init(isc);
+
+    memset(isc, 0, sizeof(struct isshe_socks_connection));
 
     isc->opts = isshe_socks_opts_new();
 
@@ -192,6 +186,7 @@ isshe_socks_connection_new()
 void
 isshe_socks_connection_free(struct isshe_socks_connection *isc)
 {
+    printf("---free isshe_socks_connection_free---\n");
     if (isc) {
         if (isc->opts) {
             isshe_socks_opts_free(isc->opts);
@@ -203,12 +198,14 @@ isshe_socks_connection_free(struct isshe_socks_connection *isc)
         }
 
         if (isc->bev) {
+            printf("---free bev: %p\n", isc->bev);
             bufferevent_free(isc->bev);
             isc->bev = NULL;
+            printf("---after free: %p\n", isc->bev);
         }
 
         free(isc);
-        isc = NULL;
+        //isc = NULL;
     }
 }
 

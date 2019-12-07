@@ -44,7 +44,9 @@ proxy_server_connection_new(struct proxy_server *server)
 
     memset(psc, 0, sizeof(struct proxy_server_connection));
     psc->from_user_conn = isshe_socks_connection_new();
+    psc->flag |= ISSHE_SOCKS_FLAG_FROM_USER;
     psc->to_user_conn = isshe_socks_connection_new();
+    psc->flag |= ISSHE_SOCKS_FLAG_TO_USER;
     psc->ps = server;
 
     return psc;
@@ -52,16 +54,21 @@ proxy_server_connection_new(struct proxy_server *server)
 
 void proxy_server_connection_free(struct proxy_server_connection *psc, uint64_t flag)
 {
+    printf("---proxy_server_connection_free---\n");
     if (psc) {
-        if (flag & ISSHE_SOCKS_FLAG_FROM_USER
+        if (flag & ISSHE_SOCKS_FLAG_FROM_USER 
             && psc->flag & ISSHE_SOCKS_FLAG_FROM_USER) {
+            printf("---free proxy_server_connection_free---free from user\n");
             isshe_socks_connection_free(psc->from_user_conn);
             psc->flag &= ~ISSHE_SOCKS_FLAG_FROM_USER;
+            psc->from_user_conn = NULL;
         }
         if (flag & ISSHE_SOCKS_FLAG_TO_USER 
             && psc->flag & ISSHE_SOCKS_FLAG_TO_USER) {
+            printf("---free proxy_server_connection_free---free to user\n");
             isshe_socks_connection_free(psc->to_user_conn);
             psc->flag &= ~ISSHE_SOCKS_FLAG_TO_USER;
+            psc->to_user_conn = NULL;
         }
 
         if (!flag) {
@@ -71,48 +78,35 @@ void proxy_server_connection_free(struct proxy_server_connection *psc, uint64_t 
     }
 }
 
-void
-proxy_server_from_user_event_cb(struct bufferevent *bev, short what, void *ctx)
-{
-    struct proxy_server_connection *psc = (struct proxy_server_connection *)ctx;
-    isshe_forward_data_event_cb(bev, what, psc->to_user_conn->bev);
-	if (what & (BEV_EVENT_EOF|BEV_EVENT_ERROR)) {
-        printf("INFO: proxy_server_connection_free...\n");
-        proxy_server_connection_free(psc, ISSHE_SOCKS_FLAG_FROM_USER);
-	}
-}
-
-void
-proxy_server_to_user_event_cb(struct bufferevent *bev, short what, void *ctx)
-{
-    struct proxy_server_connection *psc = (struct proxy_server_connection *)ctx;
-    isshe_forward_data_event_cb(bev, what, psc->from_user_conn->bev);
-	if (what & (BEV_EVENT_EOF|BEV_EVENT_ERROR)) {
-        printf("INFO: proxy_server_connection_free...\n");
-        proxy_server_connection_free(psc, ISSHE_SOCKS_FLAG_TO_USER);
-	}
-}
-
 
 void
 proxy_server_to_user_read_cb(struct bufferevent *bev, void *ctx)
 {
     struct proxy_server_connection *psc = (struct proxy_server_connection *)ctx;
-    struct bufferevent *partner = psc->from_user_conn->bev;
+    struct bufferevent *partner = NULL;
+
     //uint8_t mac[16] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
     //struct isshe_socks_opt opt;
 	struct evbuffer *src, *dst;
     //uint8_t buf[1024];      // temp
 	size_t len;
-
+    
 	src = bufferevent_get_input(bev);
 	len = evbuffer_get_length(src);
+    if (psc && psc->from_user_conn && psc->from_user_conn->bev) {
+        partner = psc->from_user_conn->bev;
+    }
 	if (!partner) {
+        printf("evbuffer_drain!!!\n");
 		evbuffer_drain(src, len);
 		return;
 	}
 
 	dst = bufferevent_get_output(partner);
+    if (!dst) {
+        printf("dst == NULL!!!\n");
+        return;
+    }
     /*
     // 添加消息校验码
     evbuffer_add(dst, mac, sizeof(mac));
@@ -122,10 +116,8 @@ proxy_server_to_user_read_cb(struct bufferevent *bev, void *ctx)
     evbuffer_add(dst, &opt, sizeof(opt.type) + sizeof(opt.len));
     */
     // 转发消息
-	evbuffer_add_buffer(dst, src);
     printf("Debug: %p(%lu) <- %p(%lu)\n", partner, evbuffer_get_length(dst), bev, len);
-    //bufferevent_setcb(bev, isshe_forward_data_read_cb, 
-    //    NULL, isshe_forward_data_event_cb, partner);
+	evbuffer_add_buffer(dst, src);
 }
 
 struct bufferevent *
@@ -188,13 +180,12 @@ proxy_server_from_user_read_cb(struct bufferevent *bev, void *ctx)
     struct proxy_server_connection *psc = (struct proxy_server_connection *)ctx;
     struct isshe_socks_connection *isc_from_user = psc->from_user_conn;
     struct isshe_socks_connection *isc_to_user = psc->to_user_conn;
-    struct bufferevent *partner;
+    struct bufferevent *partner = NULL;
     struct evbuffer *src, *dst;
     char mac[16] = {0};
     uint8_t buf[128];      // TODO: 暂时写死选项长度，调试代理通过后再修改
 	size_t len;
-    
-    printf("---------isshe----------\n");
+
     src = bufferevent_get_input(bev);
 	len = evbuffer_get_length(src);
 
@@ -202,8 +193,7 @@ proxy_server_from_user_read_cb(struct bufferevent *bev, void *ctx)
     if (isc_to_user->status != ISSHE_SCS_ESTABLISHED) {
         // 读取消息验证码，进行消息验证
         bufferevent_read(bev, mac, sizeof(mac));
-        isshe_print_buffer(mac, sizeof(mac), sizeof(mac));
-        printf("\n---------isshe----------\n");
+        //isshe_print_buffer(mac, sizeof(mac), sizeof(mac));
 
         // TODO check_mac()
 
@@ -213,16 +203,18 @@ proxy_server_from_user_read_cb(struct bufferevent *bev, void *ctx)
 
         // 解析选项，有新的选项，就添加到配置结构中
         bufferevent_read(bev, buf, sizeof(buf));
-        isshe_print_buffer((char *)buf, sizeof(buf), sizeof(buf));
-        printf("\n---------isshe----------\n");
+        //isshe_print_buffer((char *)buf, sizeof(buf), sizeof(buf));
         isshe_socks_opt_parse(buf, sizeof(buf), isc_from_user->opts);
 
         if (!isc_from_user->opts->ipv4
             && !isc_from_user->opts->ipv6
             && isc_from_user->opts->dname) {
-            isshe_domain_name_resolution(
+            if (isshe_domain_name_resolution(
                 (char *)isc_from_user->opts->dname, 
-                &isc_from_user->target_ai);
+                &isc_from_user->target_ai) != 0) {
+                    printf("域名解析错误！！！\n");
+                    return;
+                }
         }
         // 连接下一跳
         isc_to_user->bev = proxy_server_connect_to_next(psc);
@@ -242,20 +234,83 @@ proxy_server_from_user_read_cb(struct bufferevent *bev, void *ctx)
         bufferevent_enable(isc_to_user->bev, EV_READ|EV_WRITE);
     }
     
-    partner = isc_to_user->bev;
+    if (isc_to_user && isc_to_user->bev) {
+        partner = isc_to_user->bev;
+    }
     if (!partner) {
+        printf("evbuffer_drain!!!\n");
 		evbuffer_drain(src, len);
 		return;
 	}
     // 读取消息，发送给代理服务器
 	dst = bufferevent_get_output(partner);
-	evbuffer_add_buffer(dst, src);
     printf("Debug: %p(%lu) -> %p(%lu)\n", bev, len, partner, evbuffer_get_length(dst));
-    //bufferevent_setcb(bev, isshe_forward_data_read_cb, 
-    //    NULL, isshe_forward_data_event_cb, partner);
+	evbuffer_add_buffer(dst, src);
 }
 
-static void
+
+void
+proxy_server_common_event(
+    struct bufferevent *bev, 
+    struct bufferevent *partner, 
+    bufferevent_data_cb read_cb,
+    uint64_t bev_flag, 
+    uint64_t partner_flag,
+    short what,
+    void *ctx)
+{
+    struct proxy_server_connection *psc = (struct proxy_server_connection *)ctx;
+	if (what & (BEV_EVENT_EOF|BEV_EVENT_ERROR)) {
+        if (what & BEV_EVENT_ERROR) {
+            if (errno) {
+                printf("bev = %p, partner = %p\n", bev, partner);
+                perror("connection error");
+            }
+        }
+
+        if (partner) {
+            // 把所有数据读出来，发给partner
+            read_cb(bev, ctx);
+            if (evbuffer_get_length(bufferevent_get_output(partner))) {
+                bufferevent_disable(partner, EV_READ);
+            } else {
+                proxy_server_connection_free(psc, partner_flag);
+            }
+        }
+        
+        proxy_server_connection_free(psc, bev_flag);
+    }
+}
+
+void
+proxy_server_from_user_event_cb(struct bufferevent *bev, short what, void *ctx)
+{
+    struct proxy_server_connection *psc = (struct proxy_server_connection *)ctx;
+    struct bufferevent *partner = NULL;
+    if (psc && psc->to_user_conn && psc->to_user_conn->bev) {
+        partner = psc->to_user_conn->bev;
+    }
+    proxy_server_common_event(bev, partner, 
+        proxy_server_from_user_read_cb,
+        ISSHE_SOCKS_FLAG_FROM_USER, 
+        ISSHE_SOCKS_FLAG_TO_USER, what, ctx);
+}
+
+void
+proxy_server_to_user_event_cb(struct bufferevent *bev, short what, void *ctx)
+{
+    struct proxy_server_connection *psc = (struct proxy_server_connection *)ctx;
+    struct bufferevent *partner = NULL;
+    if (psc && psc->from_user_conn && psc->from_user_conn->bev) {
+        partner = psc->from_user_conn->bev;
+    }
+    proxy_server_common_event(bev, partner, 
+        proxy_server_to_user_read_cb,
+        ISSHE_SOCKS_FLAG_TO_USER,
+        ISSHE_SOCKS_FLAG_FROM_USER, what, ctx);
+}
+
+void
 proxy_server_accept_cb(struct evconnlistener *listener, evutil_socket_t fd,
     struct sockaddr *sa, int socklen, void *user_data)
 {
@@ -270,8 +325,9 @@ proxy_server_accept_cb(struct evconnlistener *listener, evutil_socket_t fd,
     psc->from_user_conn->bev = isshe_bufferevent_socket_new(ps->evbase, fd);
     assert(psc->from_user_conn->bev);
 
-    bufferevent_setcb(psc->from_user_conn->bev, proxy_server_from_user_read_cb, 
-        NULL, proxy_server_from_user_event_cb, (void*)psc);
+    bufferevent_setcb(psc->from_user_conn->bev, 
+        proxy_server_from_user_read_cb, NULL, 
+        proxy_server_from_user_event_cb, (void*)psc);
     bufferevent_enable(psc->from_user_conn->bev, EV_READ|EV_WRITE);
 }
 

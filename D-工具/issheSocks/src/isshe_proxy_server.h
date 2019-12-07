@@ -30,4 +30,20 @@ struct proxy_server_connection
     struct proxy_server *ps;
 };
 
+void proxy_server_accept_cb(
+    struct evconnlistener *listener, evutil_socket_t fd,
+    struct sockaddr *sa, int socklen, void *user_data);
+
+void proxy_server_from_user_event_cb(
+    struct bufferevent *bev, short what, void *ctx);
+
+void proxy_server_from_user_read_cb(
+    struct bufferevent *bev, void *ctx);
+
+void proxy_server_to_user_event_cb(
+    struct bufferevent *bev, short what, void *ctx);
+
+void proxy_server_to_user_read_cb(
+    struct bufferevent *bev, void *ctx);
+
 #endif

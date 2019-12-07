@@ -58,16 +58,21 @@ socks_parser_connection_new(int fd)
 void
 socks_parser_connection_free(struct socks_parser_connection *spc, uint64_t flag)
 {
+    printf("---free socks_parser_connection_free---\n");
     if (spc) {
         if (flag & ISSHE_SOCKS_FLAG_FROM_USER
             && spc->flag & ISSHE_SOCKS_FLAG_FROM_USER) {
+            printf("---free socks_parser_connection_free---free from user\n");
             isshe_socks_connection_free(spc->from_user_conn);
             spc->flag &= ~ISSHE_SOCKS_FLAG_FROM_USER;
+            spc->from_user_conn = NULL;
         }
         if (flag & ISSHE_SOCKS_FLAG_TO_USER 
             && spc->flag & ISSHE_SOCKS_FLAG_TO_USER) {
+            printf("---free socks_parser_connection_free---free to user\n");
             isshe_socks_connection_free(spc->to_user_conn);
             spc->flag &= ~ISSHE_SOCKS_FLAG_TO_USER;
+            spc->to_user_conn = NULL;
         }
 
         if (!flag) {
@@ -211,18 +216,6 @@ int scs_request_process(struct socks_parser_connection *sc, struct bufferevent *
     return 1;
 }
 
-void temp_receive_and_print_buf(struct bufferevent *bev)
-{
-    char buf[BUFFER_LEN] = {0};
-    size_t n;
-    memset(buf, 0, sizeof(buf));
-    n = bufferevent_read(bev, buf, sizeof(buf));
-    if (n <= 0) {
-        return;
-    }
-    isshe_print_buffer(buf, n, 10);
-}
-
 void
 socks_parser_from_user_read_cb(struct bufferevent *bev, void *ctx)
 {
@@ -231,13 +224,16 @@ socks_parser_from_user_read_cb(struct bufferevent *bev, void *ctx)
     struct isshe_socks_connection *isc_to_user = spc->to_user_conn;
     uint8_t mac[16] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
     //struct isshe_socks_opt opt;
-    struct bufferevent *partner = isc_to_user->bev;
+    struct bufferevent *partner = NULL; //isc_to_user->bev;
 	struct evbuffer *src, *dst;
 	size_t len;
     uint8_t buf[128];      // temp
 
 	src = bufferevent_get_input(bev);
 	len = evbuffer_get_length(src);
+    if (isc_to_user && isc_to_user->bev) {
+        partner = isc_to_user->bev;
+    }
 	if (!partner) {
 		evbuffer_drain(src, len);
 		return;
@@ -252,30 +248,17 @@ socks_parser_from_user_read_cb(struct bufferevent *bev, void *ctx)
         // 添加选项
         memset(buf, 0, sizeof(buf));    // TODO 是否需要&优化
         isshe_socks_opt_init(buf);
-        isshe_print_buffer((char *)buf, sizeof(buf), sizeof(buf));
-        printf("---------isshe----------(%d)(%s)\n", 
-            isc_from_user->opts->dname_len, isc_from_user->opts->dname);
-        // isshe_socks_opt_add(buf, ISSHE_SOCKS_OPT_ADDR_TYPE, sizeof(sc->target_type), &(sc->target_type));
         isshe_socks_opt_add(buf, ISSHE_SOCKS_OPT_DOMAIN, 
             isc_from_user->opts->dname_len, isc_from_user->opts->dname);
-        isshe_print_buffer((char *)buf, sizeof(buf), sizeof(buf));
-        printf("---------isshe----------\n");
         isshe_socks_opt_add(buf, ISSHE_SOCKS_OPT_PORT, 
             sizeof(isc_from_user->opts->port), &(isc_from_user->opts->port));
         isshe_socks_opt_add(buf, ISSHE_SOCKS_OPT_USER_DATA_LEN, sizeof(len), &len);
-        isshe_print_buffer((char *)buf, sizeof(buf), sizeof(buf));
-        printf("---------isshe----------\n");
-        //evbuffer_add(dst, &opt, isshe_socks_opt_len(buf));
         evbuffer_add(dst, buf, sizeof(buf));   // TODO 这里固定128字节了
-        //bufferevent_setcb(bev, isshe_forward_data_read_cb, 
-        //    NULL, isshe_forward_data_event_cb, partner);
         
         isc_to_user->status = ISSHE_SCS_ESTABLISHED;
     }
-
-    evbuffer_add_buffer(dst, src);
     printf("Debug: %p(%lu) -> %p(%lu)\n", bev, len, partner, evbuffer_get_length(dst));
-
+    evbuffer_add_buffer(dst, src);
 }
 
 void
@@ -283,16 +266,17 @@ socks_parser_to_user_read_cb(struct bufferevent *bev, void *ctx)
 {
     struct socks_parser_connection *spc = (struct socks_parser_connection *)ctx;
     struct isshe_socks_connection *isc_from_user = spc->from_user_conn;
-    //struct isshe_socks_connection *isc_to_user = spc->to_user_conn;
-    //uint8_t mac[16] = {0};
-    //struct isshe_socks_opt opt;
-    struct bufferevent *partner = isc_from_user->bev;
+    struct bufferevent *partner = NULL;
 	struct evbuffer *src, *dst;
 	size_t len;
 
 	src = bufferevent_get_input(bev);
 	len = evbuffer_get_length(src);
+    if (isc_from_user && isc_from_user->bev) {
+        partner = isc_from_user->bev;
+    }
 	if (!partner) {
+        printf("evbuffer_drain!!!\n");
 		evbuffer_drain(src, len);
 		return;
 	}
@@ -304,18 +288,17 @@ socks_parser_to_user_read_cb(struct bufferevent *bev, void *ctx)
     // 读取选项
     bufferevent_read(bev, &opt, sizeof(opt.type) + sizeof(opt.len));
     */
+    printf("Debug: bev = %p, partner = %p\n", bev, partner);
 	dst = bufferevent_get_output(partner);
-	evbuffer_add_buffer(dst, src);
     printf("Debug: %p(%lu) <- %p(%lu)\n", partner, evbuffer_get_length(dst), bev, len);
-
-    //bufferevent_setcb(bev, isshe_forward_data_read_cb, 
-    //    NULL, isshe_forward_data_event_cb, partner);
+	evbuffer_add_buffer(dst, src);
 }
 
 
 static void
 socks_data_event_cb(struct bufferevent *bev, short what, void *ctx)
 {
+    printf("-----socks_data_event_cb------");
     /*
     struct socks_parser_connection *spc = (struct socks_parser_connection *)ctx;
     isshe_forward_data_event_cb(bev, what, spc->from_user_conn->bev);
@@ -327,76 +310,65 @@ socks_data_event_cb(struct bufferevent *bev, short what, void *ctx)
 }
 
 void
+socks_parser_common_event(
+    struct bufferevent *bev, 
+    struct bufferevent *partner, 
+    bufferevent_data_cb read_cb,
+    uint64_t bev_flag, 
+    uint64_t partner_flag,
+    short what,
+    void *ctx)
+{
+    struct socks_parser_connection *spc = (struct socks_parser_connection *)ctx;
+	if (what & (BEV_EVENT_EOF|BEV_EVENT_ERROR)) {
+        if (what & BEV_EVENT_ERROR) {
+            if (errno) {
+                perror("connection error");
+            }
+        }
+
+        if (partner) {
+            // 把所有数据读出来，发给partner
+            read_cb(bev, ctx);
+            if (evbuffer_get_length(bufferevent_get_output(partner))) {
+                bufferevent_disable(partner, EV_READ);
+            } else {
+                socks_parser_connection_free(spc, partner_flag);
+            }
+        }
+
+        socks_parser_connection_free(spc, bev_flag);
+    }
+}
+
+
+void
 socks_parser_from_user_event_cb(struct bufferevent *bev, short what, void *ctx)
 {
     struct socks_parser_connection *spc = (struct socks_parser_connection *)ctx;
-    isshe_forward_data_event_cb(bev, what, spc->to_user_conn->bev);
-	if (what & (BEV_EVENT_EOF|BEV_EVENT_ERROR)) {
-        printf("INFO: socks_parser_connection_free...\n");
-        socks_parser_connection_free(spc, ISSHE_SOCKS_FLAG_FROM_USER);
-	}
+    struct bufferevent *partner = NULL;
+    if (spc->to_user_conn && spc->to_user_conn->bev) {
+        partner = spc->to_user_conn->bev;
+    }
+    socks_parser_common_event(bev, partner, 
+        socks_parser_from_user_read_cb,
+        ISSHE_SOCKS_FLAG_FROM_USER, 
+        ISSHE_SOCKS_FLAG_TO_USER, what, ctx);
 }
 
 void
 socks_parser_to_user_event_cb(struct bufferevent *bev, short what, void *ctx)
 {
     struct socks_parser_connection *spc = (struct socks_parser_connection *)ctx;
-    isshe_forward_data_event_cb(bev, what, spc->from_user_conn->bev);
-	if (what & (BEV_EVENT_EOF|BEV_EVENT_ERROR)) {
-        printf("INFO: socks_parser_connection_free...\n");
-        socks_parser_connection_free(spc, ISSHE_SOCKS_FLAG_TO_USER);
-	}
-}
-
-// TODO 拓展为根据配置使用特定的协议进行连接。（当前是TCP）
-/* 
- * 连接下一级
- */
-/*
-static void
-connect_to_next(struct socks_parser_connection *sc)
-{
-    struct bufferevent *bev_out;
-
-    if (isshe_domain_name_resolution(sc->target, &sc->target_ai)) {
-        // TODO: 考虑bev_in怎么处理
-        //bufferevent_free(bev_in);
-        return;
+    struct bufferevent *partner = NULL;
+    if (spc->from_user_conn && spc->from_user_conn->bev) {
+        partner = spc->from_user_conn->bev;
     }
-    
-    bev_out = isshe_bufferevent_socket_new(sc->sp->evbase, -1);
-    assert(bev_out);
-
-    struct sockaddr_in *addr;
-    addr = (struct sockaddr_in*)(sc->target_ai->ai_addr);
-    addr->sin_port = sc->target_port;
-
-    printf("isshe: connet to: %s(%d):%d\n", 
-        inet_ntoa(addr->sin_addr), sc->target_ai->ai_addrlen, ntohs(addr->sin_port));
-        
-	//isshe_print_addrinfo(sc->target_ai);
-
-    if (bufferevent_socket_connect(bev_out,
-		(struct sockaddr*)addr, sizeof(struct sockaddr_in)) < 0) {
-
-		perror("bufferevent_socket_connect");
-		bufferevent_free(bev_out);
-		//bufferevent_free(bev_in);
-		return;
-	}
-        
-    int out_fd = bufferevent_getfd(bev_out);
-    struct linger linger;
-    memset(&linger, 0, sizeof(struct linger));
-    if (setsockopt(out_fd, SOL_SOCKET, SO_LINGER, 
-        (const void *)&linger, sizeof(struct linger)) != 0) {
-        
-        printf("can not disable linger!\n");
-    }
-
-    sc->bev_out = bev_out;
+    socks_parser_common_event(bev, partner, 
+        socks_parser_to_user_read_cb,
+        ISSHE_SOCKS_FLAG_TO_USER, 
+        ISSHE_SOCKS_FLAG_FROM_USER, what, ctx);
 }
-*/
 
 static void
 socks_data_read_cb(struct bufferevent *bev, void *ctx)

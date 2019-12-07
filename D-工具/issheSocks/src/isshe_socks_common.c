@@ -185,7 +185,7 @@ isshe_domain_name_resolution(const char *domain_name, struct addrinfo **res)
 
     if ((rc = domain_name_resolution(domain_name, res)) != 0) {
         printf("domain name resolution error: %s\n", gai_strerror(rc));
-        exit(1);
+        //exit(1);
     }
 
     return rc;
