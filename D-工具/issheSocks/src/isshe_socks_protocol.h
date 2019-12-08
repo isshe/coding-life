@@ -32,6 +32,8 @@ enum isshe_socks_opt_type
     ISSHE_SOCKS_OPT_IPV6,
     ISSHE_SOCKS_OPT_PORT,
     ISSHE_SOCKS_OPT_CRYPTO,         // 指定数据部分加密算法，没有指定就按配置文件的来
+    ISSHE_SOCKS_OPT_CRYPTO_KEY,
+    ISSHE_SOCKS_OPT_CRYPTO_IVEC,
     ISSHE_SOCKS_OPT_USER,           // 用户名，可以用于流量统计等
     ISSHE_SOCKS_OPT_USER_DATA_LEN,
     ISSHE_SOCKS_OPT_END = 255,

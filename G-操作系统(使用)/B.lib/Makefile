@@ -7,7 +7,8 @@ OBJS   = isshe_error.o isshe_file.o \
 			isshe_process.o isshe_signal.o isshe_stdio.o \
 			isshe_unistd.o isshe_pthread.o isshe_time.o \
 			isshe_ipc.o isshe_rpc.o isshe_socket.o \
-			isshe_rio.o isshe_sbuf.o
+			isshe_rio.o isshe_sbuf.o crypto/isshe_aes.o \
+			crypto/isshe_aes_cfb128.o
 
 all:	$(LIBMISC)
 

@@ -18,7 +18,7 @@
 #include "isshe_socks_protocol.h"
 
 void
-socks_parser_init(struct socks_parser *parser, struct isshe_socks_config *config)
+socks_parser_init(struct isshe_socks_parser *parser, struct isshe_socks_config *config)
 {
     parser->evbase = NULL;
     parser->evlistener = NULL;
@@ -26,27 +26,25 @@ socks_parser_init(struct socks_parser *parser, struct isshe_socks_config *config
 }
 
 void
-socks_parser_uninit(struct socks_parser *parser)
+socks_parser_uninit(struct isshe_socks_parser *parser)
 {
     evconnlistener_free(parser->evlistener);
     event_base_free(parser->evbase);
 }
 
 
-struct socks_parser_connection *
+struct isshe_socks_parser_connection *
 socks_parser_connection_new(int fd)
 {
-   struct socks_parser_connection *spc = malloc(sizeof(struct socks_parser_connection));
+   struct isshe_socks_parser_connection *spc = malloc(sizeof(struct isshe_socks_parser_connection));
     if (!spc) {
         printf("can not malloc socks connection, return\n");
         return NULL;
     }
 
-    memset(spc, 0, sizeof(struct socks_parser_connection));
+    memset(spc, 0, sizeof(struct isshe_socks_parser_connection));
     spc->from_user_conn = isshe_socks_connection_new();
-    spc->flag |= ISSHE_SOCKS_FLAG_FROM_USER;
     spc->to_user_conn = isshe_socks_connection_new();
-    spc->flag |= ISSHE_SOCKS_FLAG_TO_USER;
 
     spc->from_user_conn->fd = fd;
     spc->from_user_conn->status = SCS_WAITING_SELECTION_MSG;
@@ -56,28 +54,24 @@ socks_parser_connection_new(int fd)
 
 
 void
-socks_parser_connection_free(struct socks_parser_connection *spc, uint64_t flag)
+socks_parser_connection_free(struct isshe_socks_parser_connection *spc, uint64_t flag)
 {
     printf("---free socks_parser_connection_free---\n");
     if (spc) {
-        if (flag & ISSHE_SOCKS_FLAG_FROM_USER
-            && spc->flag & ISSHE_SOCKS_FLAG_FROM_USER) {
+        if (flag & ISSHE_SOCKS_FLAG_FROM_USER) {
             printf("---free socks_parser_connection_free---free from user\n");
             isshe_socks_connection_free(spc->from_user_conn);
-            spc->flag &= ~ISSHE_SOCKS_FLAG_FROM_USER;
             spc->from_user_conn = NULL;
         }
-        if (flag & ISSHE_SOCKS_FLAG_TO_USER 
-            && spc->flag & ISSHE_SOCKS_FLAG_TO_USER) {
+        if (flag & ISSHE_SOCKS_FLAG_TO_USER) {
             printf("---free socks_parser_connection_free---free to user\n");
             isshe_socks_connection_free(spc->to_user_conn);
-            spc->flag &= ~ISSHE_SOCKS_FLAG_TO_USER;
             spc->to_user_conn = NULL;
         }
 
         if (!flag) {
             free(spc);
-            spc = NULL;
+            //spc = NULL;
         }
     }
 }
@@ -136,7 +130,7 @@ int scs_selction_msg_process(struct bufferevent *bev)
  * 处理socks5命令
  */
 void
-connect_cmd_process(struct socks_parser_connection *spc, 
+connect_cmd_process(struct isshe_socks_parser_connection *spc, 
     struct bufferevent *bev, struct socks_request *request)
 {
     struct isshe_socks_connection *isc_from_user = spc->from_user_conn;
@@ -178,7 +172,7 @@ connect_cmd_process(struct socks_parser_connection *spc,
     bufferevent_read(bev, &isc_from_user->opts->port, sizeof(isc_from_user->opts->port));
 }
 
-int scs_request_process(struct socks_parser_connection *sc, struct bufferevent *bev)
+int scs_request_process(struct isshe_socks_parser_connection *sc, struct bufferevent *bev)
 {
     printf("---isshe---: scs_request_process---\n");
     int len = evbuffer_get_length(bufferevent_get_input(bev));
@@ -217,16 +211,40 @@ int scs_request_process(struct socks_parser_connection *sc, struct bufferevent *
 }
 
 void
+socks_parser_proto_opt_gen(struct evbuffer *dst, 
+    struct isshe_socks_connection *isc, uint32_t len)
+{
+    uint8_t mac[16] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
+    uint8_t buf[1024];
+
+    // 添加消息校验码
+    evbuffer_add(dst, mac, sizeof(mac));
+
+    // TODO 不需要每次都加选项，优化：去掉后续不需要的选项
+    // 添加选项
+    //memset(buf, 0, sizeof(buf));    // TODO 是否需要&优化
+    isshe_socks_opt_init(buf);
+    isshe_socks_opt_add(buf, ISSHE_SOCKS_OPT_DOMAIN, 
+        isc->opts->dname_len, isc->opts->dname);
+    isshe_socks_opt_add(buf, ISSHE_SOCKS_OPT_PORT, 
+        sizeof(isc->opts->port), &(isc->opts->port));
+    isshe_socks_opt_add(buf, ISSHE_SOCKS_OPT_USER_DATA_LEN, sizeof(len), &len);
+    //isshe_socks_opt_add(buf, ISSHE_SOCKS_OPT_CRYPTO_IVEC, )
+    //isshe_socks_opt_add(buf, ISSHE_SOCKS_OPT_CRYPTO_KEY, )
+    evbuffer_add(dst, buf, isshe_socks_opt_len(buf));
+}
+
+void
 socks_parser_from_user_read_cb(struct bufferevent *bev, void *ctx)
 {
-    struct socks_parser_connection *spc = (struct socks_parser_connection *)ctx;
+    struct isshe_socks_parser_connection *spc = (struct isshe_socks_parser_connection *)ctx;
     struct isshe_socks_connection *isc_from_user = spc->from_user_conn;
     struct isshe_socks_connection *isc_to_user = spc->to_user_conn;
     uint8_t mac[16] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
     //struct isshe_socks_opt opt;
     struct bufferevent *partner = NULL; //isc_to_user->bev;
 	struct evbuffer *src, *dst;
-	size_t len;
+	uint32_t len;
     uint8_t buf[128];      // temp
 
 	src = bufferevent_get_input(bev);
@@ -264,7 +282,7 @@ socks_parser_from_user_read_cb(struct bufferevent *bev, void *ctx)
 void
 socks_parser_to_user_read_cb(struct bufferevent *bev, void *ctx)
 {
-    struct socks_parser_connection *spc = (struct socks_parser_connection *)ctx;
+    struct isshe_socks_parser_connection *spc = (struct isshe_socks_parser_connection *)ctx;
     struct isshe_socks_connection *isc_from_user = spc->from_user_conn;
     struct bufferevent *partner = NULL;
 	struct evbuffer *src, *dst;
@@ -300,7 +318,7 @@ socks_data_event_cb(struct bufferevent *bev, short what, void *ctx)
 {
     printf("-----socks_data_event_cb------");
     /*
-    struct socks_parser_connection *spc = (struct socks_parser_connection *)ctx;
+    struct isshe_socks_parser_connection *spc = (struct isshe_socks_parser_connection *)ctx;
     isshe_forward_data_event_cb(bev, what, spc->from_user_conn->bev);
 	if (what & (BEV_EVENT_EOF|BEV_EVENT_ERROR)) {
         printf("INFO: socks_parser_connection_free...\n");
@@ -319,7 +337,7 @@ socks_parser_common_event(
     short what,
     void *ctx)
 {
-    struct socks_parser_connection *spc = (struct socks_parser_connection *)ctx;
+    struct isshe_socks_parser_connection *spc = (struct isshe_socks_parser_connection *)ctx;
 	if (what & (BEV_EVENT_EOF|BEV_EVENT_ERROR)) {
         if (what & BEV_EVENT_ERROR) {
             if (errno) {
@@ -345,7 +363,7 @@ socks_parser_common_event(
 void
 socks_parser_from_user_event_cb(struct bufferevent *bev, short what, void *ctx)
 {
-    struct socks_parser_connection *spc = (struct socks_parser_connection *)ctx;
+    struct isshe_socks_parser_connection *spc = (struct isshe_socks_parser_connection *)ctx;
     struct bufferevent *partner = NULL;
     if (spc->to_user_conn && spc->to_user_conn->bev) {
         partner = spc->to_user_conn->bev;
@@ -359,7 +377,7 @@ socks_parser_from_user_event_cb(struct bufferevent *bev, short what, void *ctx)
 void
 socks_parser_to_user_event_cb(struct bufferevent *bev, short what, void *ctx)
 {
-    struct socks_parser_connection *spc = (struct socks_parser_connection *)ctx;
+    struct isshe_socks_parser_connection *spc = (struct isshe_socks_parser_connection *)ctx;
     struct bufferevent *partner = NULL;
     if (spc->from_user_conn && spc->from_user_conn->bev) {
         partner = spc->from_user_conn->bev;
@@ -373,7 +391,7 @@ socks_parser_to_user_event_cb(struct bufferevent *bev, short what, void *ctx)
 static void
 socks_data_read_cb(struct bufferevent *bev, void *ctx)
 {
-    struct socks_parser_connection *spc = (struct socks_parser_connection *)ctx;
+    struct isshe_socks_parser_connection *spc = (struct isshe_socks_parser_connection *)ctx;
     struct isshe_socks_connection *isc_from_user = spc->from_user_conn;
     struct isshe_socks_connection *isc_to_user = spc->to_user_conn;
 
@@ -404,7 +422,7 @@ socks_data_read_cb(struct bufferevent *bev, void *ctx)
                 memset(&sin, 0, sizeof(sin));
                 sin.sin_family = AF_INET;
                 sin.sin_addr.s_addr = htonl(INADDR_ANY);    // TODO 改成proxy的地址
-                sin.sin_port = htons(spc->sp->config->ps_config->proxy_server_port);
+                sin.sin_port = htons(spc->sp->config->ps_config->port);
                 isc_to_user->bev = isshe_socks_connect_to_next(
                     spc->sp->evbase, (struct sockaddr*)&sin,
                     sizeof(sin), ntohs(sin.sin_port));  // TODO 这两个port的设置/使用
@@ -439,12 +457,12 @@ socks_parser_accept_cb(struct evconnlistener *listener, evutil_socket_t fd,
     inet_ntoa(((struct sockaddr_in*)sa)->sin_addr),
     ntohs(((struct sockaddr_in*)sa)->sin_port));
             
-    struct socks_parser_connection *spc = socks_parser_connection_new(fd);
+    struct isshe_socks_parser_connection *spc = socks_parser_connection_new(fd);
     if (!spc) {
         return;
     }
 
-    struct socks_parser *parser = (struct socks_parser *)user_data;
+    struct isshe_socks_parser *parser = (struct isshe_socks_parser *)user_data;
     bev = isshe_bufferevent_socket_new(parser->evbase, fd);
 
     assert(bev);
@@ -458,7 +476,7 @@ socks_parser_accept_cb(struct evconnlistener *listener, evutil_socket_t fd,
 }
 
 void
-socks_parser_free(struct socks_parser *parser, struct isshe_socks_config *config)
+socks_parser_free(struct isshe_socks_parser *parser, struct isshe_socks_config *config)
 {
     // TODO
 }
@@ -466,7 +484,7 @@ socks_parser_free(struct socks_parser *parser, struct isshe_socks_config *config
 int
 main(int argc, char *argv[])
 {
-    struct socks_parser parser;
+    struct isshe_socks_parser parser;
     struct isshe_socks_config config;
 
     // config parse
@@ -477,7 +495,7 @@ main(int argc, char *argv[])
     socks_parser_init(&parser, &config);
     parser.evbase = isshe_socks_event_new();
     parser.evlistener = isshe_socks_listerner_new_bind(parser.evbase, 
-        config.sp_config->socks_parser_port, 
+        config.sp_config->port, 
         socks_parser_accept_cb, (void *)&parser);
     event_base_dispatch(parser.evbase);
     socks_parser_uninit(&parser);

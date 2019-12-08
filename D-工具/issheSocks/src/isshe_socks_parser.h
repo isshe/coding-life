@@ -83,31 +83,19 @@ struct socks_reply {
 };
 #pragma pack()
 
-struct socks_parser
+struct isshe_socks_parser
 {
     struct event_base *evbase;
     struct evconnlistener *evlistener;
     struct isshe_socks_config *config;
 };
 
-struct socks_parser_connection
+struct isshe_socks_parser_connection
 {
-    /*
-    int status;
-    int fd_in;
-    //int fd_out;
-    int target_type;
-    char *target;
-    uint8_t target_len;
-    uint16_t target_port;
-    struct addrinfo *target_ai;
-    struct bufferevent *bev_in;
-    struct bufferevent *bev_out;
-    */
     uint64_t flag;
     struct isshe_socks_connection *to_user_conn;
     struct isshe_socks_connection *from_user_conn;
-    struct socks_parser *sp;
+    struct isshe_socks_parser *sp;
     // evtimer: 定时清理状态没有转换的连接
 };
 

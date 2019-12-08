@@ -17,7 +17,7 @@
 #include "isshe_socks_protocol.h"
 
 void
-proxy_server_init(struct proxy_server *server, struct isshe_socks_config *config)
+proxy_server_init(struct isshe_proxy_server *server, struct isshe_socks_config *config)
 {
     server->evbase = NULL;
     server->evlistener = NULL;
@@ -25,49 +25,44 @@ proxy_server_init(struct proxy_server *server, struct isshe_socks_config *config
 }
 
 void
-proxy_server_uninit(struct proxy_server *server)
+proxy_server_uninit(struct isshe_proxy_server *server)
 {
     // free
     evconnlistener_free(server->evlistener);
     event_base_free(server->evbase);
 }
 
-struct proxy_server_connection *
-proxy_server_connection_new(struct proxy_server *server)
+struct isshe_proxy_server_connection *
+proxy_server_connection_new(struct isshe_proxy_server *server)
 {
-    struct proxy_server_connection *psc = 
-        (struct proxy_server_connection*)malloc(sizeof(struct proxy_server_connection));
+    struct isshe_proxy_server_connection *psc = 
+        (struct isshe_proxy_server_connection*)
+        malloc(sizeof(struct isshe_proxy_server_connection));
     if (!psc) {
-        printf("malloc proxy_server_connection failed!\n");
+        printf("malloc isshe_proxy_server_connection failed!\n");
         return psc;
     }
 
-    memset(psc, 0, sizeof(struct proxy_server_connection));
+    memset(psc, 0, sizeof(struct isshe_proxy_server_connection));
     psc->from_user_conn = isshe_socks_connection_new();
-    psc->flag |= ISSHE_SOCKS_FLAG_FROM_USER;
     psc->to_user_conn = isshe_socks_connection_new();
-    psc->flag |= ISSHE_SOCKS_FLAG_TO_USER;
     psc->ps = server;
 
     return psc;
 }
 
-void proxy_server_connection_free(struct proxy_server_connection *psc, uint64_t flag)
+void proxy_server_connection_free(struct isshe_proxy_server_connection *psc, uint64_t flag)
 {
     printf("---proxy_server_connection_free---\n");
     if (psc) {
-        if (flag & ISSHE_SOCKS_FLAG_FROM_USER 
-            && psc->flag & ISSHE_SOCKS_FLAG_FROM_USER) {
+        if (flag & ISSHE_SOCKS_FLAG_FROM_USER) {
             printf("---free proxy_server_connection_free---free from user\n");
             isshe_socks_connection_free(psc->from_user_conn);
-            psc->flag &= ~ISSHE_SOCKS_FLAG_FROM_USER;
             psc->from_user_conn = NULL;
         }
-        if (flag & ISSHE_SOCKS_FLAG_TO_USER 
-            && psc->flag & ISSHE_SOCKS_FLAG_TO_USER) {
+        if (flag & ISSHE_SOCKS_FLAG_TO_USER) {
             printf("---free proxy_server_connection_free---free to user\n");
             isshe_socks_connection_free(psc->to_user_conn);
-            psc->flag &= ~ISSHE_SOCKS_FLAG_TO_USER;
             psc->to_user_conn = NULL;
         }
 
@@ -82,7 +77,7 @@ void proxy_server_connection_free(struct proxy_server_connection *psc, uint64_t 
 void
 proxy_server_to_user_read_cb(struct bufferevent *bev, void *ctx)
 {
-    struct proxy_server_connection *psc = (struct proxy_server_connection *)ctx;
+    struct isshe_proxy_server_connection *psc = (struct isshe_proxy_server_connection *)ctx;
     struct bufferevent *partner = NULL;
 
     //uint8_t mac[16] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
@@ -121,7 +116,7 @@ proxy_server_to_user_read_cb(struct bufferevent *bev, void *ctx)
 }
 
 struct bufferevent *
-proxy_server_connect_to_next(struct proxy_server_connection *psc)
+proxy_server_connect_to_next(struct isshe_proxy_server_connection *psc)
 {
     struct isshe_socks_connection *isc_from_user = psc->from_user_conn;
     //struct isshe_socks_connection *isc_to_user = psc->to_user_conn;
@@ -177,7 +172,7 @@ proxy_server_connect_to_next(struct proxy_server_connection *psc)
 void
 proxy_server_from_user_read_cb(struct bufferevent *bev, void *ctx)
 {
-    struct proxy_server_connection *psc = (struct proxy_server_connection *)ctx;
+    struct isshe_proxy_server_connection *psc = (struct isshe_proxy_server_connection *)ctx;
     struct isshe_socks_connection *isc_from_user = psc->from_user_conn;
     struct isshe_socks_connection *isc_to_user = psc->to_user_conn;
     struct bufferevent *partner = NULL;
@@ -195,6 +190,7 @@ proxy_server_from_user_read_cb(struct bufferevent *bev, void *ctx)
         bufferevent_read(bev, mac, sizeof(mac));
         //isshe_print_buffer(mac, sizeof(mac), sizeof(mac));
 
+        // TODO protocol_read_and_parse()
         // TODO check_mac()
 
         // TODO read_encode_opts()
@@ -233,7 +229,7 @@ proxy_server_from_user_read_cb(struct bufferevent *bev, void *ctx)
             proxy_server_to_user_event_cb, (void*)psc);
         bufferevent_enable(isc_to_user->bev, EV_READ|EV_WRITE);
     }
-    
+
     if (isc_to_user && isc_to_user->bev) {
         partner = isc_to_user->bev;
     }
@@ -259,7 +255,7 @@ proxy_server_common_event(
     short what,
     void *ctx)
 {
-    struct proxy_server_connection *psc = (struct proxy_server_connection *)ctx;
+    struct isshe_proxy_server_connection *psc = (struct isshe_proxy_server_connection *)ctx;
 	if (what & (BEV_EVENT_EOF|BEV_EVENT_ERROR)) {
         if (what & BEV_EVENT_ERROR) {
             if (errno) {
@@ -285,7 +281,7 @@ proxy_server_common_event(
 void
 proxy_server_from_user_event_cb(struct bufferevent *bev, short what, void *ctx)
 {
-    struct proxy_server_connection *psc = (struct proxy_server_connection *)ctx;
+    struct isshe_proxy_server_connection *psc = (struct isshe_proxy_server_connection *)ctx;
     struct bufferevent *partner = NULL;
     if (psc && psc->to_user_conn && psc->to_user_conn->bev) {
         partner = psc->to_user_conn->bev;
@@ -299,7 +295,7 @@ proxy_server_from_user_event_cb(struct bufferevent *bev, short what, void *ctx)
 void
 proxy_server_to_user_event_cb(struct bufferevent *bev, short what, void *ctx)
 {
-    struct proxy_server_connection *psc = (struct proxy_server_connection *)ctx;
+    struct isshe_proxy_server_connection *psc = (struct isshe_proxy_server_connection *)ctx;
     struct bufferevent *partner = NULL;
     if (psc && psc->from_user_conn && psc->from_user_conn->bev) {
         partner = psc->from_user_conn->bev;
@@ -319,8 +315,8 @@ proxy_server_accept_cb(struct evconnlistener *listener, evutil_socket_t fd,
     inet_ntoa(((struct sockaddr_in*)sa)->sin_addr),
     ntohs(((struct sockaddr_in*)sa)->sin_port));
 
-    struct proxy_server *ps = (struct proxy_server *)user_data;
-    struct proxy_server_connection *psc = proxy_server_connection_new(ps);
+    struct isshe_proxy_server *ps = (struct isshe_proxy_server *)user_data;
+    struct isshe_proxy_server_connection *psc = proxy_server_connection_new(ps);
 
     psc->from_user_conn->bev = isshe_bufferevent_socket_new(ps->evbase, fd);
     assert(psc->from_user_conn->bev);
@@ -335,7 +331,7 @@ int
 main(int argc, char *argv[])
 {
     struct isshe_socks_config config;
-    struct proxy_server server;
+    struct isshe_proxy_server server;
 
     // config parse
     config_parse(&config);
@@ -347,7 +343,7 @@ main(int argc, char *argv[])
     server.evbase = isshe_socks_event_new();
     // TODO 支持TCP、UDP！当前只有TCP。（两个协议可同时开）
     server.evlistener = isshe_socks_listerner_new_bind(server.evbase, 
-        config.ps_config->proxy_server_port, proxy_server_accept_cb, (void *)&server);
+        config.ps_config->port, proxy_server_accept_cb, (void *)&server);
     event_base_dispatch(server.evbase);
     proxy_server_uninit(&server);
 

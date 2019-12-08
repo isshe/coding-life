@@ -5,31 +5,25 @@
 
 struct socks_parser_config
 {
-    uint16_t socks_parser_port;
-};
-
-struct tunnel_client_config
-{
-
-};
-
-struct tunnel_server_config
-{
-
+    uint8_t enable;
+    uint8_t dns_enable;
+    uint8_t outproto;
+    uint16_t port;
 };
 
 struct proxy_server_config
 {
-    uint16_t proxy_server_port;
+    uint8_t enable;
+    uint8_t dns_enable;
+    uint8_t inproto;
+    uint8_t outproto;
+    uint16_t port;
 };
 
 struct isshe_socks_config
 {
     int remote_dns;
-    // char *dns_addrs;
     struct socks_parser_config *sp_config;
-    struct tunnel_client_config *tc_config;
-    struct tunnel_server_config *ts_config;
     struct proxy_server_config *ps_config;
 };
 

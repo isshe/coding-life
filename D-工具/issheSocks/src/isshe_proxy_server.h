@@ -13,7 +13,7 @@
 #include "isshe_socks_protocol.h"
 
 
-struct proxy_server
+struct isshe_proxy_server
 {
     struct event_base *evbase;
     struct evconnlistener *evlistener;
@@ -21,13 +21,13 @@ struct proxy_server
 };
 
 
-struct proxy_server_connection
+struct isshe_proxy_server_connection
 {
     uint64_t flag;
     //struct isshe_socks_connection *isc;
     struct isshe_socks_connection *to_user_conn;
     struct isshe_socks_connection *from_user_conn;
-    struct proxy_server *ps;
+    struct isshe_proxy_server *ps;
 };
 
 void proxy_server_accept_cb(
