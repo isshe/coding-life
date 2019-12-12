@@ -35,5 +35,7 @@ DES: Data Encryption Standard。
 
 ## 三重DES
 3DES(TDEA)：将DES重复3次。
+分组长度为：`64 * 3 = 192`
 
 # AES
+分组长度为：`128`
