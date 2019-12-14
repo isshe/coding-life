@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <errno.h>
 
-#include "../A.lib/isshe_error.h"
+#include "isshe_error.h"
 
 int main(void)
 {
