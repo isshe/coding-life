@@ -15,7 +15,7 @@
 #include <netdb.h>
 #include <arpa/inet.h>
 #include <stdbool.h>        // For bool type
-#include <endian.h>
+//#include <endian.h>
 
 #if defined(__bsdi__) || defined(__APPLE__)
 #include <sys/syslimits.h>  // for OPEN_MAX
@@ -49,6 +49,12 @@
 #define	min(a,b)    ((a) < (b) ? (a) : (b))
 #define	max(a,b)    ((a) > (b) ? (a) : (b))
 
-#define isshe_memzero(buf, size) memset(buf, 0, size) 
+#define isshe_memzero(buf, size) memset(buf, 0, size)
+
+#if __BYTE_ORDER == __LITTLE_ENDIAN__
+#define ISSHE_LITTLE_ENDIAN
+#else
+#define ISSHE_BIG_ENDIAN
+#endif
 
 #endif

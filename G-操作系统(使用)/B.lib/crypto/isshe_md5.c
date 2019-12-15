@@ -9,10 +9,10 @@
 #include "isshe_common.h"
 
 static const uint8_t *
-isshe_md5_body(isshe_md5_t *ctx, const uint8_t *data, uint64_t size);
+isshe_md5_body(isshe_md5_s *ctx, const uint8_t *data, uint64_t size);
 
 void
-isshe_md5_init(isshe_md5_t *ctx)
+isshe_md5_init(isshe_md5_s *ctx)
 {
     ctx->a = 0x67452301;
     ctx->b = 0xefcdab89;
@@ -24,7 +24,7 @@ isshe_md5_init(isshe_md5_t *ctx)
 
 
 void
-isshe_md5_update(isshe_md5_t *ctx, const void *data, uint64_t size)
+isshe_md5_update(isshe_md5_s *ctx, const void *data, uint64_t size)
 {
     uint64_t  used, free;
 
@@ -55,7 +55,7 @@ isshe_md5_update(isshe_md5_t *ctx, const void *data, uint64_t size)
 
 
 void
-isshe_md5_final(uint8_t result[16], isshe_md5_t *ctx)
+isshe_md5_final(isshe_md5_s *ctx, uint8_t result[16])
 {
     uint64_t  used, free;
 
@@ -161,7 +161,7 @@ isshe_md5_final(uint8_t result[16], isshe_md5_t *ctx)
  */
 
 static const uint8_t *
-isshe_md5_body(isshe_md5_t *ctx, const uint8_t *data, uint64_t size)
+isshe_md5_body(isshe_md5_s *ctx, const uint8_t *data, uint64_t size)
 {
     uint32_t       a, b, c, d;
     uint32_t       saved_a, saved_b, saved_c, saved_d;
@@ -274,4 +274,14 @@ isshe_md5_body(isshe_md5_t *ctx, const uint8_t *data, uint64_t size)
     ctx->d = d;
 
     return p;
+}
+
+int isshe_md5(uint8_t *data, uint32_t len, uint8_t result[16])
+{
+    isshe_md5_s md5;
+
+    isshe_md5_init(&md5);
+    isshe_md5_update(&md5, data, len);
+    isshe_md5_final(&md5, result);
+    return 0;
 }

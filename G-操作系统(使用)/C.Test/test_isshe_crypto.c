@@ -10,10 +10,10 @@ void test_aes_cfb128()
     unsigned char ivec_cp[ISSHE_AES_BLOCK_SIZE];
     int bytes_read;
     unsigned char indata[ISSHE_AES_BLOCK_SIZE * 2];
-    unsigned char outdata[ISSHE_AES_BLOCK_SIZE];
-    unsigned char decryptdata[ISSHE_AES_BLOCK_SIZE];
+    //unsigned char outdata[ISSHE_AES_BLOCK_SIZE];
+    //unsigned char decryptdata[ISSHE_AES_BLOCK_SIZE];
     isshe_aes_key_t key;
-    isshe_aes_key_t dkey;
+    //isshe_aes_key_t dkey;
 
     memcpy(ivec_cp , ivec, ISSHE_AES_BLOCK_SIZE);
 
