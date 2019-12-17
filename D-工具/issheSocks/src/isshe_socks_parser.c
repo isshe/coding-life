@@ -7,6 +7,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netdb.h>
+#include <errno.h>
 
 #include <event2/event.h>
 #include <event2/bufferevent.h>
@@ -275,7 +276,7 @@ socks_parser_from_user_read_cb(struct bufferevent *bev, void *ctx)
         
         isc_to_user->status = ISSHE_SCS_ESTABLISHED;
     }
-    printf("Debug: %p(%lu) -> %p(%lu)\n", bev, len, partner, evbuffer_get_length(dst));
+    printf("Debug: %p(%u) -> %p(%lu)\n", bev, len, partner, evbuffer_get_length(dst));
     evbuffer_add_buffer(dst, src);
 }
 

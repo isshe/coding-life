@@ -14,12 +14,12 @@ issheSocks
   * 协议B：解析所有包
   * 顺便把支持多协议实现了
 * 加密
-* 重构，整合成一个程序
+* 重构，整合成一个框架+多个角色
   * 仔细考虑函数/变量命名/目录结构等规则
     * in/out
-    * isocks/iproxy
-    * roles
-    * isocks_socks_parser/isocks_proxy_server/isocks_protocol
+    * src/
+      * iproxy/irelay/isocks/ixxx
+  * 考虑Makefile——项目构建。
   * 支持：多角色多进程
   * 例如：同时支持proxy和socks_parser两个角色，每个能开3个处理进程
 * Log

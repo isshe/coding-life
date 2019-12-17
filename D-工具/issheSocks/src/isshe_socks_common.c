@@ -1,6 +1,7 @@
 #include <arpa/inet.h>
 #include <string.h>
 #include <stdlib.h>
+#include <errno.h>
 
 #include <event2/event.h>
 #include <event2/bufferevent.h>
