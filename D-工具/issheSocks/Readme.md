@@ -22,13 +22,13 @@ issheSocks
   * 考虑Makefile——项目构建。
   * 支持：多角色多进程
   * 例如：同时支持proxy和socks_parser两个角色，每个能开3个处理进程
+* 学习TLS1.3协议/GCM模式等，考虑新的协议。
 * Log
   * 区分角色吗？
 * json解析：配置解析
 * UDP支持
   * TCP比较简单，先实现了TCP。
   * 后面主要使用UDP，至于可靠性，后面再考虑
-* tunnel/proxy server多端口支持
 
 
 # 项目目的

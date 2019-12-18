@@ -80,11 +80,7 @@ proxy_server_to_user_read_cb(struct bufferevent *bev, void *ctx)
 {
     struct isshe_proxy_server_connection *psc = (struct isshe_proxy_server_connection *)ctx;
     struct bufferevent *partner = NULL;
-
-    //uint8_t mac[16] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
-    //struct isshe_socks_opt opt;
 	struct evbuffer *src, *dst;
-    //uint8_t buf[1024];      // temp
 	size_t len;
     
 	src = bufferevent_get_input(bev);

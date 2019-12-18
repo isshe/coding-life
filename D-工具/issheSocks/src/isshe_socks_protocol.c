@@ -30,24 +30,19 @@ void isshe_socks_opt_init(uint8_t *buf)
 // TODO 不够健壮，只考虑了正常已初始化的情况
 int isshe_socks_opt_find(uint8_t *buf, uint8_t type)
 {
-    int i = 0;
-    uint8_t cur_type;
-    uint8_t cur_len;
+    int i;
+    struct isshe_socks_opt *opt;
 
-    while(TRUE) {
-        cur_type = buf[i];
-        cur_len = buf[i + 1];
-        printf("cur_type = %u, cur_len = %u\n", cur_type, cur_len);
-        if (cur_type == type) {
+    i = 0;
+    while(i < ISSHE_SOCKS_OPT_MAX_LEN) {
+        opt = (struct isshe_socks_opt *)(buf + i);
+        if (opt->type == type) {
             return i;
-        } else if (cur_type == ISSHE_SOCKS_OPT_END) {
-            break;
-        } else {
-            i = i + cur_len + sizeof(cur_len) + sizeof(cur_type);
+        } else if (opt->type == ISSHE_SOCKS_OPT_END) {
+            return FAILURE;
         }
-    }
-
-    return FAILURE;
+        i += opt->len + sizeof(opt->len) + sizeof(opt->type);
+    } 
 }
 
 

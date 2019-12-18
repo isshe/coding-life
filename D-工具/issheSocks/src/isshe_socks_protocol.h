@@ -12,6 +12,7 @@
 #define ISSHE_SOCKS_FLAG_TO_USER            1
 #define ISSHE_SOCKS_FLAG_FROM_USER          2
 #define ISSHE_SOCKS_FLAG_CONFIG             4
+#define ISSHE_SOCKS_OPT_MAX_LEN             1024
 
 /*
 +----------+---------+---------+

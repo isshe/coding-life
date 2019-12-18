@@ -10,6 +10,7 @@
 * 兼容性：主要支持`*nix系列`，跨平台、跨处理器架构等后面再考虑。
 
 # TODO
+* 学习TLS1.3，当前先实现最简单一版
 * 下一版本考虑加密模式用gcm的话，怎么定义头部。
 
 # 特别说明
@@ -78,4 +79,10 @@
   * 长度：16B
   * 生成方式：伪随机数。
 * session iv：同session key。
-* session reply key: 服务器应答使用的key。 
+* session reply key: 服务器应答使用的key。
+
+gcm:
+* key: key
+* iv: iv
+* tag: hmac
+* aad: 
