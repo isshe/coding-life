@@ -23,6 +23,7 @@ typedef struct {
 } isout_opt_s;
 
 typedef enum {
+    ISOUT_OPT_COUNT,
     ISOUT_OPT_DATA_PROTOCOL,
     ISOUT_OPT_DATA_LEN,
     ISOUT_OPT_IPV4,
