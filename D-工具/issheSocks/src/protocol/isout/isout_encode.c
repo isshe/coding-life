@@ -31,10 +31,10 @@ int isout_client_encode(isession_s *session)
     isout_conn_opts_s *sopts = &outconn->sent_opts;
     isout_conn_opts_s *aopts = &outconn->all_opts;
     uint8_t buf[ISOUT_ALL_OPT_MAX_LEN];
-    int i;
+    int i = 0;
 
     memset(buf, 0, ISOUT_ALL_OPT_MAX_LEN);
-    isout_opt_append(buf, ISOUT_OPT_COUNT, sizeof(aopts->count), aopts->count);
+    i += isout_opt_append(buf + i, ISOUT_OPT_COUNT, sizeof(aopts->count), aopts->count);
     sopts->count = aopts->count;
     if (aopts->dname_len && sopts->dname != aopts->dname) {
         isout_opt_append(buf, ISOUT_OPT_DOMAIN, aopts->dname_len, aopts->dname);
@@ -45,7 +45,7 @@ int isout_client_encode(isession_s *session)
         sopts->dname_len = aopts->dname_len;
     }
     if (aopts->ipv6_len && sopts->ipv6 != aopts->ipv6) {
-        isout_opt_append(buf, ISOUT_OPT_IPV6, aopts->ipv6_len, aopts->ipv6);
+        i += isout_opt_append(buf + i, ISOUT_OPT_IPV6, aopts->ipv6_len, aopts->ipv6);
         if (sopts->ipv6) {
             free(sopts->ipv6);
         }
@@ -53,9 +53,21 @@ int isout_client_encode(isession_s *session)
         sopts->ipv6_len = aopts->ipv6_len;
     }
 
-    if (aopts->addr_type != sopts->addr_type) {
-        isout_opt_append(buf)
+    if (aopts->ipv4 != sopts->ipv4) {
+        i += isout_opt_append(buf + i, ISOUT_OPT_IPV4, sizeof(sopts->ipv4), aopts->ipv4);
+        sopts->ipv4 = aopts->ipv4;
     }
+
+    if (aopts->addr_type != sopts->addr_type) {
+        i += isout_opt_append(buf + i, ISOUT_OPT_ADDR_TYPE, sizeof(sopts->addr_type), aopts->addr_type);
+        sopts->addr_type = aopts->addr_type;
+    }
+
+    if (aopts->port != sopts->port) {
+        i += isout_opt_append(buf + i, ISOUT_OPT_PORT, sizeof(sopts->port), aopts->port);
+        sopts->port = aopts->port;
+    }
+    i += isout_opt_append(buf + i, ISOUT_OPT_END, 0, NULL);
 
 }
 
