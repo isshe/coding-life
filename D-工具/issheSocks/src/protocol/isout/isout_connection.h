@@ -9,10 +9,17 @@
 
 #include "isout_protocol.h"
 
+#define ISOUT_OPTS_FLAG_DNAME       (1 << 0)
+#define ISOUT_OPTS_FLAG_IPV4        (1 << 1)
+#define ISOUT_OPTS_FLAG_IPV6        (1 << 2)
+#define ISOUT_OPTS_FLAG_ADDR_TYPE   (1 << 3)
+#define ISOUT_OPTS_FLAG_PORT        (1 << 4)
+
 
 typedef struct
 {
     uint64_t count;     // 计数器，初始化为0
+    uint32_t random;    // 随机数, 初始化为0
     uint8_t *dname;     // domain name
     uint8_t *ipv6;      // 初始化为NULL
     uint32_t ipv4;      // 初始化为0
@@ -20,7 +27,7 @@ typedef struct
     uint8_t addr_type;  // 初始化为0， ISSHE_SOCKS_ADDR_TYPE_DOMAIN
     uint8_t dname_len;  // 初始化为0
     uint8_t ipv6_len;   // 初始化为0
-    //uint32_t user_data_len;  // 用户数据长度
+    uint32_t user_data_len;  // 用户数据长度
 }isout_conn_opts_s;
 
 typedef struct
@@ -29,9 +36,11 @@ typedef struct
     int status;
     struct bufferevent *bev;
     struct addrinfo *target_ai;
-    //isout_conn_opts_s opts;
-    isout_conn_opts_s sent_opts;   // 已发送选项
-    isout_conn_opts_s all_opts;    // 包含所有选项
+    uint64_t opts_flag;
+    isout_conn_opts_s opts;
+
+    //isout_conn_opts_s sent_opts;   // 已发送选项
+    //isout_conn_opts_s all_opts;    // 包含所有选项
 }isout_connection_s;
 
 #endif

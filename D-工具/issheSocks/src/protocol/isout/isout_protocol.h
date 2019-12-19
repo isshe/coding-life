@@ -9,6 +9,7 @@
 #include <stdint.h>
 
 #define ISOUT_ALL_OPT_MAX_LEN   1024
+#define ISOUT_HMAC_LEN      32
 
 /*
 +------------+----------+----------+
@@ -24,6 +25,7 @@ typedef struct {
 
 typedef enum {
     ISOUT_OPT_COUNT,
+    ISOUT_OPT_RANDOM,
     ISOUT_OPT_DATA_PROTOCOL,
     ISOUT_OPT_DATA_LEN,
     ISOUT_OPT_IPV4,
