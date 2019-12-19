@@ -1,30 +1,73 @@
 
+#include "isshe_common.h"
+
 #include "isout_connection.h"
+#include "isout_protocol.h"
 
-/*
-int isout_conn_opts_update(uint8_t *buf, uint8_t type, uint8_t len, uint8_t *all, uint8_t *sent)
+
+void *isout_opts_malloc_copy(isout_opt_s *opt)
 {
-    memcpy(sent, all, len);
-    return isout_opt_append(buf, type, len, all);
+    void *temp = malloc(opt->len);
+    if (!temp) {
+        printf("ERROR: isout_opts_copy malloc!!!\n");
+        exit(0);
+    }
+
+    memcpy(temp, opt->data, opt->len);
+    return temp;
 }
 
-int isout_conn_opts_update_64(uint8_t *buf, uint8_t type, uint64_t *all, uint64_t *sent)
+int isout_opts_parse(isout_conn_opts_s *opts, uint8_t *opts_str)
 {
-    return isout_conn_opts_update(buf, type, sizeof(*all), all, sent);
-}
+    isout_opt_s *opt;
+    int index;
 
-int isout_conn_opts_update_32(uint8_t *buf, uint8_t type, uint32_t *all, uint32_t *sent)
-{
-    return isout_conn_opts_update(buf, type, sizeof(*all), all, sent);
-}
+    if (!opts || !opts_str) {
+        printf("ERROR: !opts && !opts_str!!!\n");
+        return ISSHE_FAILURE;
+    }
 
-int isout_conn_opts_update_16(uint8_t *buf, uint8_t type, uint16_t *all, uint16_t *sent)
-{
-    return isout_conn_opts_update(buf, type, sizeof(*all), all, sent);
-}
+    do {
+        opt = (isout_opt_s *)opts_str + index;
+        switch (opt->type)
+        {
+        case ISOUT_OPT_COUNT:
+            opts->count = ntohll(*(uint64_t *)opt->data);
+            break;
+        case ISOUT_OPT_RANDOM:
+            opts->random = ntohl(*(uint32_t *)opt->data);
+            break;
+        case ISOUT_OPT_DOMAIN:
+            opts->dname_len = opt->len;
+            opts->dname = (uint8_t *)isout_opts_malloc_copy(opt);
+            break;
+        case ISOUT_OPT_IPV6:
+            opts->ipv6_len = opt->len;
+            opts->ipv6 = (uint8_t *)isout_opts_malloc_copy(opt);
+            break;
+        case ISOUT_OPT_IPV4:
+            opts->ipv4 = ntohl(*(uint32_t *)opt->data);      // 大端转主机
+            break;
+        case ISOUT_OPT_PORT:
+            opts->port = ntohs(*(uint16_t *)opt->data);
+            break;
+        case ISOUT_OPT_ADDR_TYPE:
+            opts->addr_type = opt->data[0];
+            break;
+        case ISOUT_OPT_DATA_LEN:
+            opts->user_data_len = ntohs(*(uint16_t *)opt->data);
+            break;
+        case ISOUT_OPT_CRYPTO_ALGO:
+            break;
+        case ISOUT_OPT_CRYPTO_KEY:
+            break;
+        case ISOUT_OPT_CRYPTO_IV:
+            break;
+        default:
+            break;
+        }
+        index += sizeof(opt->type) + sizeof(opt->len) + opt->len;
+    } while(opt->type != ISOUT_OPT_END);
 
-int isout_conn_opts_update_8(uint8_t *buf, uint8_t type, uint8_t *all, uint8_t *sent)
-{
-    return isout_conn_opts_update(buf, type, sizeof(*all), all, sent);
+    return ISSHE_SUCCESS;
 }
-*/

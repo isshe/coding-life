@@ -37,7 +37,7 @@ typedef enum {
     ISOUT_OPT_CRYPTO_KEY,
     ISOUT_OPT_CRYPTO_IV,
     ISOUT_OPT_END = 255,
-};
+} isout_opt_e;
 
 int isout_opt_append(uint8_t *buf, uint8_t type, uint8_t len, const void *data);
 

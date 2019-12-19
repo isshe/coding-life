@@ -47,7 +47,7 @@ int isout_opts_to_string(uint8_t *buf, isout_conn_opts_s *opts, uint64_t flag)
     i += isout_opt_append(buf + i, ISOUT_OPT_END, 0, NULL);
 
     // NOTE: panding一下
-    i += ISSHE_AES_BLOCK_SIZE - (i % ISSHE_AES_BLOCK_SIZE)
+    i += ISSHE_AES_BLOCK_SIZE - (i % ISSHE_AES_BLOCK_SIZE);
 
     return i;
 }
@@ -119,7 +119,7 @@ int isout_encode(isession_s *session)
 
     // 生成加密数据
     data_len = evbuffer_get_length(bufferevent_get_input(inbev));
-    data = (uint8_t *)malloc(len);
+    data = (uint8_t *)malloc(data_len);
     if (!data) {
         printf("ERROR: malloc data error!\n");
         exit(0);

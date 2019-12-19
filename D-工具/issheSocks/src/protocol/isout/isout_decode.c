@@ -31,33 +31,28 @@ int isout_decode_opts_block(uint8_t *data, int len)
     isshe_aes_cfb128_encrypt(data, data, len, &key, ivec, &num, ISSHE_AES_DECRYPT);
     printf("num = %d, ivec = %s\n", num, ivec);
     printf("decrypt: %s\n", data);
-    return ISSHE_SUCCESS;
+    return len;
 }
 
-int isout_decode_opts(struct bufferevent *bev, uint8_t *buf, uint32_t read)
+int isout_decode_opts(struct bufferevent *bev, uint8_t *buf)
 {
     // 一块一块解密，解密完一块，就找找是否存在结束选项标记
     isout_opt_s *opt;
     uint32_t decoded = 0;
-    uint32_t i = 0;
-    // TODO NOT FINISHED
-    while(i < ISOUT_ALL_OPT_MAX_LEN) {
-        if (decoded > read) {
-            // read
-            bufferevent_read(bev, buf + read, ISSHE_AES_BLOCK_SIZE);
-            read += ISSHE_AES_BLOCK_SIZE;
+    uint32_t checked = 0;
+
+    decoded += isout_decode_opts_block(buf + decoded, ISSHE_AES_BLOCK_SIZE);
+    while(checked < ISOUT_ALL_OPT_MAX_LEN) {
+        if (checked > decoded) {
+            // read && decode
+            bufferevent_read(bev, buf + decoded, ISSHE_AES_BLOCK_SIZE);
+            decoded += isout_decode_opts_block(buf + decoded, ISSHE_AES_BLOCK_SIZE);
             continue;
         }
-        if (decode < read) {
-            // decode
-            isout_decode_opts_block(buf + decoded, ISSHE_AES_BLOCK_SIZE);
-            decoded += ISSHE_AES_BLOCK_SIZE;
-            continue;
-        }
-        opt = (isout_opt_s *)(buf + i);
-        i += sizeof(opt->type) + sizeof(opt->len) + len;
+        opt = (isout_opt_s *)(buf + checked);
+        checked += sizeof(opt->type) + sizeof(opt->len) + opt->len;
         if (opt->type == ISOUT_OPT_END) {
-            return i;
+            return checked;
         }
     }
 
@@ -78,9 +73,9 @@ int isout_decode(isession_s *session)
     uint32_t opts_len;
 
     // TODO 长度校验，不符合长度，就返回，等待数据到来。具体实现还需再考虑。（断点续跑- -）
-    // 读取HMAC
+    // 读取HMAC及部分加密选项
     bufferevent_read(inbev, hmac, sizeof(hmac));
-    bufferevent_read(inbev, opts, ISSHE_AES_BLOCK_SIZE);              // TODO 先读16
+    bufferevent_read(inbev, opts, ISSHE_AES_BLOCK_SIZE);// TODO 先读16
 
     // 校验HMAC
     if (!is_valid_hmac(opts, ISSHE_AES_BLOCK_SIZE, hmac)) {
@@ -89,11 +84,22 @@ int isout_decode(isession_s *session)
         return ISSHE_FAILURE;
     }
 
-    // 解密并解析选项
+    // 解密
+    opts_len = isout_decode_opts(inbev, opts);
+    if (opts_len == ISSHE_FAILURE) {
+        printf("ERROR: isout_decode_opts\n");
+        // TODO 清理这个连接
+        return ISSHE_FAILURE;
+    }
+
+    // 解析选项
+    isout_opts_parse(inbev->opts, opts);
 
     // 解密数据
+    isout_decode_data();
 
     // 转发数据
+    bufferevent_write();
     
     return ISSHE_SUCCESS;
 }

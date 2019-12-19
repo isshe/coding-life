@@ -27,7 +27,7 @@ typedef struct
     uint8_t addr_type;  // 初始化为0， ISSHE_SOCKS_ADDR_TYPE_DOMAIN
     uint8_t dname_len;  // 初始化为0
     uint8_t ipv6_len;   // 初始化为0
-    uint32_t user_data_len;  // 用户数据长度
+    uint16_t user_data_len;  // 用户数据长度
 }isout_conn_opts_s;
 
 typedef struct
