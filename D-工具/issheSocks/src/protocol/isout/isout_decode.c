@@ -17,14 +17,29 @@ int is_valid_hmac(uint8_t *data, uint32_t len, uint8_t *hmac)
     return ISSHE_TRUE;
 }
 
-int isout_decode_opts_block(uint8_t *data, int len)
+
+int isout_decode_data(uint8_t *data, int len)
 {
-    unsigned char ckey[ISSHE_AES_BLOCK_SIZE] = "master key";
-    unsigned char ivec[ISSHE_AES_BLOCK_SIZE] = "master iv";         // NOTE: ivec这个会被改变！
+    unsigned char ckey[ISSHE_AES_BLOCK_SIZE] = "session key";
+    unsigned char ivec[ISSHE_AES_BLOCK_SIZE] = "session iv";        // NOTE: ivec这个会被改变！
     //unsigned char ivec_cp[ISSHE_AES_BLOCK_SIZE];
     //memcpy(ivec_cp , ivec, ISSHE_AES_BLOCK_SIZE);
     isshe_aes_key_t key;
     int num = 0;
+
+    isshe_aes_set_encrypt_key(ckey, ISSHE_AES_BLOCK_SIZE_BIT, &key);
+
+    printf("num = %d, ivec = %s\n", num, ivec);
+    printf("src: %s\n", data);
+    isshe_aes_cfb128_encrypt(data, data, len, &key, ivec, &num, ISSHE_AES_DECRYPT);
+    printf("num = %d, ivec = %s\n", num, ivec);
+    printf("decrypt: %s\n", data);
+    return ISSHE_SUCCESS;
+}
+
+
+int isout_decode_opts_block(uint8_t *data, int len, isshe_aes_key_t *key, uint8_t *ivec, int *num)
+{
 
     printf("num = %d, ivec = %s\n", num, ivec);
     printf("src: %s\n", data);
@@ -41,12 +56,20 @@ int isout_decode_opts(struct bufferevent *bev, uint8_t *buf)
     uint32_t decoded = 0;
     uint32_t checked = 0;
 
-    decoded += isout_decode_opts_block(buf + decoded, ISSHE_AES_BLOCK_SIZE);
+    unsigned char ckey[ISSHE_AES_BLOCK_SIZE] = "master key";
+    unsigned char ivec[ISSHE_AES_BLOCK_SIZE] = "master iv";
+    isshe_aes_key_t key;
+    int num = 0;
+
+    isshe_aes_set_encrypt_key(ckey, ISSHE_AES_BLOCK_SIZE_BIT, &key);
+
+    decoded += isout_decode_opts_block(buf + decoded, ISSHE_AES_BLOCK_SIZE, &key, ivec, &num);
     while(checked < ISOUT_ALL_OPT_MAX_LEN) {
         if (checked > decoded) {
             // read && decode
+            // TODO 判断长度是否够
             bufferevent_read(bev, buf + decoded, ISSHE_AES_BLOCK_SIZE);
-            decoded += isout_decode_opts_block(buf + decoded, ISSHE_AES_BLOCK_SIZE);
+            decoded += isout_decode_opts_block(buf + decoded, ISSHE_AES_BLOCK_SIZE, &key, ivec, &num);
             continue;
         }
         opt = (isout_opt_s *)(buf + checked);
@@ -95,11 +118,24 @@ int isout_decode(isession_s *session)
     // 解析选项
     isout_opts_parse(inbev->opts, opts);
 
-    // 解密数据
-    isout_decode_data();
+    if (inbev->opts.user_data_len) {
+        // 分配内存，读数据
+        uint8_t *udata = (uint8_t *)malloc(inbev->opts.user_data_len);
+        if (!udata) {
+            printf("ERROR: isout_decode 分配内存失败！！！\n");
+            exit(0);
+        }
 
-    // 转发数据
-    bufferevent_write();
+        // TODO 判断长度是否够
+        bufferevent_read(inbev, udata, inbev->opts.user_data_len);
+
+        // 解密数据
+        isout_decode_data(udata, inbev->opts.user_data_len);
+
+        // 转发数据
+        bufferevent_write(outbev, udata, inbev->opts.user_data_len);
+    }
+
     
     return ISSHE_SUCCESS;
 }

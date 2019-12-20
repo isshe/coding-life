@@ -7,10 +7,11 @@
 //#define OPENSSL_SMALL_FOOTPRINT 1
 //#define STRICT_ALIGNMENT 1
 
-#define ISSHE_AES_ENCRYPT     1
-#define ISSHE_AES_DECRYPT     0
-#define ISSHE_AES_MAX_ROUND   14
-#define ISSHE_AES_BLOCK_SIZE  16
+#define ISSHE_AES_ENCRYPT           1
+#define ISSHE_AES_DECRYPT           0
+#define ISSHE_AES_MAX_ROUND         14
+#define ISSHE_AES_BLOCK_SIZE        16
+#define ISSHE_AES_BLOCK_SIZE_BIT    128
 
 #define GETU32(pt) (((uint32_t)(pt)[0] << 24) ^ ((uint32_t)(pt)[1] << 16) ^ ((uint32_t)(pt)[2] <<  8) ^ ((uint32_t)(pt)[3]))
 #define PUTU32(ct, st) { (ct)[0] = (uint8_t)((st) >> 24); (ct)[1] = (uint8_t)((st) >> 16); (ct)[2] = (uint8_t)((st) >>  8); (ct)[3] = (uint8_t)(st); }

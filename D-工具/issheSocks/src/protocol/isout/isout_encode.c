@@ -46,7 +46,7 @@ int isout_opts_to_string(uint8_t *buf, isout_conn_opts_s *opts, uint64_t flag)
 
     i += isout_opt_append(buf + i, ISOUT_OPT_END, 0, NULL);
 
-    // NOTE: panding一下
+    // NOTE: padding一下
     i += ISSHE_AES_BLOCK_SIZE - (i % ISSHE_AES_BLOCK_SIZE);
 
     return i;
@@ -59,13 +59,20 @@ int isout_encode_opts(uint8_t *data, int len)
     //unsigned char ivec_cp[ISSHE_AES_BLOCK_SIZE];
     //memcpy(ivec_cp , ivec, ISSHE_AES_BLOCK_SIZE);
     isshe_aes_key_t key;
-    int num = 0;
+    int num;
+    int index;
+    
+    assert((len % ISSHE_AES_BLOCK_SIZE) == 0);          // Note
 
-    printf("num = %d, ivec = %s\n", num, ivec);
-    printf("src: %s\n", data);
-    isshe_aes_cfb128_encrypt(data, data, len, &key, ivec, &num, ISSHE_AES_ENCRYPT);
-    printf("num = %d, ivec = %s\n", num, ivec);
-    printf("encrypt: %s\n", data);
+    isshe_aes_set_encrypt_key(ckey, ISSHE_AES_BLOCK_SIZE_BIT, &key);
+    for (index = 0; index < len; index += ISSHE_AES_BLOCK_SIZE) {
+        printf("num = %d, ivec = %s\n", num, ivec);
+        printf("src: %s\n", data);
+        isshe_aes_cfb128_encrypt(data + index, data + index, len, &key, ivec, &num, ISSHE_AES_ENCRYPT);
+        printf("num = %d, ivec = %s\n", num, ivec);
+        printf("encrypt: %s\n", data);
+    }
+
     return ISSHE_SUCCESS;
 }
 
@@ -77,6 +84,8 @@ int isout_encode_data(uint8_t *data, int len)
     //memcpy(ivec_cp , ivec, ISSHE_AES_BLOCK_SIZE);
     isshe_aes_key_t key;
     int num = 0;
+
+    isshe_aes_set_encrypt_key(ckey, ISSHE_AES_BLOCK_SIZE_BIT, &key);
 
     printf("num = %d, ivec = %s\n", num, ivec);
     printf("src: %s\n", data);

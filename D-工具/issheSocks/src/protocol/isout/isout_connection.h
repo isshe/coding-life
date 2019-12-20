@@ -38,9 +38,9 @@ typedef struct
     struct addrinfo *target_ai;
     uint64_t opts_flag;
     isout_conn_opts_s opts;
-
-    //isout_conn_opts_s sent_opts;   // 已发送选项
-    //isout_conn_opts_s all_opts;    // 包含所有选项
 }isout_connection_s;
+
+
+int isout_opts_parse(isout_conn_opts_s *opts, uint8_t *opts_str);
 
 #endif
