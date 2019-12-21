@@ -186,7 +186,6 @@ proxy_server_from_user_read_cb(struct bufferevent *bev, void *ctx)
 
     // 连接目标服务器
     if (isc_to_user->status != ISSHE_SCS_ESTABLISHED) {
-        isout_decode();
         // 读取消息验证码，进行消息验证
         bufferevent_read(bev, mac, sizeof(mac));
         //isshe_print_buffer(mac, sizeof(mac), sizeof(mac));

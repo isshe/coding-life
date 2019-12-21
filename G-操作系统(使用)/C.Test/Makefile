@@ -13,6 +13,6 @@ all:	$(PROGS)
 	$(CC) $(CFLAGS) $@.c -o $@$(SUFFIX) $(LDFLAGS) $(LDLIBS)
 
 clean:
-	$(RM) $(RMFLAGS) $(PROGS) $(TEMPFILES) *.o
+	$(RM) $(RMFLAGS) $(PROGS) $(TEMPFILES) *.o *.out
 
 include $(ROOT)/Make.libisshe.inc

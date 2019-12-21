@@ -41,44 +41,6 @@ isshe_socks_listerner_new_bind(struct event_base *base,
     return listener;
 }
 
-// TODO: 再考虑这个水位调节的问题
-/* 
-static void
-isshe_drained_write_cb(struct bufferevent *bev, void *ctx)
-{
-	struct bufferevent *partner = ctx;
-
-	// We were choking the other side until we drained our outbuf a bit.
-	// Now it seems drained. 
-	bufferevent_setcb(bev, isshe_forward_data_read_cb, NULL, isshe_forward_data_event_cb, partner);
-	bufferevent_setwatermark(bev, EV_WRITE, 0, 0);
-	if (partner) {
-		bufferevent_enable(partner, EV_READ);
-	}
-}
-
-// 两边速度失衡，就调整一下
-void
-isshe_drained_process(struct bufferevent *bev, 
-	struct bufferevent *partner, bufferevent_data_cb readcb, 
-	bufferevent_data_cb writecb, bufferevent_event_cb eventcb, void *ctx)
-{
-	struct evbuffer *dst;
-	dst = bufferevent_get_output(partner);
-	if (evbuffer_get_length(dst) >= MAX_OUTPUT) {
-		// We're giving the other side data faster than it can
-		// pass it on.  Stop reading here until we have drained the
-		// other side to MAX_OUTPUT/2 bytes.
-		printf("!!!!!!!!!!!!!!!!!!!!!?????????????????\n");
-		bufferevent_setcb(partner, readcb, 
-			writecb, eventcb, ctx);
-		bufferevent_setwatermark(partner, EV_WRITE, MAX_OUTPUT/2,
-		    MAX_OUTPUT);
-		bufferevent_disable(bev, EV_READ);
-	}
-}
-*/
-
 void
 isshe_forward_data_read_cb(struct bufferevent *bev, void *ctx)
 {
