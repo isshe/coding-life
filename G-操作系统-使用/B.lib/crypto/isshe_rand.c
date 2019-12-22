@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-#include "rand/isshe_rand.h"
+#include "isshe_rand.h"
 
 int isshe_rand_bytes_dev_urandom(unsigned char *buf, int num)
 {

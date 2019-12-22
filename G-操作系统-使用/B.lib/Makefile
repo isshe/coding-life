@@ -13,7 +13,7 @@ OBJS   = isshe_error.o isshe_file.o \
 			crypto/isshe_md5.o \
 			crypto/isshe_sha2.o \
 			crypto/isshe_hmac.o \
-			rand/isshe_rand.o
+			crypto/isshe_rand.o
 
 all:	$(LIBMISC)
 

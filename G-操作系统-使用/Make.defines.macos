@@ -4,7 +4,7 @@
 # C programs using gcc.
 
 ISSHE_LIB_DIR=B.lib
-ISSHE_INC_DIR= -I$(ROOT)/A.include -I$(ROOT)/A.include/crypto -I$(ROOT)/A.include/rand
+ISSHE_INC_DIR= -I$(ROOT)/A.include -I$(ROOT)/A.include/crypto
 CC=gcc
 # COMPILE.c=$(CC) $(CFLAGS) $(CPPFLAGS) -c
 COMPILE.c=$(CC) $(CFLAGS) -c
