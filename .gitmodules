@@ -1,0 +1,3 @@
+[submodule "P-Projects/isout"]
+	path = P-Projects/isout
+	url = https://github.com/isshe/isout.git
