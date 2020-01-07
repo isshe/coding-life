@@ -67,3 +67,5 @@ venv/
 *_temp.svg
 *.tmp
 *.temp
+node_modules/
+package-lock.json

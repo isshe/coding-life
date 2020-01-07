@@ -1,0 +1,9 @@
+{
+    "name": "koa_learning",
+    "version": "1.0.0",
+    "description": "learn koa",
+    "private": true,
+    "dependencies": {
+        "koa": "^2.11.0"
+    }
+}
