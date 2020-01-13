@@ -120,10 +120,3 @@ pid_t isshe_waitpid(pid_t pid, int *iptr, int options)
 
     return ret_pid;
 }
-
-void isshe_kill(pid_t pid, int signo)
-{
-    if (kill(pid, signo) == -1) {
-        isshe_sys_error_exit("kill error");
-    }
-}
