@@ -1,3 +1,6 @@
 [submodule "P-Projects/isout"]
 	path = P-Projects/isout
 	url = https://github.com/i-sout/isout.git
+[submodule "P-Projects/quickcmd"]
+	path = P-Projects/quickcmd
+	url = https://github.com/i-sout/quickcmd.git
