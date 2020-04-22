@@ -235,6 +235,12 @@ vm-pages 123217729              # 页面数
 vm-max-threads 4                # 用于执行value对象换入工作的线程数量
 ```
 
+## 发布/订阅
+```
+PUBLISH CHANNAL MESSAGE
+SUBSCRIBE channel [channel ...] 
+```
+
 # 问题
 ## redis-cli中文乱码？
 * 执行`redis-cli --raw`

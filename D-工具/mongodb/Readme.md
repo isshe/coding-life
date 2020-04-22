@@ -167,6 +167,7 @@ db.dropDatabase()
 use <dbname>
 show collections
 db.<collections_name>.drop()
+db.getCollection("<collections_name>").drop();
 ```
 
 ## 删除文档
@@ -228,3 +229,11 @@ db.user.aggregate([
 <DBNAME>.system.sources: 列出服务器信息
 ```
 
+# 备份/恢复
+```
+# 备份
+./mongodump --host=mongodb-base.gaia-1.yf-1.chongqing.yf-1.tcepoc.fsphere.cn --port=27017 --db=cc_data -u user_0 -p ccdata
+
+# 恢复
+./mongorestore -h ${mongodb_host}:${mongodb_port} --username=${mongodb_user} --password=${mongodb_pass} -d ${mongodb_db} --dir=${mongodb_dir}
+```
