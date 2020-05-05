@@ -26,10 +26,12 @@ nginx
 * `server-rewrite`:
 * `find-config`: 不能注册处理程序，由nginx核心来完成请求与配置块的配对工作。
 * `post-rewrite`: 不能注册处理程序，由nginx核心完成rewrite阶段要求的`内部跳转`操作（如果rewrite阶段有要求的话）。
-* `preaccess`: 
+* `preaccess`: 访问控制，主要是访问频率等。
 * `post-access`: 不能注册处理程序。主要用于配置access阶段实现标准`ngx_http_core`模块提供的配置执行`satisfy`的功能.
 * `try-file`: 不能注册处理程序。N个参数，依次检查N-1个参数映射的文件/目录是否存在，存在则返回。不存在则以第N个参数`内部跳转/返回指定状态码页`。
   * 当最后一个参数时，总是直接执行“内部跳转”，而不论其对应的文件系统对象是否存在。
+* `log`: 记录log的阶段。
+
 
 # 常见错误
 * `proxy_pass`和其他`content`阶段的模块在同一个location。
