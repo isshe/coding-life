@@ -90,4 +90,17 @@ ls abc/*/softwares/*.json | xargs -n 1 basename | sort -n | uniq
 sed -i "s/$src/$dst/g" $file
 ```
 
+# 遍历
+```shell
+# 获取到ip后，应该是一个列表，这里需要循环一下
+for((i=0;i<${#deploy_hosts[@]};i++))
+do
+    host_ip=${deploy_hosts[i]}
+done
+```
+```shell
+    for module in ${need_start_modules[@]}; do
+        start_service "${install_dir}" "${module}" $host_ip
+    done
+```
 
