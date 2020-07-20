@@ -1,0 +1,8 @@
+version: '3.1'
+services: 
+  zk:
+    image: daocloud.io/daocloud/zookeeper:latest
+    restart: always
+    container_name: zookeeper
+    ports: 
+      - 2181:2181
