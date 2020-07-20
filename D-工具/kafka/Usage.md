@@ -14,13 +14,18 @@
 
 # 创建Topic
 ```shell
-/usr/local/kafka/bin/kaftopics.sh --create \
+/usr/local/kafka/bin/kafka-topics.sh --create \
 --zookeeper localhost:2181 --replication-factor 1 \--partitions 1 --topic test
 ```
 
-# 生产消息
+# 获取 TOPIC 详细信息
 ```shell
 /usr/local/kafka/bin/kafka-topics.sh --zookeeper localhost:2181 --describe --topic test
+```
+
+# 生产消息
+```
+bin/kafka-console-producer.sh --broker-list host:9092 --topic <topic>
 ```
 
 # 消费消息

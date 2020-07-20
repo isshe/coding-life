@@ -4,6 +4,10 @@
 Docker 命令
 ---
 
+> docker 中央仓库：https://hub.daocloud.io/
+> docker 教程：
+
+
 # 通用
 ## 安装
 ```
@@ -73,6 +77,8 @@ docker image ls ubuntu:18.04
 `<镜像>`可以是`镜像短ID`、`镜像长ID`、`镜像名`或者`镜像摘要`.
 删除行为分为两类，一类是`Untagged`，另一类是`Deleted`; 镜像可以拥有多个tag,因此只有所有tag都被删除后,才会delete.
 
+> docker rmi <镜像标识>
+
 ## 构建镜像
 > docker build [OPTIONS] PATH | URL | -
 
@@ -80,6 +86,29 @@ docker image ls ubuntu:18.04
 ```
 docker build -t nginx:v3 .
 ```
+
+## 镜像的导入导出
+导出:
+> dokcer save -o <导出的路径/名称> <镜像 ID>
+
+加载：
+> docker load -i <镜像文件>
+
+修改镜像名称
+> docker tag <镜像 ID> <名称:版本>
+
+
+## 自定义镜像
+### 创建 Dockerfile 文件，并指定自定义镜像信息：
+```
+from：指定当前自定义镜像依赖的环境
+copy：将需要的文件复制到自定义镜像中
+workdir：声明镜像的默认工作目录
+cmd：需要执行的命令（在 workdir下执行，cmd 可以写多个，以最后一个为准）
+```
+
+### 构建镜像
+> docker build -t <镜像名称>:[tag] .
 
 
 # 容器相关
@@ -100,7 +129,7 @@ bash: 用于交互的shell
 docker run --name webserver -d -p 80:80 nginx
 --name: 为容器命名
 -d: 后台运行容器，并打印容器ID。（detach）
--p: 映射端口
+-p: 映射端口，`本地:容器`
 ```
 
 ## 查看正在运行的容器
@@ -132,6 +161,7 @@ docker diff ubuntu:18.04
 ## 停止容器
 > docker stop <容器>：停止容器。
 > docker kill <容器>：强制停止一个容器。
+> docker stop $(docker ps -qa)
 
 ## 重新启动容器
 > docker start <容器>
@@ -147,6 +177,8 @@ docker commit \
 
 ## 删除容器
 > docker container rm <容器>
+> docker rm <容器 ID>
+> docker rm $(docker ps -qa)
 
 ## 清除所有处于终止状态的容器
 > docker container prune
@@ -172,6 +204,39 @@ cat ubuntu.tar | docker import - test/ubuntu:v1.0
 # 从URL或某个目录导入
 docker import http://example.com/exampleimage.tgz example/imagerepo
 ```
+
+## 复制文件
+* 复制到容器
+> docker cp <文件> <容器ID>:<容器路径>
+
+
+## 查看容器运行日志
+> docker logs -f <容器 ID>
+`-f`:滚动查看。
+
+## 数据卷
+* 创建数据卷
+> dokcer volume create <数据卷名称>
+创建数据卷之后，数据默认会存放在`/var/lib/docker/volumes/<数据卷名称>/_data 目录`
+
+* 查看数据卷详细信息
+> docker volume inspect <数据卷名称>
+
+* 查看所有数据卷
+> docker volume ls
+
+* 删除数据卷
+> docker volume rm <数据卷名称>
+
+* 应用数据卷
+方法一：
+> docker run -v <数据卷名称>:<容器内部的路径> <镜像 ID>
+容器内部路径中的文件，会同时映射到宿主机上。
+
+方法二：
+> docker run -v <宿主机路径>:<容器内部路径> <镜像 ID>
+容器内部路径中的文件，不会映射到宿主机上。
+宿主机路径不存在时，会自动创建。
 
 # 注意
 ## docker的load 和 import 的区别？
