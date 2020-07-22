@@ -5,6 +5,11 @@ Redis
 ---
 Redis：REmote DIctionary Server（Redis），是一个key-value存储器，也是一个数据结构服务器(data structures server)。
 Redis分为服务器(redis-server)和客户端(redis-cli)。
+特性:
+* 基于内存运行，性能高效
+* 支持分布式，理论上可以无限扩展
+* key-value存储系统
+* 开源的使用ANSI C语言编写、遵守BSD协议、支持网络、可基于内存亦可持久化的日志型、Key-Value数据库，并提供多种语言的API
 
 参考文档:
 http://redisdoc.com/
@@ -336,3 +341,5 @@ SUBSCRIBE channel [channel ...]
 * 执行`redis-cli --raw`
 
 ## 什么是二进制安全？
+
+## redis 的优缺点?
