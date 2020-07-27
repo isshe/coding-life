@@ -11,9 +11,7 @@ services:
     volumes:
       - ./conf/redis1.conf:/usr/local/redis/redis.conf
       - ./conf/sentinel1.conf:/usr/local/redis/sentinel.conf
-    command: 
-      - ["redis-server", "/usr/local/redis/redis.conf"]
-      - ["redis-sentinel", "/usr/local/redis/sentinel.conf"]
+    command: bash -c "redis-server /usr/local/redis/redis.conf; redis-sentinel /usr/local/redis/sentinel.conf"
 
   redis2:
     image: redis:6.0.6
@@ -28,9 +26,7 @@ services:
       - ./conf/sentinel2.conf:/usr/local/redis/sentinel.conf
     links:
       - redis1:master
-    command: 
-      - ["redis-server", "/usr/local/redis/redis.conf"]
-      - ["redis-sentinel", "/usr/local/redis/sentinel.conf"]
+    command: bash -c "redis-server /usr/local/redis/redis.conf; redis-sentinel /usr/local/redis/sentinel.conf"
 
   redis3:
     image: redis:6.0.6
@@ -45,7 +41,5 @@ services:
       - ./conf/sentinel3.conf:/usr/local/redis/sentinel.conf
     links:
       - redis1:master
-    command: 
-      - ["redis-server", "/usr/local/redis/redis.conf"]
-      - ["redis-sentinel", "/usr/local/redis/sentinel.conf"]
+    command: bash -c "redis-server /usr/local/redis/redis.conf; redis-sentinel /usr/local/redis/sentinel.conf"
 
