@@ -1,0 +1,51 @@
+version: '3.1'
+services: 
+  redis1:
+    image: redis:6.0.6
+    restart: always
+    container_name: redis1
+    ports: 
+      - 6381:6379
+    environment: 
+      - TZ=Asia/Shanghai
+    volumes:
+      - ./conf/redis1.conf:/usr/local/redis/redis.conf
+      - ./conf/sentinel1.conf:/usr/local/redis/sentinel.conf
+    command: 
+      - ["redis-server", "/usr/local/redis/redis.conf"]
+      - ["redis-sentinel", "/usr/local/redis/sentinel.conf"]
+
+  redis2:
+    image: redis:6.0.6
+    restart: always
+    container_name: redis2
+    ports: 
+      - 6382:6379
+    environment: 
+      - TZ=Asia/Shanghai
+    volumes:
+      - ./conf/redis2.conf:/usr/local/redis/redis.conf
+      - ./conf/sentinel2.conf:/usr/local/redis/sentinel.conf
+    links:
+      - redis1:master
+    command: 
+      - ["redis-server", "/usr/local/redis/redis.conf"]
+      - ["redis-sentinel", "/usr/local/redis/sentinel.conf"]
+
+  redis3:
+    image: redis:6.0.6
+    restart: always
+    container_name: redis3
+    ports: 
+      - 6383:6379
+    environment: 
+      - TZ=Asia/Shanghai
+    volumes:
+      - ./conf/redis3.conf:/usr/local/redis/redis.conf
+      - ./conf/sentinel3.conf:/usr/local/redis/sentinel.conf
+    links:
+      - redis1:master
+    command: 
+      - ["redis-server", "/usr/local/redis/redis.conf"]
+      - ["redis-sentinel", "/usr/local/redis/sentinel.conf"]
+
