@@ -1,0 +1,73 @@
+version: '3.1'
+services:
+  redis1:
+    image: redis:6.0.6
+    container_name: redis1
+    ports:
+      - 7001:7001
+      - 17001:17001
+    environment:
+      - TZ=Asia/Shanghai
+    volumes:
+      - ./conf/redis1.conf:/usr/local/redis/redis.conf
+    command: bash -c "redis-server /usr/local/redis/redis.conf"
+
+  redis2:
+    image: redis:6.0.6
+    container_name: redis2
+    ports:
+      - 7002:7002
+      - 17002:17002
+    environment:
+      - TZ=Asia/Shanghai
+    volumes:
+      - ./conf/redis2.conf:/usr/local/redis/redis.conf
+    command: bash -c "redis-server /usr/local/redis/redis.conf"
+
+  redis3:
+    image: redis:6.0.6
+    container_name: redis3
+    ports:
+      - 7003:7003
+      - 17003:17003
+    environment:
+      - TZ=Asia/Shanghai
+    volumes:
+      - ./conf/redis3.conf:/usr/local/redis/redis.conf
+    command: bash -c "redis-server /usr/local/redis/redis.conf"
+
+  redis4:
+    image: redis:6.0.6
+    container_name: redis4
+    ports:
+      - 7004:7004
+      - 17004:17004
+    environment:
+      - TZ=Asia/Shanghai
+    volumes:
+      - ./conf/redis4.conf:/usr/local/redis/redis.conf
+    command: bash -c "redis-server /usr/local/redis/redis.conf"
+
+  redis5:
+    image: redis:6.0.6
+    container_name: redis5
+    ports:
+      - 7005:7005
+      - 17005:17005
+    environment:
+      - TZ=Asia/Shanghai
+    volumes:
+      - ./conf/redis5.conf:/usr/local/redis/redis.conf
+    command: bash -c "redis-server /usr/local/redis/redis.conf"
+
+  redis6:
+    image: redis:6.0.6
+    container_name: redis6
+    ports:
+      - 7006:7006
+      - 17006:17006
+    environment:
+      - TZ=Asia/Shanghai
+    volumes:
+      - ./conf/redis6.conf:/usr/local/redis/redis.conf
+    command: bash -c "redis-server /usr/local/redis/redis.conf"
