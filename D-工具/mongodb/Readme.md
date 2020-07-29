@@ -8,8 +8,8 @@ MongoDB
 * 非关系型数据库；
 * 面向集合的存储；
 * 角色包含：
-  * 数据库
-  * 集合
+  * 数据库: 可以在创建文档时自动创建
+  * 集合：可以在创建文档时自动创建
     * 一组文档的组合
   * 文档
     * 文档的逻辑联系
@@ -75,6 +75,7 @@ db.<collection_name>.find({"field":/xxx$/})     # 以xxx结尾的
 ```
 db.<collection_name>.find({"name":{$type:2}})
 db.<collection_name>.find({"name":{$type:string}})
+db['collection'].find()
 ```
 * type：
   * 1：双精度(Double)
@@ -140,6 +141,8 @@ use <dbname>
 db.<collection_name>.insert([
     {"xxx": "yyy"}, {"aaa": "bbb"}
 ])
+db.<collection>.insertOne()
+db.<collection>.insertMany()
 ```
 > collections_name: 如果集合不存在，会自动创建。
 
@@ -150,6 +153,7 @@ db.<collection_name>.insert([
 ```
 use mydb
 db.<collection_name>.insert({"field":"value", ...})
+# 如果没有指定 $set 会直接更新记录
 db.<collection_name>.update({"field":"value", ...}, {$set: {"field1":"value1"}})    # 方法一
 db.<collection_name>.save({"_id":"xxx", ...})                                       # 方法二
 ```
@@ -168,6 +172,7 @@ use <dbname>
 show collections
 db.<collections_name>.drop()
 db.getCollection("<collections_name>").drop();
+db['<collection>'].drop()
 ```
 
 ## 删除文档
