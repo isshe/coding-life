@@ -25,7 +25,22 @@ async def aioredis_transactions():
     ok1, ok2 = await tr.execute()
     print(ok1, ok2)
 
+async def aioredis_transactions2():
+    redis = await aioredis.create_redis(
+        'redis://localhost')
+    await redis.delete('foo', 'bar')
+    tr = redis.multi_exec()
+    fut1 = tr.incr('foo')
+    fut2 = tr.incr('bar')
+    res = await tr.execute()
+    res2 = await asyncio.gather(fut1, fut2)
+    print(res, res2)
+    # assert res == res2
+
+    redis.close()
+    await redis.wait_closed()
 
 if __name__ == "__main__":
     asyncio.run(aioredis_transactions())
+    asyncio.run(aioredis_transactions2())
     redis_transactions()
