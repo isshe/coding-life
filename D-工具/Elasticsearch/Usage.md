@@ -358,5 +358,299 @@ DELETE /_search/scroll/FGluY2x1ZGVfY29udGV4dF91dWlkDnF1ZXJ5VGhlbkZldGNoBRRmREE3c
 * scroll：指定存储时间
 
 ## 2.6 查询后删除
-> 待补充: https://www.bilibili.com/video/BV1Qz411e7yx?p=33
+根据 term/match 等查询方式去删除大量的文档。
+> 如果需要删除的内容，是大部分数据，推荐是创建一个新的 index，然后把数据添加到新的 index。
+
+```
+POST /book/_delete_by_query
+{
+  "query": {
+    "range": {
+      "count": {
+        "gt": 12345,
+        "lt": 100001
+      }
+    }
+  }
+}
+```
+
+## 2.7 复合查询
+### 2.7.1 bool 查询
+复合过滤器，将你的多个查询条件，以一定的逻辑组合在一起。
+* must：and 的意思，全部都需要匹配。
+* must_not: 全部都不能匹配。
+* should: or 的意思。
+```json
+POST /book/_search
+{
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "range": {
+            "count": {
+              "gte": 12356,
+              "lte": 1000010
+            }
+          }
+        },
+        {
+          "term": {
+            "author": {
+              "value": "isshe"
+            }
+          }
+        }
+      ],
+      "must_not": [
+        {
+          "match": {
+            "name": "天才大当家"
+          }
+        }
+      ]
+    }
+  }
+}
+```
+
+## 2.8 boosting 查询
+boosting查询可以影响查询后的 score。
+* positive：只有匹配上 positive 的内容，才会被放到结果集中。
+* negative：如果匹配上和 positive 并且匹配上 negative，就可以降低这样的文档的分数。
+* negative_boost：指定系数，必须小于 1.0. 
+关于查询结果分数计算：
+* 搜索的关键字在文档中出现的频次越高，分数越高。
+* 指定的文档内容越短，分数越高。
+* 被分词的关键字的词汇，被分词库匹配的数量越多，分数越高。
+```json
+POST /book/_search
+{
+  "query": {
+    "boosting": {
+      "positive": {
+        "match": {
+          "name": "大当家"
+        }
+      },
+      "negative": {
+        "match": {
+          "author": "isshe"
+        }
+      },
+      "negative_boost": 0.2
+    }
+  }
+}
+```
+
+## 2.9 filter 查询
+query查询：根据查询条件去计算文档的匹配度得到一个分数，并根据分数进行排序。
+filter查询：根据查询条件去查询文档，但**不计算分数**，并且会对经常被过滤的数据进行缓存。
+```json
+POST /book/_search
+{
+  "query": {
+    "bool": {
+      "filter": [
+        {
+          "term": {
+            "author": "isshe"
+          }
+        },
+        {
+          "prefix": {
+            "name": "天才"
+          }
+        }
+      ]
+    }
+  }
+}
+```
+
+## 2.10 高亮查询
+对查询的内容以一定的特殊样式展示给用户。
+* fregment_size: 指定高亮数据展示多少个字符回来。默认 100.
+* pre_tags：指定前缀标签。
+* post_tags：指定后缀标签。
+highlight 和 query 同级别。
+
+```json
+POST /book/_search
+{
+  "query": {
+    "bool": {
+      "filter": [
+        {
+          "term": {
+            "author": "isshe"
+          }
+        },
+        {
+          "prefix": {
+            "name": "天才"
+          }
+        }
+      ]
+    }
+  },
+  "highlight": {
+    "fields": {
+      "name": {}
+    },
+    "pre_tags": [
+      "<font color='red'>"
+    ],
+    "post_tags": [
+      "</font>"
+    ]
+  }
+}
+```
+
+## 2.11 聚合查询
+
+### 2.11.1 去重计数查询
+去重计数 Cardinality：第一步对指定的 field 进行去重，第二步进行统计。
+```json
+POST /book/_search
+{
+  "aggs": {
+    "res": {  # 结果名称
+      "cardinality": {  # 聚合类型
+        "field": "author"
+      }
+    }
+  }
+}
+```
+
+### 2.11.2 范围统计
+统计一定范围内出现的文档个数。
+* from: `>=`
+* to: `<`
+```json
+POST /book/_search
+{
+  "aggs": {
+    "res": {
+      "range": {
+        "field": "count",
+        "ranges": [
+          {
+            "from": 12345,
+            "to": 100001
+          }
+        ]
+      },
+      "ip_range": {
+        "field": "ip",
+        "ranges": [
+          {
+            "from": "10.0.0.5",
+            "to": "10.0.0.10"
+          }
+        ]
+      },
+      "date_range": {
+        "field": "date",
+        "format": "MM-yyy", # 可以指定格式
+        "ranges": [
+          {
+            "from": "now-10d/d",
+            "to": "now"
+          }
+        ]
+      }
+    }
+  }
+}
+```
+* range: range/ip_range/date_range
+
+### 2.11.3 统计聚合查询
+统计字段的最大值、最小值、平均值。
+```json
+POST /book/_search
+{
+  "aggs": {
+    "res": {
+      "extended_stats": {
+        "field": "count"
+      }
+    }
+  }
+}
+```
+
+## 2.12 经纬度查询
+* geo_distance: 直线距离检索方式
+* geo_bounding_box: 以两个点(左上右下)确定一个矩形范围，获取其中所有数据。
+* geo_polygon: 以多个点确定一个多边形，获取其中所有数据。
+```json
+# geo_distance
+POST /map/_search
+{
+  "query": {
+    "geo_distance": {
+      "location": {
+        "lon":116.401969,
+        "lat": 39.914492
+      },
+      "distance": 10000,
+      "distance_type": "arc"
+    }
+  }
+}
+
+# geo_bounding_box
+POST /map/_search
+{
+  "query": {
+    "geo_bounding_box": {
+      "location": {
+        "top_left": {
+          "lon": 116.401969,
+          "lat": 39.914492
+        },
+        "bottom_right": {
+          "lon": 116.503154,
+          "lat": 39.873749
+        }
+      }
+    }
+  }
+}
+
+# geo_polygon
+POST /map/_search
+{
+  "query": {
+    "geo_polygon": {
+      "location": {
+        "points": [{
+          "lon": 116.401969,
+          "lat": 39.914492
+        },
+        {
+          "lon": 116.503154,
+          "lat": 39.873749
+        },
+        {
+          "lon": 116.32838,
+          "lat": 39.899881
+        }
+        ]
+      }
+    }
+  }
+}
+
+```
+* distance：指定距离
+* distance_type：指定形状
+
+
 
