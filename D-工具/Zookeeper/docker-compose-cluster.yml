@@ -1,5 +1,11 @@
 # zk 集群
-version: '3.1'
+version: '3.7'
+
+networks:
+  zkafka_docker_net: # 定义网络名称,供 kafka 引用
+    external: false
+    name: zkafka_docker_net
+
 services: 
   zk1:
     image: zookeeper # daocloud.io/daocloud/zookeeper:latest这个镜像貌似有问题
@@ -10,6 +16,11 @@ services:
     environment: 
       ZOO_MY_ID: 1
       ZOO_SERVERS: server.1=0.0.0.0:2888:3888;2181 server.2=zk2:2888:3888;2181 server.3=zk3:2888:3888;2181
+    volumes:
+      - ./zk1/data:/data
+      - ./zk1/datalog:/datalog
+    networks:
+      - zkafka_docker_net
 
   zk2:
     image: zookeeper
@@ -20,6 +31,11 @@ services:
     environment: 
       ZOO_MY_ID: 2
       ZOO_SERVERS: server.1=zk1:2888:3888;2181 server.2=0.0.0.0:2888:3888;2181 server.3=zk3:2888:3888;2181
+    volumes:
+      - ./zk2/data:/data
+      - ./zk2/datalog:/datalog
+    networks:
+      - zkafka_docker_net
 
   zk3:
     image: zookeeper
@@ -30,3 +46,8 @@ services:
     environment: 
       ZOO_MY_ID: 3
       ZOO_SERVERS: server.1=zk1:2888:3888;2181 server.2=zk2:2888:3888;2181 server.3=0.0.0.0:2888:3888;2181
+    volumes:
+      - ./zk3/data:/data
+      - ./zk3/datalog:/datalog
+    networks:
+      - zkafka_docker_net

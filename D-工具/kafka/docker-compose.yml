@@ -1,0 +1,91 @@
+version: '3.7'
+
+networks:
+  zkafka_docker_net: # 定义网络名称, 在 zk 的 docker-compose.yml 中创建了
+    external: true
+    name: zkafka_docker_net
+
+services:
+  kafka1:
+    image: wurstmeister/kafka:2.12-2.5.0
+    container_name: kafka1
+    ports:
+      - 9091:9092
+    external_links:
+      - zk1
+      - zk2
+      - zk3
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ADVERTISED_HOST_NAME: 10.140.0.3  # 修改:宿主机IP
+      KAFKA_ADVERTISED_PORT: 9091             # 修改:宿主机映射port
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://10.140.0.3:9091 # 绑定发布订阅的端口。修改:宿主机IP
+      KAFKA_ZOOKEEPER_CONNECT: zk1:2181,zk2:2181,zk3:2181
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./kafka1/data:/kafka
+    networks:
+      - zkafka_docker_net
+
+  kafka2:
+    image: wurstmeister/kafka:2.12-2.5.0
+    container_name: kafka2
+    ports:
+      - 9092:9092
+    external_links:
+      - zk1
+      - zk2
+      - zk3
+    environment:
+      KAFKA_BROKER_ID: 2
+      KAFKA_ADVERTISED_HOST_NAME: 10.140.0.3
+      KAFKA_ADVERTISED_PORT: 9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://10.140.0.3:9092
+      KAFKA_ZOOKEEPER_CONNECT: zk1:2181,zk2:2181,zk3:2181
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./kafka2/data:/kafka
+    networks:
+      - zkafka_docker_net
+
+  kafka3:
+    image: wurstmeister/kafka:2.12-2.5.0
+    container_name: kafka3
+    ports:
+      - 9093:9092
+    external_links:
+      - zk1
+      - zk2
+      - zk3
+    environment:
+      KAFKA_BROKER_ID: 3
+      KAFKA_ADVERTISED_HOST_NAME: 10.140.0.3
+      KAFKA_ADVERTISED_PORT: 9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://10.140.0.3:9093
+      KAFKA_ZOOKEEPER_CONNECT: zk1:2181,zk2:2181,zk3:2181
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./kafka3/data:/kafka
+    networks:
+      - zkafka_docker_net
+
+  kafka-manager:
+    image: sheepkiller/kafka-manager:latest
+    restart: unless-stopped
+    container_name: kafka-manager
+    hostname: kafka-manager
+    ports:
+      - 9000:9000
+    links:            # 连接本compose文件创建的container
+      - kafka1
+      - kafka2
+      - kafka3
+    external_links:   # 连接本compose文件以外的container
+      - zk1
+      - zk2
+      - zk3
+    environment:
+      ZK_HOSTS: zk1:2181,zk2:2181,zk3:2181                 ## 修改:宿主机IP
+      TZ: CST-8
+    networks:
+      - zkafka_docker_net
