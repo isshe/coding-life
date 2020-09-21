@@ -69,3 +69,18 @@ git checkout -b <branch name> --track origin/<branch name>
 ```bash
 git show --name-only HEAD
 ```
+
+# git merge squash
+```bash
+git checkout <your-dev-branch>
+# -i 后跟 commit id，要合并的提交的前一个，如果你要合并两次提交，那个出来的编辑器里应该有两条记录
+git rebase -i HEAD~2
+# 编辑框出来后，可以把后面的提交的 pick 改为 squash
+git pull --rebase origin master
+git push -f origin <your-dev-branch>  #
+
+git checkout master
+git pull origin master
+git merge <your-dev-branch>
+git push origin master
+```
