@@ -1,0 +1,7 @@
+Script started on 2020-11-02 01:26:52-08:00 [<not executed on terminal>]
+]0;root@centos7:~/code/Personal/coding-life/E-编程语言/9.OpsLang/examples[root@centos7 examples]# set +o history
+]0;root@centos7:~/code/Personal/coding-life/E-编程语言/9.OpsLang/examples[root@centos7 examples]# tput rmm
+[?1034l]0;root@centos7:~/code/Personal/coding-life/E-编程语言/9.OpsLang/examples[root@centos7 examples]# tput rmam
+[?7l]0;root@centos7:~/code/Personal/coding-life/E-编程语言/9.OpsLang/examples[root@centos7 examples]# PROMPT_COMMAND= && PS1="\[\033[01;36m\][\u@\H \[\033[01;34m\]\w \[\033[01;35m\]\$?\[\033[01;36m\] ]\$\[\033[00m\] "
+[01;36m[root@centos7 [01;34m~/code/Personal/coding-life/E-编程语言/9.OpsLang/examples [01;35m0[01;36m ]$[00m unset -f command_not_found_handle && export LC_ALL=C PS2= && set +h +H +o history +o vi +o emacs
+[01;36m[root@centos7 [01;34m~/code/Personal/coding-life/E-编程语言/9.OpsLang/examples [01;35m0[01;36m ]$[00m 
