@@ -1,0 +1,20 @@
+goal all {
+    run {
+        my Num @nums;
+        my Num @nums2 = (3.14, 0);
+
+        {
+            @nums =>
+                say("nums is NOT empty"),
+                done;
+            true =>
+                say("nums is empty");
+
+            @nums2 =>
+                say("nums2 is NOT empty"),
+                done;
+            true =>
+                say("nums2 is empty");
+        }
+    }
+}

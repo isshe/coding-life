@@ -1,0 +1,10 @@
+goal all {
+    run {
+        my Num %ages{Str} = (dog: 1.5, cat: 5.4, bird: 0.3);
+
+        say("bird: ", %ages<bird>),
+        say("cat: ", %ages<cat>),
+        say("dog: ", %ages<dog>),
+        say("tiger: ", %ages<tiger>);
+    }
+}

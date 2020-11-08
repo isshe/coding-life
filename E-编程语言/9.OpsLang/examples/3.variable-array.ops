@@ -1,0 +1,21 @@
+# 注意：这里中间那些行用的是,(逗号)；变量定义声明用;分号结尾。
+
+goal all {
+    run {
+        my Int @ints;
+
+        push(@ints, 32),
+        push(@ints, -3),
+        push(@ints, 0),
+
+        say("index 0: ", @ints[0]),
+        say("index 2: ", @ints[2]),
+        say("len: ", elems(@ints)),
+        pop(@ints),
+        say("len: ", elems(@ints)),
+        say("index 2: ", @ints[2]),
+        say("shift: ", shift(@ints)),
+        unshift(@ints, 123),
+        say("array: [@ints]");
+    }
+}

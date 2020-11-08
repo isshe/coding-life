@@ -70,3 +70,5 @@ venv/
 node_modules/
 package-lock.json
 *.iml
+ops.script.log
+

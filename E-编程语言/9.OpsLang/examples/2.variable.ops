@@ -1,0 +1,9 @@
+
+# $ 用于标量变量
+# @ 用于散列变量
+# % 用于散列变量
+
+my Int $count = 0;
+my Str $name;
+my Str @domains;
+my Bool %map{Str};
