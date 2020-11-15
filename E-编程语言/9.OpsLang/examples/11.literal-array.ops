@@ -1,0 +1,10 @@
+action print-int-array(Int @arr) {
+    print("[@arr]"),
+    print("\n");
+}
+
+goal all {
+    run {
+        print-int-array((3, 79, -51));
+    }
+}

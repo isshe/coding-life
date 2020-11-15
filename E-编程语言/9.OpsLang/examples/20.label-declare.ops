@@ -1,0 +1,22 @@
+
+goal all {
+    run {
+        label done;
+
+        check {
+            true =>
+                label done,
+                say("check pre"),
+                goto(done),
+                say("NOT THIS"),
+            done:
+                say("check post");
+        }
+
+        say("run pre"),
+        goto(done),
+        say("NOT THIS"),
+    done:
+        say("run post");
+    }
+}

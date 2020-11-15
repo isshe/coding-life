@@ -1,0 +1,11 @@
+goal all {
+    run {
+        say("before"),
+
+    again:
+
+        say("middle"),
+        goto(again),
+        say("after");
+    }
+}

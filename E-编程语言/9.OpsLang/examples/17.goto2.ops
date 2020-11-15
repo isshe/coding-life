@@ -1,0 +1,15 @@
+goal all {
+    run {
+        say("before"),
+
+    again:
+
+        say("middle"),
+        goto(again),
+        {
+            too-many-tries =>
+                say("caught the too-many-tries exception");
+        },
+        say("after");
+    }
+}

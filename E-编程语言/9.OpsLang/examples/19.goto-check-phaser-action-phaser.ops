@@ -1,0 +1,18 @@
+goal all {
+    run {
+        label do-work;
+
+        check {
+            ! file-exists("/tmp/a") =>
+                goto(do-work);
+
+            true => ok;
+        }
+
+        say("before"),
+
+    do-work:
+
+        say("hi from all.run");
+    }
+}

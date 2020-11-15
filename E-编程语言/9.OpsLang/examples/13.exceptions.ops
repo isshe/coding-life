@@ -1,0 +1,9 @@
+goal all {
+    run {
+        $ (exit 3),
+        {
+            failed => say("cmd failed with exit code: ", exit-code);
+        },
+        say("done");
+    }
+}

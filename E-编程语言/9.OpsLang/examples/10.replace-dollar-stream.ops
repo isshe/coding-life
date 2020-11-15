@@ -1,0 +1,14 @@
+
+
+goal all {
+    run {
+        $ echo hi,
+        stream {
+            out contains-word /hi/ =>
+                say("hit!");
+
+            found-prompt =>
+                break;
+        }
+    }
+}

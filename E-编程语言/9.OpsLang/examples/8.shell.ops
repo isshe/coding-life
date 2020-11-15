@@ -1,0 +1,7 @@
+my Str @foo = qw(hello world);
+
+goal all {
+    run {
+        say(sh/echo @.foo "@.foo"/);
+    }
+}

@@ -1,0 +1,24 @@
+goal all {
+    run {
+        say("before"),
+
+    again:
+
+        say("middle"),
+        goto(again, tries: 10),
+        {
+            too-many-tries =>
+                say("caught the too-many-tries exception");
+        },
+
+        say("middle2"),
+        goto(again, init-delay: 0.001, delay-factor: 2, max-delay: 1,
+     max-total-delay: 10),
+        {
+            too-many-tries =>
+                say("caught the too-many-tries exception");
+        },
+
+        say("after");
+    }
+}

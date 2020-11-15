@@ -1,0 +1,14 @@
+goal all {
+    run {
+        my Str $s = "hello, world";
+
+        {
+            $s contains /(\w+), (\w+)/ =>
+                say("0: [$0], 1: [$1], 2: [$2]"),
+                done;
+
+            true =>
+                say("not matched!");
+        };
+    }
+}

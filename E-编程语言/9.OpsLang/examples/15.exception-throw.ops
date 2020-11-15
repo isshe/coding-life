@@ -1,0 +1,15 @@
+exception too-large;
+
+action foo (Int $n) {
+    {
+        $n > 100 =>
+            throw(too-large, msg: "$n is larger than 100");
+    };
+}
+
+goal all {
+    run {
+        foo(101),
+        say("done");
+    }
+}

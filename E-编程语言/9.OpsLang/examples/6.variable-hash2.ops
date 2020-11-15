@@ -1,0 +1,12 @@
+goal all {
+    run {
+        my Num %ages{Str} = (dog: 1.5, cat: 5.4, bird: 0.3);
+        my Str $key = 'dog';
+        my Str %weekdays{Int} = (1: "Monday", 2: "Tuesday", 3: "Wednesday",
+                                 4: "Thursday", 5: "Friday");
+
+        say("$key: ", %ages{$key}),
+        say(%weekdays{3}),
+        say(%weekdays{5});
+    }
+}

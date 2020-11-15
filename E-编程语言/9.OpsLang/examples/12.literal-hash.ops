@@ -1,0 +1,9 @@
+action print-dog-age(Int %ages{Str}) {
+    say("dog age: ", %ages<dog>);
+}
+
+goal all {
+    run {
+        print-dog-age((dog: 3, cat: 4));
+    }
+}

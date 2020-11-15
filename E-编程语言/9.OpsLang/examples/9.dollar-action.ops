@@ -1,0 +1,9 @@
+goal all {
+    run {
+        $ cd /tmp/,
+        $ mkdir foo2,
+        $ ls /tmp,
+        done;
+    }
+}
+

@@ -1,0 +1,20 @@
+exception too-large;
+
+action foo (Int $n) {
+    {
+        $n > 100 =>
+            throw(too-large);
+    };
+}
+
+goal all {
+    run {
+        foo(101),
+        {
+            too-large =>
+                say("caught too large"),
+                done;
+        },
+        say("done");
+    }
+}
