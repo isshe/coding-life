@@ -116,7 +116,7 @@ cmd：需要执行的命令（在 workdir下执行，cmd 可以写多个，以�
 ## 运行镜像/容器
 > docker run
 
-示例: 
+示例:
 ```
 docker run -it --rm ubuntu:18.04 bash
 -i: 交互操作
@@ -150,13 +150,18 @@ docker run --name webserver -d -p 80:80 nginx
 ## 查看容器的改动
 > docker diff <容器>
 
-示例: 
+示例:
 ```
 docker diff ubuntu:18.04
 ```
 
 ## 把改动后的容器制作成镜像
+
 > docker commit [选项] <容器ID或容器名> [<仓库名>[:<标签>]]
+
+示例：
+
+> docker commit -a "isshe" -m "CI environment of openresty edge" c05732dc97c3 registry.cn-hongkong.aliyuncs.com/isshe/ubuntu-openresty-edge-ci:16.04.01
 
 ## 停止容器
 > docker stop <容器>：停止容器。
