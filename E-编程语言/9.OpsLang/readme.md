@@ -197,4 +197,105 @@ $a < 3 ? $a + 1 : $a
 %scores<john> == %scores{"john"}
 ```
 
-当前进度： rules
+
+# 条件判断
+与：`,`
+或：`;`
+
+示例：
+
+``` perl
+# 与
+file-exists("/tmp/a.txt"), hostname eq 'tiger', prompt-user eq 'agentzh' =>
+    say("hit!");
+
+# 或
+file-exists("/foo"), prompt-host eq 'glass';
+file-exists("/bar"), prompt-host eq 'nuc'
+=>
+    say("hit!");
+```
+
+# 异步 async
+* 顶层的变量会在不同线程间共享。
+* 动作块内的变量会在不同线程间有不同的拷贝。
+
+
+# lua 块
+lua 块中支持的变量形式：
+```
+$.NAME
+$.{NAME}
+@.NAME
+@.{NAME}
+@{NAME}
+%.{NAME}
+%{NAME}
+```
+
+# 动作返回值
+返回值类型可以是
+
+* 标量类型（`Str`，`Num`，`Int`，或`Bool`），
+* 数组类型（`Str[]`，`Num[]`，`Int[]`，或`Bool[]`），或
+* 哈希类型（`Num{Str}`，`Int{Str}`，`Str{Num}`和等等）。
+
+# 动作阶段
+prep：做一些准备工作。
+build：进行软件构建（通常是代码编译和代码生成）。
+install：安装软件。
+run：运行此处不容易分类的软件或其他操作。
+package：请打包内置和已安装的软件（例如RPM或Deb包）。
+
+# 阶段检查
+每个动作阶段程序都可以使用可选的检查阶段程序。
+* `ok()`: 成功, 不执行后续动作，跳过此阶段。
+* `nok()`: 失败，执行后续的动作。
+
+
+示例：
+```perl
+goal hello {
+    run {
+        check {
+            file-exists("/tmp/a.txt") =>
+                ok();
+        }
+        say("hello, world!");
+    }
+}
+```
+
+
+# 模块
+定义模块
+```
+module foo;
+module foo.bar;
+```
+
+引用模块
+```
+use foo;
+use foo.bar;
+```
+
+导出符号
+```perl
+# 定义模块
+module foo;
+
+action do-this () is export {
+    say("do this!");
+}
+
+# 使用模块
+use foo;
+
+goal all {
+    run {
+        do-this();
+        foo.do-this();
+    }
+}
+```
