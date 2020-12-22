@@ -3,6 +3,7 @@
 projects=(
     "/root/code/Personal/Notebook"
     "/root/code/Personal/coding-life"
+    "/root/code/Personal/Work"
 )
 
 for project in ${projects[@]}
@@ -21,7 +22,8 @@ do
         fi
 
         git add .
-        git commit -m "change: daily sync."
+        now=`date +%Y%m%d`
+        git commit -m "$now: daily sync."
 
         echo "[+] git push: $branch"
         if [ $branch ]; then
