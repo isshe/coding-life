@@ -20,7 +20,7 @@ if [ $a -eq $b ]then if
 # 判断文件夹是否存在(-d)/判断文件是否存在(-f)
 ```
 if [ -d $path ]          # if [ ! -d $path ]
-then 
+then
 fi
 ```
 
@@ -99,8 +99,8 @@ do
 done
 ```
 ```shell
-    for module in ${need_start_modules[@]}; do
-        start_service "${install_dir}" "${module}" $host_ip
-    done
+for module in ${need_start_modules[@]}; do
+    start_service "${install_dir}" "${module}" $host_ip
+done
 ```
 
