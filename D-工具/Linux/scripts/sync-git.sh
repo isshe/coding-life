@@ -4,6 +4,7 @@ projects=(
     "/root/code/Personal/Notebook"
     "/root/code/Personal/coding-life"
     "/root/code/Personal/Work"
+    "/root/code/Personal/delivery-oredge"
 )
 
 for project in ${projects[@]}
