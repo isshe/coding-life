@@ -333,7 +333,7 @@ redis-cli -a [password]
 ## 发布/订阅
 ```
 PUBLISH CHANNAL MESSAGE
-SUBSCRIBE channel [channel ...] 
+SUBSCRIBE channel [channel ...]
 ```
 
 # 问题
