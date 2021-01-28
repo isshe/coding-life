@@ -84,3 +84,16 @@ git pull origin master
 git merge <your-dev-branch>
 git push origin master
 ```
+
+# git tag
+
+* 打 tag
+
+```
+git tag -a {tag name} {commit id}
+```
+
+* 推送 tag 到远端
+```
+git push origin {tag name}
+```
