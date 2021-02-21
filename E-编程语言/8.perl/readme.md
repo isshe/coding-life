@@ -83,3 +83,48 @@ sub DESTROY{
 @ISA = qw( 父类名称 );
 ```
 * 重载：使用继承，然后定义重名函数即可。
+
+
+# 良好的 Perl 开发习惯
+
+## 开启内建警告信息
+
+```perl
+# 1.
+perl -w my_program
+
+# 2.
+#!/usr/bin/perl -w
+
+# 3. 可部分打开
+#!/usr/bin/perl
+use warnings
+...
+no warnings
+```
+
+## 查看更详细的问题描述
+
+```
+use diagnostics
+```
+
+## 开启严格模式
+
+```
+use strict
+```
+
+有以下好处：
+* 避免拼写错误
+* 限定变量的范围
+
+
+## 使用帮助文档 perldoc
+
+```
+perldoc
+perldoc -f print
+perldoc perlsyn
+perldoc perl
+```
