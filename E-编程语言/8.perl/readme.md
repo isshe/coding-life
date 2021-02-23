@@ -128,3 +128,46 @@ perldoc -f print
 perldoc perlsyn
 perldoc perl
 ```
+
+# 数组
+## 特殊索引值
+* `$#<array>`: 返回最后一个元素的索引值，示例如`$#arr`。
+* 负数索引：从后往前索引，示例如`@arr[-1]`
+
+# 引用
+
+取地址：`\$var`
+
+## 软引用
+
+软引用: 存储变量名
+
+```perl
+$scalar = "Hello1"
+@scalar = ("Hello2", "World", 123)
+$refer = "scalar"   # 引用变量名
+$$refer             # Hello1
+$$refer[0]          # Hello2
+```
+
+## 硬引用
+
+硬引用：存储地址
+
+``` perl
+$foo = "hello";
+$scalarref = \$foo;     # 标量引用
+$constref = \123.456;   # 常量引用
+$arrayref = \@arr;      # 数组引用
+$arrayref2 = [1, 2, 3]  # 匿名数组的引用
+```
+
+解引用
+
+```perl
+${$scalarref}   # 简写 $$scalarref
+${$constref}    # 简写 $$constref
+${$arrayref}[0]
+${$arrayref2}[0]
+```
+
