@@ -1,12 +1,12 @@
 #!/usr/bin/perl
- 
+
 $bar = "I am runoob site. welcome to runoob site.";
 if ($bar =~ /run/){
    print "第一次匹配\n";
 }else{
    print "第一次不匹配\n";
 }
- 
+
 $bar = "run";
 if ($bar =~ /run/){
    print "第二次匹配\n";
@@ -33,3 +33,28 @@ $string = 'welcome to runoob site.';
 print "转化前：$string\n";
 $string =~ tr/a-z/A-z/;
 print "转化后：$string\n";
+
+
+# \x: 取分组
+$bar = "I am runrun site. welcomerun to runoob site.";
+if ($bar =~ /(run)\1 site. (welcome)\1/){
+   print "第一次匹配 $1 $2\n";
+}else{
+   print "第一次不匹配\n";
+}
+
+
+# 取分组内容
+$bar = "I am runrun site. welcomerun to runoob site.";
+if ($bar =~ /I (|am) runrun/){
+   print "第一次匹配 $1\n";
+}else{
+   print "第一次不匹配\n";
+}
+
+$bar = "I  runrun site. welcomerun to runoob site.";
+if ($bar =~ /I (|am) runrun/){
+   print "第一次匹配 $1\n";
+}else{
+   print "第一次不匹配\n";
+}
