@@ -171,3 +171,12 @@ ${$arrayref}[0]
 ${$arrayref2}[0]
 ```
 
+# 哈希
+## 哈希函数
+* exist
+* each
+* ENV
+* reverse
+* delete
+* keys
+* values
