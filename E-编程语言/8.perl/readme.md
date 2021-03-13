@@ -160,6 +160,8 @@ $scalarref = \$foo;     # 标量引用
 $constref = \123.456;   # 常量引用
 $arrayref = \@arr;      # 数组引用
 $arrayref2 = [1, 2, 3]  # 匿名数组的引用
+%hash = (two => 2, three => 3, four => 4, five => 5);
+$hashref = \%hash;
 ```
 
 解引用
@@ -168,7 +170,9 @@ $arrayref2 = [1, 2, 3]  # 匿名数组的引用
 ${$scalarref}   # 简写 $$scalarref
 ${$constref}    # 简写 $$constref
 ${$arrayref}[0]
+@arr = @$arrayref;
 ${$arrayref2}[0]
+%hash = %$hashref;
 ```
 
 # 哈希
@@ -180,3 +184,6 @@ ${$arrayref2}[0]
 * delete
 * keys
 * values
+
+
+## 参数
