@@ -1,7 +1,7 @@
 #!/usr/bin/perl
- 
+
 open(DATA, "<format.pl") or die "format.pl 文件无法打开, $!";
- 
+
 while(<DATA>){
    print "$_";
 }
@@ -27,7 +27,7 @@ rename ("/usr/runoob/test/file1.txt", "/usr/runoob/test/file2.txt" );
 unlink ("/usr/runoob/test/file1.txt");
 
 # file info
-my $file = "/usr/test/runoob/file1.txt";
+my $file = "/tmp";
 my (@description, $size);
 if (-e $file)
 {
@@ -39,5 +39,5 @@ if (-e $file)
     push @description, '是一个目录' if (-d _);
     push @description, '文件存在' if (-x _);
     push @description, (($size = -s _)) ? "$size 字节" : '空';
-    print "$file 信息：", join(', ',@description),"\n";
+    print "\n$file 信息：", join(', ',@description),"\n";
 }

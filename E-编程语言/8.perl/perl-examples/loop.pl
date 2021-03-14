@@ -32,6 +32,15 @@ foreach my $n (@arr) {
 print("\n");
 
 
+# foreach array
+print("------------foreach array 2--------------\n");
+my @arr = (1, 2, 3);
+foreach (@arr) {
+   print("$_, ")  # 注意这里
+}
+print("\n");
+
+
 # foreach hash
 print("------------foreach hash--------------\n");
 my %hash = (two => 2, three => 3, four => 4, five => 5);

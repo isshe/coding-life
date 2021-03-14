@@ -186,4 +186,19 @@ ${$arrayref2}[0]
 * values
 
 
-## 参数
+# 多行文本
+```perl
+my $page = <<HERE;
+<html>
+    <head><title>$title</title></head>
+    <body>This is a page.</body>
+</html>
+HERE
+
+my $page = <<_EOC_;
+<html>
+    <head><title>$title</title></head>
+    <body>This is a page.</body>
+</html>
+_EOC_
+```
