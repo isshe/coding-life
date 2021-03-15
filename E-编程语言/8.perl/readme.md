@@ -4,7 +4,12 @@
 perl 教程
 ---
 
+有不懂优先看这个：
+http://perl.linuxtoy.org/flow-control.html
+
+已经过了一遍：
 https://www.runoob.com/perl/perl-intro.html
+
 
 # 注释
 ```perl
