@@ -19,6 +19,11 @@ select col1, array_agg(col2)
 from table1 group by col1;
 ```
 
+# 去除聚合后的{NULL}
+```
+array_agg(distinct e.item) filter (where e.item is not null) as tcp_ports
+```
+
 # 查看表大小
 ```sql
 SELECT
@@ -29,4 +34,9 @@ information_schema.tables
 ORDER BY
     pg_total_relation_size('"' || table_schema || '"."' || table_name || '"')
 DESC limit 20;
+```
+
+# 查询语句性能分析
+```
+explain analyze select * from abc;
 ```
