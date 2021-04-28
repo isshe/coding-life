@@ -207,3 +207,14 @@ my $page = <<_EOC_;
 </html>
 _EOC_
 ```
+
+
+# 高频用法
+## 获取脚本所在的目录
+
+```perl
+use File::Basename;
+use Cwd qw(abs_path);
+
+my $basepath = dirname(abs_path(__FILE__));
+```
