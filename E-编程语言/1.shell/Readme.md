@@ -98,6 +98,7 @@ do
     host_ip=${deploy_hosts[i]}
 done
 ```
+
 ```shell
 for module in ${need_start_modules[@]}; do
     start_service "${install_dir}" "${module}" $host_ip
