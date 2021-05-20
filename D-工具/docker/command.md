@@ -126,7 +126,7 @@ bash: 用于交互的shell
 ```
 示例:
 ```
-docker run --name webserver -d -p 80:80 nginx
+docker run --name webserver -d -t -p 80:80 nginx
 --name: 为容器命名
 -d: 后台运行容器，并打印容器ID。（detach）
 -p: 映射端口，`本地:容器`
