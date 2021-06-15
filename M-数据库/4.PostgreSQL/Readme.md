@@ -40,3 +40,13 @@ DESC limit 20;
 ```
 explain analyze select * from abc;
 ```
+
+# 查看活动连接数量
+```
+select datname, usename, application_name, state, count(state) from pg_stat_activity group by datname, usename, application_name, state;
+```
+
+# 查看最大连接数量
+```
+show max_connections;
+```
