@@ -1,10 +1,9 @@
 #!/bin/bash
 
 projects=(
-    "/root/code/Personal/Notebook"
-    "/root/code/Personal/coding-life"
-    "/root/code/Personal/Work"
-    "/root/code/Personal/delivery-oredge"
+    "/root/persional/coding-life"
+    "/root/persional/xway/xway-frontend"
+    "/root/persional/xway/xway-backend"
 )
 
 for project in ${projects[@]}
