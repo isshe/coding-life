@@ -21,7 +21,7 @@ Docker
 * 常见用途:
   * 对微服务架构的一个一个服务进行封装.
   * 为不同的服务提供不同的应用/运行环境.
-  * 
+  *
 
 # 如何使用Docker？
 
@@ -41,7 +41,7 @@ Docker
 | 启动 | 秒级 | 分级 |
 | 硬盘使用 | M级 | G级 |
 | 性能 | 接近原生 | 若于原生 |
-| 系统支持量 | 单机上千 | 一般几十个 | 
+| 系统支持量 | 单机上千 | 一般几十个 |
 
 
 # 传统虚拟化技术与Docker的区别?
@@ -54,8 +54,15 @@ VS
 * **需要超级用户时，使用`gosu`，不用`su`或`sudo`。**
 
 # 拓展
-* Linux内核cgroup?
-* Linux内核namespace?
-* Union FS
+## Linux内核cgroup?
+## Linux内核namespace?
+## Union FS
+## 获取容器 ID？
+
+```
+cat /proc/self/cgroup | grep /docker/ | tail -n 1 | awk -F '/' '{print $3}'
+```
+## 判断是否是容器？
+* 检查 /.dockerenv 文件是否存在。
 
 # 参考
