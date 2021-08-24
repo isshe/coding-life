@@ -28,17 +28,17 @@ do
         comment="$now: daily sync."
         if git status -s | grep 'M '; then
             first_file=$(git status -s | grep 'M ' | awk -F ' ' '{print $2}' | head -n 1)
-            comment="change: modified $(basename $first_file) ($now daily sync)."
+            comment="change: modified $first_file ($now daily sync)."
         fi
 
         if git status -s | grep 'D '; then
             first_file=$(git status -s | grep 'D ' | awk -F ' ' '{print $2}' | head -n 1)
-            comment="change: deleted $(basename $first_file) ($now daily sync)."
+            comment="change: deleted $first_file ($now daily sync)."
         fi
 
         if git status -s | grep '?? '; then
             first_file=$(git status -s | grep '?? ' | awk -F ' ' '{print $2}' | head -n 1)
-            comment="change: added $(basename $first_file) ($now daily sync)."
+            comment="change: added $first_file ($now daily sync)."
         fi
 
         git commit -m "$comment"
