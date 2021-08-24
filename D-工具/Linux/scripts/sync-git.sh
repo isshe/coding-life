@@ -4,29 +4,47 @@ projects=(
     "/root/persional/coding-life"
     "/root/persional/xway/xway-frontend"
     "/root/persional/xway/xway-backend"
+    "/root/code/Personal/coding-life"
 )
 
-for project in ${projects[@]}
+for project in "${projects[@]}"
 do
     echo "---- project: $project start -----"
-    cd $project
-    no_changed=`git status | grep 'nothing to commit'`
+    cd "$project" || continue
+    no_changed=$(git status | grep 'nothing to commit')
     # echo "$no_changed"
-    if [[ "x$no_changed" == "x" ]]; then
-        branch=`git branch | grep '* ' | awk -F ' ' '{print $2}'`
+    if [ -z "$no_changed" ]; then
+        branch=$(git branch | grep '* ' | awk -F ' ' '{print $2}')
         echo "[+] git pull: $branch"
-        if [ $branch ]; then
+        if [ -n "$branch" ]; then
             git pull origin $branch
         else
             git pull
         fi
 
         git add .
-        now=`date +%Y%m%d`
-        git commit -m "$now: daily sync."
+        now=$(date +%Y%m%d)
+
+        comment="$now: daily sync."
+        if git status -s | grep 'M '; then
+            first_file=$(git status -s | grep 'M ' | awk -F ' ' '{print $2}' | head -n 1)
+            comment="change: modified $(basename $first_file) ($now daily sync)."
+        fi
+
+        if git status -s | grep 'D '; then
+            first_file=$(git status -s | grep 'D ' | awk -F ' ' '{print $2}' | head -n 1)
+            comment="change: deleted $(basename $first_file) ($now daily sync)."
+        fi
+
+        if git status -s | grep '?? '; then
+            first_file=$(git status -s | grep '?? ' | awk -F ' ' '{print $2}' | head -n 1)
+            comment="change: added $(basename $first_file) ($now daily sync)."
+        fi
+
+        git commit -m "$comment"
 
         echo "[+] git push: $branch"
-        if [ $branch ]; then
+        if [ -n "$branch" ]; then
             git push origin $branch
         else
             git push
