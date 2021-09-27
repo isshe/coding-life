@@ -1,6 +1,12 @@
 # Visual Studio Code 的快捷键
 
 option + t: 聚焦终端
+option + t: 切换终端
+option + up: 切换终端标签，workbench.action.terminal.focusPrevious
+option + down: 切换终端标签，workbench.action.terminal.focusNext
+option + n: 新建终端
+option + \: 拆分终端
+cmd + \: 拆分终端
 option + e: 聚焦编辑器
 option + 左: 向左移动一个单词
 option + 右: 向右移动一个单词
