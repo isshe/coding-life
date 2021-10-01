@@ -133,6 +133,7 @@ JavaScript 对象类似于：
 |JSON.stringify()|用于将 JavaScript 值转换为 JSON 字符串。|
 
 ## A. 注意事项
+* 使用 `let(变量)/const(常量)` 代替 `var`；
 * 使用`严格模式`;
 * 使用`严格运算符`: `===`;
 * null 用于对象, undefined 用于变量，属性和方法。

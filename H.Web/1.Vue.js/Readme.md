@@ -3,19 +3,26 @@
 # Vue.js
 
 ## 1. v-bind
-* 绑定元素特性。详见[app4](2.Base/index.html)
+* 绑定元素特性。
 
 ## 2. v-if
-* 条件判断。详见[app/app2](2.Base/index.html)
+* 条件判断。
 
 ## 3. v-for
-* 循环。详见[app3](2.Base/index.html)
+* 循环。
 
 ## 4. v-on
-* 添加事件监听器。详见[app5](2.Base/index.html)
+
+> @click
+
+* 添加事件监听器。
+
+```
+v-on:click
+```
 
 ## 5. v-model
-* 实现表单和应用状态之间的双向绑定。详见[app6](2.Base/index.html)
+* 实现表单和应用状态之间的双向绑定。
 
 ## 6. component
 
