@@ -140,10 +140,10 @@ JavaScript 对象类似于：
     * 使用 var 关键字声明的全局作用域变量属于 window 对象: (可以使用 window.var_name 访问变量)
     * 使用 let 关键字声明的全局作用域变量不属于 window 对象: (不可以使用 window.var_name 访问变量)
 * let不能使用变量提升；（let 关键字定义的变量则不可以在使用后声明，也就是变量需要先声明再使用。）
-* href="#"与href="javascript:void(0)"的区别: 
+* href="#"与href="javascript:void(0)"的区别:
     * `#`包含了一个位置信息，默认的锚是`#top`也就是网页的上端。
     * 而javascript:void(0), 仅仅表示一个死链接。
     * 在页面很长的时候会使用`#`来定位页面的具体位置，格式为：`# + id`。
-    
- ## B. JavaScript 代码规范
- [JavaScript 代码规范](https://www.runoob.com/js/js-conventions.html)
+
+## B. JavaScript 代码规范
+[JavaScript 代码规范](https://www.runoob.com/js/js-conventions.html)
