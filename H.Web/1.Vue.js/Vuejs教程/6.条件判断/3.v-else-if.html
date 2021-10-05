@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Hello</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+
+<body>
+
+<div id="app">
+    <h2 v-if="score >= 85">优秀</h2>
+    <h2 v-else-if="score >= 60">及格</h2>
+    <h1 v-else>不及格</h1>
+</div>
+
+<script>
+// 声明式编程
+const app = new Vue({
+    el: '#app',
+    data: {
+        score: 100,
+    },
+})
+</script>
+
+</body>
+</html>

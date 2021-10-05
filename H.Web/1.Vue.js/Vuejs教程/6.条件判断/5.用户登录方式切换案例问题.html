@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Hello</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+
+<body>
+
+<div id="app">
+    <!-- 会出现 if 中输入的内容，切换到 else 以后，还存在的问题；加个 key 即可，不同则不复用 -->
+    <span v-if="isUser">
+        <label for="username">用户账号</label>
+        <input type="text" id="username" placeholder="用户账号" key="username">
+    </span>
+    <span v-else>
+        <label for="email">用户邮箱</label>
+        <input type="text" id="email" placeholder="用户邮箱" key="key">
+    </span>
+    <button @click="isUser = !isUser">切换登录方式</button>
+</div>
+
+<script>
+// 声明式编程
+const app = new Vue({
+    el: '#app',
+    data: {
+        isUser: true,
+    },
+})
+</script>
+
+</body>
+</html>
