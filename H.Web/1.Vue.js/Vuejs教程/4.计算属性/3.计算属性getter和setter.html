@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Hello</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+
+<body>
+
+<div id="app">
+    <h2>{{fullName}}</h2>
+</div>
+
+<script>
+// 声明式编程
+const app = new Vue({
+    el: '#app',
+    data: {
+        firstName: "aaa",
+        lastName: "bbb",
+    },
+    // 计算属性
+    computed: {
+        fullName: {
+            get:function() {
+                return this.firstName + ' ' + this.lastName;
+            },
+            set:function(value) {
+                const names = value.split(' ');
+                this.firstName = names[0];
+                this.lastName = names[1];
+            }
+        }
+    }
+})
+</script>
+
+</body>
+</html>

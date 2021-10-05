@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Hello</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+
+<body>
+
+<div id="app">
+    <!-- 无参 -->
+    <button @click="btn1Click">1</button>
+    <!-- <button @click="btn1Click()">1</button> -->
+
+    <!-- 没有括号，默认传 Event -->
+    <!-- <button @click="btn2Click(123)">2</button> -->
+    <!-- <button @click="btn2Click()">2</button> -->
+    <button @click="btn2Click">2</button>
+
+    <!-- $event -->
+    <button @click="btn2Click(abc, $event)">3</button>
+
+</div>
+
+<script>
+// 声明式编程
+const app = new Vue({
+    el: '#app',
+    data: {
+        count: 0,
+        abc: 123,
+    },
+    methods: {
+        btn1Click() {
+            console.log("button 1 click");
+        },
+        btn2Click(event) {
+            console.log("button 3 click, event = ", event);
+        },
+        btn3Click(arg, event) {
+            console.log("button 3 click, arg = ", arg);
+            console.log("button 3 click, event = ", event);
+        },
+    }
+})
+</script>
+
+</body>
+</html>

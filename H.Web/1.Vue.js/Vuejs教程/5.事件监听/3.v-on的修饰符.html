@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Hello</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+
+<body>
+
+<div id="app">
+    <!-- 事件冒泡 -->
+    <div @click="divClick">
+        <button @click.stop="btnClick">BT</button>
+    </div>
+
+    <br>
+
+    <!-- prevent: 阻止自动提交，自行收集数据提交 -->
+    <form action="baidu">
+        <input type="submit" value="提交" @click.prevent="submitClick">
+    </form>
+
+    <!-- 监听键盘按键点击 -->
+    <input type="text" @keyup.enter="keyup">
+
+    <!-- 自定义组件 -->
+    <!-- <pon @click.native=""></pon> -->
+
+    <!-- once -->
+    <button @click.once="btnClick">BTONCE</button>
+</div>
+
+<script>
+// 声明式编程
+const app = new Vue({
+    el: '#app',
+    data: {
+        count: 0,
+    },
+    methods: {
+        divClick() {
+            console.log('divClick');
+        },
+        btnClick() {
+            console.log('btnClick');
+        },
+        submitClick() {
+            console.log('submitClick');
+        },
+        keyup() {
+            console.log('keyup');
+        }
+    }
+})
+</script>
+
+</body>
+</html>

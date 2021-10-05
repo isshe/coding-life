@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Hello</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+
+<body>
+
+<div id="app">
+    <h2>Total: {{totalPrice}}</h2>
+</div>
+
+<script>
+// 声明式编程
+const app = new Vue({
+    el: '#app',
+    data: {
+        count: 0,
+        movies: [
+        { id : 1, name: 'aaa', price: 110},
+        { id : 2, name: 'bbb', price: 120},
+        { id : 3, name: 'ccc', price: 130},
+        ],
+    },
+    // 计算属性
+    computed: {
+        totalPrice: function() {
+            let result = 0;
+            //for(let i = 0; i < this.movies.length; i++) {
+            //    result += this.movies[i].price;
+            //}
+
+            // es6
+            //for (let i in this.movies) {
+            //    result += this.movies[i].price;
+            //}
+
+            for (let m of this.movies) {
+                result += m.price;
+            }
+
+            return result;
+        }
+    }
+})
+</script>
+
+</body>
+</html>
