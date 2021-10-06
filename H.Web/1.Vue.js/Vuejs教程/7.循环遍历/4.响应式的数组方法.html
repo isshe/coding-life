@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Hello</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+
+<body>
+
+<div id="app">
+    <ul>
+        <li v-for="name in names">
+            <div>{{name}}</div>
+        </li>
+    </ul>
+    <button @click="push">push</button>
+    <button @click="pop">pop</button>
+    <button @click="shift">shift</button>
+    <button @click="unshift">unshift</button>
+    <button @click="splice">splice</button>
+    <button @click="sort">sort</button>
+    <button @click="reverse">reverse</button>
+</div>
+
+<script>
+// 声明式编程
+const app = new Vue({
+    el: '#app',
+    data: {
+        names: ['a', 'b', 'c', 'd'],
+    },
+    methods: {
+        push() {
+            // this.names.push('f');
+            this.names.push('f', 'g');
+        },
+        pop() {
+            this.names.pop();
+        },
+        shift() {
+            this.names.shift();
+        },
+        unshift() {
+            this.names.unshift("x", "y", "z");
+        },
+        splice() {
+            // 插入元素
+            this.names.splice(0, 0, 'x');
+            // 删除元素
+            this.names.splice(0, 2);
+            // 替换元素
+            this.names.splice(0, 1, 'z');
+        },
+        sort() {
+            this.names.sort();
+        },
+        reverse() {
+            this.names.reverse();
+        },
+    }
+})
+</script>
+
+</body>
+</html>

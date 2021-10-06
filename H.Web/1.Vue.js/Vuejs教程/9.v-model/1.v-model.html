@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Hello</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+
+<body>
+
+<div id="app">
+    <h2>{{message}}</h2>
+    <input type="text" v-model="message">
+    <!-- 等价于 -->
+    <!-- <input type="text" :value="message" v-on:input="valueChange"> -->
+    <!-- 等价于 -->
+    <!-- <input type="text" :value="message" v-on:input="message = $event.target.value"> -->
+</div>
+
+<script>
+// 声明式编程
+const app = new Vue({
+    el: '#app',
+    data: {
+        message: "bbb",
+    },
+    methods: {
+        valueChange(event) {
+            this.message = event.target.value;
+        }
+    }
+})
+</script>
+
+</body>
+</html>

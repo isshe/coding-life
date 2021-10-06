@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Hello</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+
+<body>
+
+<div id="app">
+    <ul>
+        <li v-for="(v, k) in info">
+            <div>{{k}}:{{v}}</div>
+        </li>
+    </ul>
+    <ul>
+        <li v-for="(v, k, i) in info">
+            <div>{{i}}:{{k}}:{{v}}</div>
+        </li>
+    </ul>
+</div>
+
+<script>
+// 声明式编程
+const app = new Vue({
+    el: '#app',
+    data: {
+        info: {
+            name: "aaa",
+            age: 18
+        }
+    },
+})
+</script>
+
+</body>
+</html>

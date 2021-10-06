@@ -132,6 +132,13 @@ JavaScript 对象类似于：
 |JSON.parse()|用于将一个 JSON 字符串转换为 JavaScript 对象。|
 |JSON.stringify()|用于将 JavaScript 值转换为 JSON 字符串。|
 
+## 12.filter/map/reduce
+
+* filter: 对数组进行过滤
+* map: 对数组元素逐个进行处理
+* reduce：对数组内容进行汇总
+
+
 ## A. 注意事项
 * 使用 `let(变量)/const(常量)` 代替 `var`；
 * 使用`严格模式`;

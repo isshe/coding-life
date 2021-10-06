@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="index.css">
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+<body>
+<div id="app">
+    <table>
+        <thead>
+            <tr>
+                <th>序号</th>
+                <th>书籍名称</th>
+                <th>出版日期</th>
+                <th>价格</th>
+                <th>购买数量</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr v-for="(book,i) in books">
+                <td>{{i + 1}}</td>
+                <td>{{book.name}}</td>
+                <td>{{book.date}}</td>
+                <td>{{book.price | showPrice}}</td>
+                <td>
+                    <button @click="dec(i)" :disabled="book.count <= 1">-</button>
+                    {{book.count}}
+                    <button @click="inc(i)" :disabled="book.count >= 9">+</button>
+                </td>
+                <td>
+                    <button @click="remove(i)">移除</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <h2>总价格: {{totalPrice | showPrice}}</h2>
+</div>
+
+<script src="index.js">
+
+</script>
+</body>
+</html>

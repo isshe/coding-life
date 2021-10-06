@@ -42,6 +42,15 @@ v-on:click
 ## 5. v-model
 * 实现表单和应用状态之间的双向绑定。
 
+```html
+<div id="app">
+    <h2>{{message}}</h2>
+    <input type="text" v-model="message">
+    <!-- 等价于 -->
+    <input type="text" :value="message" v-on:input="message = $event.target.value">
+</div>
+```
+
 ## 6. component
 
 ## 7. 实例的生命周期
