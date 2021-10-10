@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Hello</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+
+<body>
+
+<div id="app">
+    <cpn2></cpn2>
+</div>
+
+<script>
+// 创建组件
+const cpnC1 = Vue.extend({
+    template:`
+        <div>
+            <h2>One</h2>
+        </div>
+    `
+})
+
+const cpnC2 = Vue.extend({
+    template:`
+        <div>
+            <cpn1></cpn1>
+            <h2>Two</h2>
+        </div>
+    `,
+    components: {
+        cpn1: cpnC1
+    }
+})
+
+// 注册组件（全局组件）
+
+// 声明式编程
+const app = new Vue({
+    el: '#app',
+    data: {
+        message: "bbb",
+    },
+    components: {
+        cpn2: cpnC2,
+    }
+})
+</script>
+
+</body>
+</html>

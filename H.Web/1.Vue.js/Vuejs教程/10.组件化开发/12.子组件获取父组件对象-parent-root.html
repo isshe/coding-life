@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Hello</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+
+<body>
+
+<div id="app">
+    <cpn></cpn>
+</div>
+
+<template id="cpn">
+    <div>
+        <h2>Child</h2>
+        <button id="a" @click="btnClick">bt</button>
+    </div>
+</template>
+
+<script>
+// 声明式编程
+const app = new Vue({
+    el: '#app',
+    data: {
+        message: "Hello",
+    },
+    components: {
+        cpn: {
+            template:'#cpn',
+            methods: {
+                btnClick() {
+                    // $parent
+                    console.log(this.$parent);
+                    console.log(this.$parent.message);
+
+                    // $root
+                    console.log(this.$root);
+                    console.log(this.$root.message);
+                },
+            }
+        },
+    }
+})
+</script>
+
+</body>
+</html>

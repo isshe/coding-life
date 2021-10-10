@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Hello</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+
+<body>
+
+<div id="app">
+    <cpn></cpn>
+    <cpn2></cpn2>
+</div>
+
+<!-- 1. 使用 script -->
+<!-- <script type="text/x-template" id="cpn">
+    <div>
+        <h2>Test</h2>
+        <p>haha</p>
+    </div>
+</script> -->
+
+<!-- 2.使用 template，一般用这种方式 -->
+<template id="cpn">
+    <div>
+        <h2>Test</h2>
+        <p>haha</p>
+    </div>
+</template>
+
+<script>
+// 创建组件
+// 注册组件（全局组件）
+Vue.component('cpn', {
+    template:'#cpn',
+})
+
+// 声明式编程
+const app = new Vue({
+    el: '#app',
+    data: {
+        message: "bbb",
+    },
+    components: {
+        cpn2: {
+            template:`
+                <div>
+                    <h2>Test</h2>
+                    <p>haha</p>
+                </div>
+            `
+        }
+    }
+})
+</script>
+
+</body>
+</html>

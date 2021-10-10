@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Hello</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+
+<body>
+
+<div id="app">
+    <!-- lazy -->
+    <input type="text" v-model.lazy="message">
+    <h2>{{message}}</h2>
+
+    <!-- number -->
+    <input type="number" v-model.number="age">
+    <h2>{{age}} {{typeof age}}</h2>
+
+    <!-- trim -->
+    <input type="text" v-model.trim="name">
+    <h2>{{name}}</h2>
+</div>
+
+<script>
+// 声明式编程
+const app = new Vue({
+    el: '#app',
+    data: {
+        message: "香蕉",
+        age:0,
+        name: '',
+    },
+})
+</script>
+
+</body>
+</html>

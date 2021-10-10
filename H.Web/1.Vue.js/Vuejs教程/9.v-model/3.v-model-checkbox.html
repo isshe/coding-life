@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Hello</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+
+<body>
+
+<div id="app">
+    <!-- 单选框 -->
+    <label for="xieyi">
+        <input type="checkbox" id="agree" v-model="isAgree">agree
+    </label>
+    <h2>{{isAgree}}</h2>
+    <button type="button" id="bt" :disabled="!isAgree">Next</button>
+
+    <br>
+    <br>
+
+    <!-- 多选框 -->
+    <label for="duoxuan">
+        <input type="checkbox" value="足球" v-model="hobbies">足球
+        <input type="checkbox" value="篮球" v-model="hobbies">篮球
+        <input type="checkbox" value="羽毛球" v-model="hobbies">羽毛球
+    </label>
+    <h2>{{hobbies}}</h2>
+
+    <!-- 多选框-值绑定 -->
+    <label v-for="item in originHobbies" :for="item">
+        <input type="checkbox" :value="item" :id="item" v-model="hobbies">{{item}}
+    </label>
+    <h2>{{hobbies}}</h2>
+
+</div>
+
+<script>
+// 声明式编程
+const app = new Vue({
+    el: '#app',
+    data: {
+        isAgree: false,
+        hobbies: [],
+        originHobbies: ["足球", "篮球", "羽毛球", "乒乓球"],
+    },
+})
+</script>
+
+</body>
+</html>
