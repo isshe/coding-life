@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Hello</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+
+<body>
+
+<div id="app">
+    <cpn v-show="isShow"></cpn>
+</div>
+
+<template id="cpn">
+    <div>
+        <span>左边</span>
+        <span>中间</span>
+        <span v-show="isShow">右边</span>
+    </div>
+</template>
+
+<script>
+// 声明式编程
+const app = new Vue({
+    el: '#app',
+    data: {
+        message: "Hello",
+        isShow: true,
+    },
+    components: {
+        cpn: {
+            template:'#cpn',
+            data() {
+                return {
+                    isShow: false,
+                }
+            }
+        },
+    }
+})
+</script>
+
+</body>
+</html>

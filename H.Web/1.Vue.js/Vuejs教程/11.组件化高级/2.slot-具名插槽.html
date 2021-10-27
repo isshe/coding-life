@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Hello</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+
+<body>
+
+<div id="app">
+    <cpn>
+        <span slot="center">标题</span>
+        <button slot="left">返回</button>
+    </cpn>
+</div>
+
+<template id="cpn">
+    <div>
+        <slot name="left"><span>左边</span></slot>
+        <slot name="center"><span>中间</span></slot>
+        <slot name="right"><span>右边</span></slot>
+    </div>
+</template>
+
+<script>
+// 声明式编程
+const app = new Vue({
+    el: '#app',
+    data: {
+        message: "Hello",
+    },
+    components: {
+        cpn: {
+            template:'#cpn',
+        },
+    }
+})
+</script>
+
+</body>
+</html>
