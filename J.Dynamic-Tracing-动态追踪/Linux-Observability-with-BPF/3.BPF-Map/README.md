@@ -97,3 +97,81 @@ else
 
 
 # 删除
+
+* 内核空间
+
+```
+result = bpf_map_delete_element(&my_map, &key);
+```
+
+* 用户空间
+
+```
+result = bpf_map_delete_element(map_data[0].fd, &key);
+```
+
+# 遍历
+
+如果在遍历过程中删除元素，bpf_map_get_next_key 尝试查找已删除元素的键，找不到将重新开始。
+
+* 内核空间
+
+```
+int next_key, lookup_key;
+lookup_key = -1;
+while(bpf_map_get_next_key(map_data[0].fd, &lookup_key, &next_key) == 0) {
+  printf("The next key in the map is: '%d'\n", next_key);
+  lookup_key = next_key;
+}
+```
+
+* 用户空间
+
+```
+int next_key, lookup_key;
+lookup_key = -1;
+
+while(bpf_map_get_next_key(map_data[0].fd, &lookup_key, &next_key) == 0) {
+  printf("The next key in the map is: '%d'\n", next_key);
+  if (next_key == 2) {
+    printf("Deleting key '2'\n");
+    bpf_map_delete_element(map_data[0].fd &next_key);
+  }
+
+  lookup_key = next_key;
+}
+```
+
+# 查找并删除元素
+
+* 用户空间
+
+```
+int key, value, result, it;
+key = 1;
+
+for (it = 0; it < 2; it++) {
+  result = bpf_map_lookup_and_delete_element(map_data[0].fd, &key, &value);
+  if (result == 0)
+    printf("Value read from the map: '%d'\n", value);
+  else
+    printf("Failed to read value from the map: %d (%s)\n", result, strerror(errno));
+}
+```
+
+# 并发访问 BPF MAP
+
+BPF MAP 使用自旋锁 (spinlock) 解决竞争问题；但只能用于数组、HASH 和 cgroup 存储映射中。
+
+* bpf_spin_lock：锁定一个元素
+* bpf_spin_unlock：解锁一个元素
+
+定义使用自旋锁的结构
+
+```
+struct concurrent_element {
+  struct bpf_spin_lock semaphore;
+  int count;
+}
+```
+
