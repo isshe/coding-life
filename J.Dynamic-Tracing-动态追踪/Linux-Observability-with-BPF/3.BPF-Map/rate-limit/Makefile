@@ -9,6 +9,7 @@ KERNAL_SOURCE = /usr/src/linux-source-5.4.0/linux-source-5.4.0
 BPFTOOLS = $(KERNAL_SOURCE)/samples/bpf
 BPFLOADER = $(BPFTOOLS)/bpf_load.c
 SRCARCH = x86
+
 # Use USERINCLUDE when you must reference the UAPI directories only.
 USERINCLUDE    := \
 		-I$(KERNAL_SOURCE)/arch/$(SRCARCH)/include/uapi \
@@ -26,7 +27,7 @@ LINUXINCLUDE    := \
 		-I$(KERNAL_SOURCE)/include \
 		$(USERINCLUDE)
 
-CCINCLUDE := $(LINUXINCLUDE) \
+KBUILD_CFLAGS := $(LINUXINCLUDE) \
 	-I$(KERNAL_SOURCE)/tools/testing/selftests/bpf \
 	-I$(KERNAL_SOURCE)/samples/bpf/
 
@@ -34,10 +35,19 @@ CCINCLUDE := $(LINUXINCLUDE) \
 # CCINCLUDE += -I$(KERNAL_SOURCE)/include
 # CCINCLUDE += -I$(KERNAL_SOURCE)/arch/x86/include
 
-LOADINCLUDE += -I$(KERNAL_SOURCE)/samples/bpf
-LOADINCLUDE += -I$(KERNAL_SOURCE)/tools/lib
-LOADINCLUDE += -I$(KERNAL_SOURCE)/tools/perf
-LOADINCLUDE += -I$(KERNAL_SOURCE)/tools/include
+# KBUILD_CFLAGS += -I$(KERNAL_SOURCE)/samples/bpf
+# KBUILD_CFLAGS += -I$(KERNAL_SOURCE)/tools/lib
+# KBUILD_CFLAGS += -I$(KERNAL_SOURCE)/tools/perf
+# KBUILD_CFLAGS += -I$(KERNAL_SOURCE)/tools/include
+
+KBUILD_CFLAGS += -I$(KERNAL_SOURCE)/samples/bpf
+KBUILD_CFLAGS += -I$(KERNAL_SOURCE)/usr/include
+KBUILD_CFLAGS += -I$(KERNAL_SOURCE)/tools/lib/bpf/
+KBUILD_CFLAGS += -I$(KERNAL_SOURCE)/tools/testing/selftests/bpf/
+KBUILD_CFLAGS += -I$(KERNAL_SOURCE)/tools/lib/
+KBUILD_CFLAGS += -I$(KERNAL_SOURCE)/tools/include
+KBUILD_CFLAGS += -I$(KERNAL_SOURCE)/tools/perf
+
 LIBRARY_PATH += -L$(KERNAL_SOURCE)/tools/lib/bpf
 
 BPFSO = -lbpf
@@ -65,10 +75,10 @@ clean:
 	rm -f *.o *.so $(EXECABLE)
 
 build: ${BPFCODE.c} ${BPFLOADER}
-	$(CLANG) -O2 -target bpf -c $(BPFCODE:=.c) $(CCINCLUDE) -o ${BPFCODE:=.o}
+	$(CLANG) -O2 -target bpf -c $(BPFCODE:=.c) $(KBUILD_CFLAGS) -o ${BPFCODE:=.o}
 
 bpfload: build
-	$(CLANG) $(CFLAGS) -o $(EXECABLE) -lelf $(LOADINCLUDE) $(LIBRARY_PATH) $(BPFSO) \
+	$(CLANG) $(CFLAGS) -o $(EXECABLE) -lelf $(KBUILD_CFLAGS) $(LIBRARY_PATH) $(BPFSO) \
         $(BPFLOADER) rate_limit_user.c
 
 $(EXECABLE): bpfload

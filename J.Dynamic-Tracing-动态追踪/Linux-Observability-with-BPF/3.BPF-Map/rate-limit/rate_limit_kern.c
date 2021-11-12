@@ -31,22 +31,24 @@ struct bpf_map_def SEC("maps") counters = {
 uint64_t update_counter(uint32_t ipv4)
 {
 
-    uint64_t value;
+    uint64_t *value;
     struct ip_key key = {};
 
     key.v4_addr = ipv4;
     key.family = IPV4_FAMILY;
 
-    bpf_map_lookup_elem(counters, &key, &value);
+    value = bpf_map_lookup_elem((void *)&counters, &key);
 
     (*value) += 1;
+
+    return *value;
 };
 
 SEC("tracepoint/syscalls/sys_enter_execve")
 int bpf_prog(void *ctx)
 {
     char msg[] = "Hello, BPF World!";
-    // bpf_trace_printk(msg, sizeof(msg));
+    bpf_trace_printk(msg, sizeof(msg));
     return 0;
 }
 
