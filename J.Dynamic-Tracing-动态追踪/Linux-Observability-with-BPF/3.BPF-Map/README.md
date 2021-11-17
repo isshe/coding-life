@@ -196,3 +196,12 @@ int bpf_program(struct pt_regs *ctx) {
 }
 ```
 
+# 虚拟文件系统
+
+* 自行挂载
+
+有些 Linux 发行版默认不挂载，所以需要自行挂载。
+
+```
+mount -t bpf /sys/fs/bpf /sys/fs/bpf
+```
