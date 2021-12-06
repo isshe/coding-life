@@ -14,7 +14,7 @@ int trace_main(struct pt_regs *ctx) {
 
 bpf = BPF(text=bpf_source)
 print("file_path = ", file_path)
-bpf.attach_uprobe(name="/tmp/hello-bpf-go.out",
+bpf.attach_uprobe(name="./hello-bpf-go.out",
                   sym="main.main", fn_name="trace_main")
 bpf.trace_print()
 # me = os.getpid()
