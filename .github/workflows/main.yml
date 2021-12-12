@@ -1,0 +1,47 @@
+name: github pages
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+
+jobs:
+  Deploy:
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: true
+          fetch-depth: 0
+
+      - name: Clone blog
+        uses: actions/checkout@v2
+        with:
+          repository: isshe/blog
+          path: ../blog
+
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'
+          architecture: 'x64'
+
+      - name: Update blog to repo blog
+        run: |
+          cd Y.Blog/scripts
+          /usr/bin/python3 to-hugo.py
+          cd -
+          mv ../blog ./blog
+
+      - name: Pushes to blog
+        uses: cpina/github-action-push-to-another-repository@main
+        env:
+          API_TOKEN_GITHUB: ${{ secrets.FOR_WORKFLOW_PUSH }}
+        with:
+          source-directory: 'blog'
+          destination-github-username: 'isshe'
+          destination-repository-name: 'blog'
+          user-email: i.sshe@outlook.com
+          target-branch: master
+          commit-message: 'change: update blog.'

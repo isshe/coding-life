@@ -28,7 +28,7 @@ Python
 # 类型转换
 * str(): 转换为字符串。
     * str(123)
-    
+
 # Python之禅
 ```
 Beautiful is better than ugly.
@@ -227,3 +227,9 @@ else:
 ```
 
 
+## 获取脚本路径
+
+```
+import os
+file_path = os.path.realpath(__file__)
+```
