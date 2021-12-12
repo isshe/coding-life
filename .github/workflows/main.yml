@@ -34,6 +34,9 @@ jobs:
           /usr/bin/python3 to-hugo.py
           cd -
           mv ../blog ./blog
+          cd ./blog
+          git config --unset-all http.https://github.com/.extraheader
+          cd -
 
       - name: Pushes to blog
         uses: cpina/github-action-push-to-another-repository@main
