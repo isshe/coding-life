@@ -1,5 +1,3 @@
-[TOC]
-
 DNS Queries over HTTPS (DoH)
 ---
 

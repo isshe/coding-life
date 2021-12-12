@@ -1,18 +1,3 @@
----
-title: 【网络协议】DHCP-动态主机配置协议
-date: 2018-08-18 14:30:31
-tags: 
-  - 计算机网络
-  - DHCP
-categories: 网络协议
-toc: false
-mathjax: false
-description:
-top: false
----
-
-[TOC]
-
 DHCP
 ---
 
