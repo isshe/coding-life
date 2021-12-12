@@ -15,9 +15,9 @@ class Category(object):
 
     def add(self):
         category_path = self.path
-        # TODO: fix this
         if os.path.exists(category_path):
-            shutil.rmtree(category_path)
+            return
+            # shutil.rmtree(category_path)
 
         print("[+] Adding category: ", self.name)
         os.mkdir(category_path)
