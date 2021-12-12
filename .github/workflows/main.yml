@@ -19,7 +19,7 @@ jobs:
         uses: actions/checkout@v2
         with:
           repository: isshe/blog
-          path: ../blog
+          path: blog
 
       - name: Setup Python
         uses: actions/setup-python@v2
@@ -29,6 +29,7 @@ jobs:
 
       - name: Update blog to repo blog
         run: |
+          mv ./blog ../blog
           cd Y.Blog/scripts
           /usr/bin/python3 to-hugo.py
           cd -
