@@ -106,7 +106,7 @@ class Article(object):
                     info['image'] = file
         else:
             file = info.get("filename", None)
-            time = os.path.getmtime(src_path + "/" + file)
+            time = get_git_file_modtime(src_path, file)
             date = info.get('date', None)
             if not date or date < time:
                 info['date'] = time

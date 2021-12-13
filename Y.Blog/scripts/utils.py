@@ -18,15 +18,15 @@ def pick_image(path):
 
 
 def get_git_file_modtime(path, filename):
-    cmd = "cd {} && git log --pretty='format:%ci' {} | head -n 1 | awk -F ' ' '{}' | tr -d '\n'".format(
-        path, filename, '{print $1}')
+    cmd = "cd {} && git log --pretty='format:%ci' {} | head -n 1 | tr -d '\n'".format(
+        path, filename)
     result = subprocess.run(['/bin/bash', '-c', cmd], stdout=subprocess.PIPE)
     return result.stdout.decode("utf-8")
 
 
 def get_git_file_create_time(path, filename):
-    cmd = "cd {} && git log --pretty='format:%ci' {} | tail -n 1 | awk -F ' ' '{}' | tr -d '\n'".format(
-        path, filename, '{print $1}')
+    cmd = "cd {} && git log --pretty='format:%ci' {} | tail -n 1 | tr -d '\n'".format(
+        path, filename)
     result = subprocess.run(['/bin/bash', '-c', cmd], stdout=subprocess.PIPE)
     return result.stdout.decode("utf-8")
 
