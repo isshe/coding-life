@@ -18,7 +18,14 @@ def pick_image(path):
 
 
 def get_git_file_modtime(path, filename):
-    cmd = "cd {} && git log -1 --pretty='format:%ci' {} | awk -F ' ' '{}' | tr -d '\n'".format(
+    cmd = "cd {} && git log --pretty='format:%ci' {} | head -n 1 | awk -F ' ' '{}' | tr -d '\n'".format(
+        path, filename, '{print $1}')
+    result = subprocess.run(['/bin/bash', '-c', cmd], stdout=subprocess.PIPE)
+    return result.stdout.decode("utf-8")
+
+
+def get_git_file_create_time(path, filename):
+    cmd = "cd {} && git log --pretty='format:%ci' {} | tail -n 1 | awk -F ' ' '{}' | tr -d '\n'".format(
         path, filename, '{print $1}')
     result = subprocess.run(['/bin/bash', '-c', cmd], stdout=subprocess.PIPE)
     return result.stdout.decode("utf-8")
@@ -43,6 +50,7 @@ if __name__ == "__main__":
     path = '/root/persional/coding-life/Y.Blog/scripts'
     filename = 'to-hugo.py'
     print(get_git_file_modtime(path, filename))
+    print(get_git_file_create_time(path, filename))
 
     file = '/root/persional/blog/content/post/coding-life/network/protocol/arp/index.md'
     print(get_blog_file_date(file))
