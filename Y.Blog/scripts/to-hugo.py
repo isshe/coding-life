@@ -62,12 +62,18 @@ def main():
 
             common_info[k] = v
 
+        articles_hash = {}
+        for article in articles:
+            articles_hash[article['dst-dir']] = True
+
         # NOTE: clean dst path
         blog_post_path = blog_path + "/content/post"
         dst_path = blog_post_path + '/' + common_info.get("dst-path", None)
-        if dst_path and os.path.exists(dst_path):
-            print("[+] removing ", dst_path)
-            shutil.rmtree(dst_path)
+        dirs = os.listdir(dst_path)
+        for dir in dirs:
+            if not articles_hash.get(dir, None):
+                print("[+] removing ", dst_path)
+                shutil.rmtree(dst_path)
 
         # process common category
         categories = common_info.get('categories', None)
@@ -85,7 +91,6 @@ def main():
                     ct.add()
 
             # process article
-            print("[+] Converting articles", article['title'])
             atc = Article(script_path, blog_path, article, common_info)
             atc.convert()
 

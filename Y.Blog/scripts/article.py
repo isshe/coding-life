@@ -1,7 +1,8 @@
 import os
 import shutil
 from datetime import datetime
-from utils import pick_image
+from utils import pick_image, get_git_file_modtime, get_blog_file_date
+
 
 class Article(object):
     def __init__(self, script_path, blog_path, article_info, common_info):
@@ -21,7 +22,6 @@ class Article(object):
         self.set_dst_path()
         self.set_src_path()
         self.add_more_detail()
-
 
     def set_dst_path(self):
         common = self.common_info
@@ -94,7 +94,7 @@ class Article(object):
             # src is directory
             files = os.listdir(src_path)
             for file in files:
-                time = os.path.getmtime(src_path + "/" + file)
+                time = get_git_file_modtime(src_path, file)
                 date = info.get('date', None)
                 if not date or date < time:
                     info['date'] = time
@@ -114,7 +114,10 @@ class Article(object):
         if isinstance(info['date'], float):
             ts = int(info['date'])
             info['date'] = datetime.utcfromtimestamp(ts) \
-                .strftime('%Y-%m-%d %H:%M:%S')
+                .strftime('%Y-%m-%d')
+
+        self.dst_index_date = get_blog_file_date(
+            self.dst_path + '/' + 'index.md')
 
         info['author'] = 'isshe'
 
@@ -158,6 +161,15 @@ class Article(object):
         src_path = self.src_path
         src_dir = self.src_dir
 
+        # print("self.dst_index_date = ", self.dst_index_date)
+        # print("info['date'] = ", info['date'])
+        if self.dst_index_date and info['date'] == self.dst_index_date:
+            print("[!] {} already up to date".format(info['title']))
+            return
+        elif os.path.exists(dst_path):
+            shutil.rmtree(dst_path)
+
+        print("[+] Converting articles: ", info['title'])
         if not self.is_single_file:
             # src is directory
             shutil.copytree(src_path, dst_path)
@@ -171,7 +183,7 @@ class Article(object):
             _, file_extension = os.path.splitext(image)
             new_image_name = "image" + file_extension
             shutil.copyfile(self.image_path + '/' + image,
-                    self.dst_path + '/' + new_image_name)
+                            self.dst_path + '/' + new_image_name)
             info['image'] = new_image_name
 
         # output
