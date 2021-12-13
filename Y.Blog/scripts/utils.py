@@ -45,6 +45,15 @@ def get_blog_file_date(file):
     return None
 
 
+def fix_markdown_file_path(line):
+    m = re.search('(.*)\[(.*)\]\(\./(.*)\)(.*)', line)
+    if m:
+        line = '{}[{}]({}){}\n'.format(
+            m.group(1), m.group(2), m.group(3), m.group(4))
+
+    return line
+
+
 if __name__ == "__main__":
 
     path = '/root/persional/coding-life/Y.Blog/scripts'
@@ -54,3 +63,6 @@ if __name__ == "__main__":
 
     file = '/root/persional/blog/content/post/coding-life/network/protocol/arp/index.md'
     print(get_blog_file_date(file))
+
+    line = '![典型进程地址空间1](./process_address_map.png)'
+    print(fix_markdown_file_path(line))

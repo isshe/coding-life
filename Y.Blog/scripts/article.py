@@ -1,7 +1,11 @@
 import os
+import re
 import shutil
 from datetime import datetime
-from utils import pick_image, get_git_file_modtime, get_blog_file_date
+from utils import pick_image, \
+    get_git_file_modtime, \
+    get_blog_file_date, \
+    fix_markdown_file_path
 
 
 class Article(object):
@@ -196,8 +200,9 @@ class Article(object):
             content_file = "{}/{}".format(src_path, info['filename'])
             with open(content_file, "r") as cf:
                 for line in cf:
-                    if not line.startswith('[TOC]'):
-                        f.write(line)
-                # f.write(cf.read())
+                    if line.startswith('[TOC]'):
+                        continue
+                    line = fix_markdown_file_path(line)
+                    f.write(line)
 
         return dst_path
