@@ -1,0 +1,20 @@
+{
+    "categories": [
+        "个人感悟"
+    ],
+    "tags": [
+        "think",
+        "personal"
+    ],
+    "src-path": "X.Think/2021",
+    "dst-path": "coding-life/think/2021",
+    "articles": [
+        {
+            "title": "个人感悟 —— 国家公祭日有感",
+            "src-dir": "20211213",
+            "dst-dir": "20211213",
+            "filename": "国家公祭日有感.md",
+            "image": "iscream.jpg"
+        }
+    ]
+}
