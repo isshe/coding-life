@@ -86,7 +86,7 @@ def main():
 
             # process article
             print("[+] Converting articles", article['title'])
-            atc = Article(script_path, blog_post_path, article, common_info)
+            atc = Article(script_path, blog_path, article, common_info)
             atc.convert()
 
 

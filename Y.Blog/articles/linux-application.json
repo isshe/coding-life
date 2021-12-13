@@ -1,0 +1,33 @@
+{
+    "categories": [
+        "操作系统"
+    ],
+    "tags": [
+        "OS",
+        "Application",
+        "Linux"
+    ],
+    "src-path": "B.Operating-System/Linux/Application",
+    "dst-path": "coding-life/linux/application",
+    "articles": [
+        {
+            "title": "操作系统 —— 进程",
+            "src-dir": "1.进程",
+            "dst-dir": "process",
+            "filename": "Readme.md",
+            "image": "process_address_map.png",
+            "tags": [
+                "process"
+            ]
+        },
+        {
+            "title": "操作系统 —— 信号",
+            "src-dir": "2.信号",
+            "dst-dir": "signal",
+            "filename": "Readme.md",
+            "tags": [
+                "signal"
+            ]
+        }
+    ]
+}

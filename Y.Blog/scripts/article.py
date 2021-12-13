@@ -1,12 +1,13 @@
 import os
 import shutil
 from datetime import datetime
-
+from utils import pick_image
 
 class Article(object):
-    def __init__(self, script_path, blog_post_path, article_info, common_info):
+    def __init__(self, script_path, blog_path, article_info, common_info):
         self.script_path = script_path
-        self.blog_post_path = blog_post_path
+        self.post_path = blog_path + '/content/post'
+        self.image_path = blog_path + "/static"
         self.article_info = article_info
         self.common_info = common_info
         self.skip_list = {
@@ -16,7 +17,44 @@ class Article(object):
             "src-path": True,
             "filename": True,
         }
+        self.is_single_file = True
+        self.set_dst_path()
+        self.set_src_path()
         self.add_more_detail()
+
+
+    def set_dst_path(self):
+        common = self.common_info
+        info = self.article_info
+
+        dst_dir = info.get("dst-dir", "")
+        dst_path = "{}/{}/{}".format(
+            self.post_path,
+            common.get("dst-path", ""),
+            dst_dir
+        )
+        self.dst_dir = dst_dir
+        self.dst_path = dst_path
+
+    def set_src_path(self):
+        common = self.common_info
+        info = self.article_info
+
+        src_path = "{}/../../{}".format(
+            self.script_path,
+            common.get("src-path", "")
+        )
+
+        src_dir = info.get("src-dir", None)
+        if src_dir:
+            # src is directory
+            src_path = src_path + "/" + src_dir
+            self.is_single_file = False
+        else:
+            self.is_single_file = True
+
+        self.src_path = src_path
+        self.src_dir = src_dir
 
     def format_info(self):
         need_info = {}
@@ -28,20 +66,6 @@ class Article(object):
                 continue
 
             need_info[k] = v
-
-        info = self.common_info
-        for k, v in info.items():
-            if skip_list.get(k, False):
-                continue
-
-            if need_info[k]:
-                if isinstance(need_info[k], list) \
-                        and isinstance(v, list):
-                    # merge to list
-                    for lv in v:
-                        need_info[k].append(lv)
-            else:
-                need_info[k] = v
 
         res = ""
         for k, v in need_info.items():
@@ -55,23 +79,19 @@ class Article(object):
                 v = '"' + str(v) + '"'
             res = "{}{} = {}\n".format(res, k, v)
 
-            if k == "categories":
-                res = "{}{} = {}\n".format(res, "tags", v.lower())
+            # if k == "tags":
+            #     print("v = ", v)
 
         return res
 
     def add_more_detail(self):
         info = self.article_info
         common = self.common_info
+        src_path = self.src_path
+        src_dir = self.src_dir
 
-        src_path = "{}/../../{}".format(
-            self.script_path,
-            common.get("src-path", "")
-        )
-        src_dir = info.get("src-dir", None)
-        if src_dir:
+        if not self.is_single_file:
             # src is directory
-            src_path = src_path + "/" + src_dir
             files = os.listdir(src_path)
             for file in files:
                 time = os.path.getmtime(src_path + "/" + file)
@@ -98,30 +118,61 @@ class Article(object):
 
         info['author'] = 'isshe'
 
+        # merge categories
+        common_categories = common.get('categories', [])
+        article_categories = info.get('categories', [])
+        for category in common_categories:
+            article_categories.append(category)
+
+        info['categories'] = article_categories
+
+        # merge tags
+        tags_hash = {}
+
+        tags = info.get('tags', [])
+        for tag in tags:
+            tag = tag.lower()
+            if not tags_hash.get(tag, None):
+                tags_hash[tag] = True
+
+        categories = info.get('categories', [])
+        for category in categories:
+            category = category.lower()
+            if not tags_hash.get(category, None):
+                tags_hash[category] = True
+
+        common_tags = common.get('tags', [])
+        for tag in common_tags:
+            tag = tag.lower()
+            if not tags_hash.get(tag, None):
+                tags_hash[tag] = True
+
+        info['tags'] = [k for k, _ in tags_hash.items()]
+        # print(info['tags'])
+
     def convert(self):
         info = self.article_info
         common = self.common_info
+        dst_dir = self.dst_dir
+        dst_path = self.dst_path
+        src_path = self.src_path
+        src_dir = self.src_dir
 
-        dst_dir = info.get("dst-dir", "")
-        dst_path = "{}/{}/{}".format(
-            self.blog_post_path,
-            common.get("dst-path", ""),
-            dst_dir
-        )
-
-        src_path = "{}/../../{}".format(
-            self.script_path,
-            common.get("src-path", "")
-        )
-        src_dir = info.get("src-dir", None)
-        if src_dir:
+        if not self.is_single_file:
             # src is directory
-            src_path = src_path + "/" + src_dir
             shutil.copytree(src_path, dst_path)
             os.remove(dst_path + '/' + info['filename'])
         else:
             # src is single file, just prepare dst dir
-            os.mkdir(dst_path)
+            os.makedirs(dst_path)
+
+        if not info.get('image', None):
+            image = pick_image(self.image_path)
+            _, file_extension = os.path.splitext(image)
+            new_image_name = "image" + file_extension
+            shutil.copyfile(self.image_path + '/' + image,
+                    self.dst_path + '/' + new_image_name)
+            info['image'] = new_image_name
 
         # output
         index_file = dst_path + "/index.md"
@@ -132,6 +183,9 @@ class Article(object):
 
             content_file = "{}/{}".format(src_path, info['filename'])
             with open(content_file, "r") as cf:
-                f.write(cf.read())
+                for line in cf:
+                    if not line.startswith('[TOC]'):
+                        f.write(line)
+                # f.write(cf.read())
 
         return dst_path

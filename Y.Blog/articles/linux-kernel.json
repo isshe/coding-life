@@ -1,0 +1,22 @@
+{
+    "categories": [
+        "Linux 内核"
+    ],
+    "tags": [
+        "Kernel",
+        "Linux"
+    ],
+    "src-path": "B.Operating-System/Linux/Kernel",
+    "dst-path": "coding-life/linux/kernel",
+    "articles": [
+        {
+            "title": "Linux 内核 —— 中断",
+            "src-dir": "10.中断",
+            "dst-dir": "interrupt",
+            "filename": "Readme.md",
+            "tags": [
+                "Process"
+            ]
+        }
+    ]
+}

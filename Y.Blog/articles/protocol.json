@@ -1,7 +1,9 @@
 {
     "categories": [
-        "计算机网络",
         "网络协议",
+        "计算机网络"
+    ],
+    "tags": [
         "Protocol",
         "Computer Network"
     ],
@@ -9,36 +11,36 @@
     "dst-path": "coding-life/network/protocol",
     "articles": [
         {
-            "title": "DHCP 协议介绍",
+            "title": "网络协议 —— DHCP",
             "src-dir": "DHCP",
             "dst-dir": "dhcp",
             "filename": "DHCP.md",
             "image": "dhcp.png",
-            "categories": [
+            "tags": [
                 "DHCP"
             ]
         },
         {
-            "title": "ARP 协议介绍",
+            "title": "网络协议 —— ARP",
             "dst-dir": "arp",
             "filename": "ARP.md",
-            "categories": [
+            "tags": [
                 "ARP"
             ]
         },
         {
-            "title": "DNS 协议介绍",
+            "title": "网络协议 —— DNS",
             "dst-dir": "dns",
             "filename": "DNS.md",
-            "categories": [
+            "tags": [
                 "DNS"
             ]
         },
         {
-            "title": "ICMP 协议介绍",
+            "title": "网络协议 —— ICMP",
             "dst-dir": "icmp",
             "filename": "ICMP.md",
-            "categories": [
+            "tags": [
                 "ICMP"
             ]
         },
@@ -46,7 +48,7 @@
             "title": "VLAN 介绍",
             "dst-dir": "vlan",
             "filename": "VLAN.md",
-            "categories": [
+            "tags": [
                 "VLAN"
             ]
         }
