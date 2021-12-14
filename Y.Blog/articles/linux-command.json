@@ -3,8 +3,8 @@
         "Linux 命令"
     ],
     "tags": [
-        "Command",
-        "Linux"
+        "command",
+        "linux"
     ],
     "src-path": "B.Operating-System/Linux/Commands",
     "dst-path": "coding-life/linux/commands",

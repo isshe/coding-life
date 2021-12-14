@@ -3,8 +3,8 @@
         "Linux 内核"
     ],
     "tags": [
-        "Kernel",
-        "Linux"
+        "kernel",
+        "linux"
     ],
     "src-path": "B.Operating-System/Linux/Kernel",
     "dst-path": "coding-life/linux/kernel",
@@ -15,7 +15,16 @@
             "dst-dir": "interrupt",
             "filename": "Readme.md",
             "tags": [
-                "Process"
+                "process"
+            ]
+        },
+        {
+            "title": "Linux 内核 —— 设备驱动",
+            "src-dir": "11.设备驱动",
+            "dst-dir": "driver",
+            "filename": "Readme.md",
+            "tags": [
+                "driver"
             ]
         }
     ]

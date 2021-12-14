@@ -3,9 +3,8 @@
         "操作系统"
     ],
     "tags": [
-        "OS",
-        "Application",
-        "Linux"
+        "application",
+        "linux"
     ],
     "src-path": "B.Operating-System/Linux/Application",
     "dst-path": "coding-life/linux/application",
@@ -27,6 +26,15 @@
             "filename": "Readme.md",
             "tags": [
                 "signal"
+            ]
+        },
+        {
+            "title": "操作系统 —— 线程",
+            "src-dir": "4.线程",
+            "dst-dir": "thread",
+            "filename": "Readme.md",
+            "tags": [
+                "thread"
             ]
         }
     ]

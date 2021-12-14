@@ -37,5 +37,3 @@ int pthread_rwlockattr_destroy(pthread_rwlockattr_t *attr);
 int pthread_rwlockattr_getpshared(const pthread_rwlockattr_t *attr, int *pshared);
 int pthread_rwlockattr_setpshared(pthread_rwlockattr_t *attr, int pshared);
 ```
-
-## 4. 

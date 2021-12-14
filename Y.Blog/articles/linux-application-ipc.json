@@ -1,0 +1,128 @@
+{
+    "categories": [
+        "操作系统"
+    ],
+    "tags": [
+        "application",
+        "linux"
+    ],
+    "src-path": "B.Operating-System/Linux/Application/3.进程通信",
+    "dst-path": "coding-life/linux/application-ipc",
+    "articles": [
+        {
+            "title": "操作系统 —— 进程间通信之管道",
+            "src-dir": "1.管道",
+            "dst-dir": "pipe",
+            "filename": "Readme.md",
+            "categories": [
+                "进程间通信"
+            ],
+            "tags": [
+                "pipe"
+            ]
+        },
+        {
+            "title": "操作系统 —— 进程间通信之FIFO",
+            "src-dir": "2.FIFO",
+            "dst-dir": "fifo",
+            "filename": "Readme.md",
+            "categories": [
+                "进程间通信"
+            ],
+            "tags": [
+                "fifo"
+            ]
+        },
+        {
+            "title": "操作系统 —— 进程间通信之 SystemV 消息队列",
+            "src-dir": "3.SystemV消息队列",
+            "dst-dir": "systemvmq",
+            "filename": "Readme.md",
+            "categories": [
+                "进程间通信"
+            ],
+            "tags": [
+                "systemv",
+                "消息队列"
+            ]
+        },
+        {
+            "title": "操作系统 —— 进程间通信之 Posix 消息队列",
+            "src-dir": "4.Posix消息队列",
+            "dst-dir": "posixmq",
+            "filename": "Readme.md",
+            "categories": [
+                "进程间通信"
+            ],
+            "tags": [
+                "posix",
+                "消息队列"
+            ]
+        },
+        {
+            "title": "操作系统 —— 进程间通信之 Posix 信号量",
+            "src-dir": "5.Posix信号量",
+            "dst-dir": "posixsem",
+            "filename": "Readme.md",
+            "categories": [
+                "进程间通信"
+            ],
+            "tags": [
+                "posix",
+                "信号量"
+            ]
+        },
+        {
+            "title": "操作系统 —— 进程间通信之 SystemV 信号量",
+            "src-dir": "6.SystemV信号量",
+            "dst-dir": "systemvsem",
+            "filename": "Readme.md",
+            "categories": [
+                "进程间通信"
+            ],
+            "tags": [
+                "systemv",
+                "信号量"
+            ]
+        },
+        {
+            "title": "操作系统 —— 进程间通信之共享内存",
+            "src-dir": "7.共享内存区",
+            "dst-dir": "mmap",
+            "filename": "Readme.md",
+            "categories": [
+                "进程间通信"
+            ],
+            "tags": [
+                "posix",
+                "共享内存"
+            ]
+        },
+        {
+            "title": "操作系统 —— 进程间通信之 Posix 共享内存",
+            "src-dir": "8.Posix共享内存区",
+            "dst-dir": "posixshm",
+            "filename": "Readme.md",
+            "categories": [
+                "进程间通信"
+            ],
+            "tags": [
+                "posix",
+                "共享内存"
+            ]
+        },
+        {
+            "title": "操作系统 —— 进程间通信之 SystemV 共享内存",
+            "src-dir": "9.SystemV共享内存区",
+            "dst-dir": "systemvshm",
+            "filename": "Readme.md",
+            "categories": [
+                "进程间通信"
+            ],
+            "tags": [
+                "systemv",
+                "共享内存"
+            ]
+        }
+    ]
+}

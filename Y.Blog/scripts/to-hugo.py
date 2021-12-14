@@ -69,11 +69,14 @@ def main():
         # NOTE: clean dst path
         blog_post_path = blog_path + "/content/post"
         dst_path = blog_post_path + '/' + common_info.get("dst-path", None)
-        dirs = os.listdir(dst_path)
-        for dir in dirs:
-            if not articles_hash.get(dir, None):
-                print("[+] removing ", dst_path)
-                shutil.rmtree(dst_path)
+        if not os.path.exists(dst_path):
+            os.makedirs(dst_path)
+        else:
+            dirs = os.listdir(dst_path)
+            for dir in dirs:
+                if not articles_hash.get(dir, None):
+                    print("[+] removing ", dst_path)
+                    shutil.rmtree(dst_path)
 
         # process common category
         categories = common_info.get('categories', None)

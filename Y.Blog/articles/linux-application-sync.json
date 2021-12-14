@@ -1,0 +1,37 @@
+{
+    "categories": [
+        "操作系统"
+    ],
+    "tags": [
+        "application",
+        "linux"
+    ],
+    "src-path": "B.Operating-System/Linux/Application/5.同步",
+    "dst-path": "coding-life/linux/application-sync",
+    "articles": [
+        {
+            "title": "操作系统 —— 进线程同步之互斥锁、条件变量",
+            "src-dir": "1.互斥锁与条件变量",
+            "dst-dir": "mutex",
+            "filename": "Readme.md",
+            "categories": [
+                "进线程同步"
+            ],
+            "tags": [
+                "mutex"
+            ]
+        },
+        {
+            "title": "操作系统 —— 进线程同步之读写锁",
+            "src-dir": "2.读写锁",
+            "dst-dir": "rwlock",
+            "filename": "Readme.md",
+            "categories": [
+                "进线程同步"
+            ],
+            "tags": [
+                "rwlock"
+            ]
+        }
+    ]
+}

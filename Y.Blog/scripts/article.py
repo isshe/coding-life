@@ -138,7 +138,7 @@ class Article(object):
 
         tags = info.get('tags', [])
         for tag in tags:
-            tag = tag.lower()
+            # tag = tag.lower()
             if not tags_hash.get(tag, None):
                 tags_hash[tag] = True
 
@@ -150,7 +150,7 @@ class Article(object):
 
         common_tags = common.get('tags', [])
         for tag in common_tags:
-            tag = tag.lower()
+            # tag = tag.lower()
             if not tags_hash.get(tag, None):
                 tags_hash[tag] = True
 
