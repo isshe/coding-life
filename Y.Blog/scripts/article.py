@@ -12,7 +12,7 @@ class Article(object):
     def __init__(self, script_path, blog_path, article_info, common_info):
         self.script_path = script_path
         self.post_path = blog_path + '/content/post'
-        self.image_path = blog_path + "/static"
+        self.image_path = blog_path + "/static/images"
         self.article_info = article_info
         self.common_info = common_info
         self.skip_list = {
