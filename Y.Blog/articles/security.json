@@ -1,0 +1,19 @@
+{
+    "categories": [
+        "安全"
+    ],
+    "tags": [
+        "Security"
+    ],
+    "src-path": "G.Security",
+    "dst-path": "coding-life/security",
+    "articles": [
+        {
+            "title": "安全 —— 使用 Snyk 及 Nessus 进行漏洞扫描",
+            "src-dir": "Vulnerability-Scan-漏洞扫描",
+            "dst-dir": "vulnerability-scan",
+            "filename": "README.md",
+            "image": "images/snyk-result-2.png"
+        }
+    ]
+}

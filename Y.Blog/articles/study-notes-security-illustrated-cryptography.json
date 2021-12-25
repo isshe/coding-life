@@ -1,0 +1,97 @@
+{
+    "categories": [
+        "读书笔记",
+        "图解编码技术"
+    ],
+    "tags": [
+        "Study Notes"
+    ],
+    "src-path": "G.Security/图解密码技术-第三版",
+    "dst-path": "coding-life/study-notes/security/illustrated-cryptography",
+    "articles": [
+        {
+            "title": "图解密码技术 —— 第 1 章-环游密码世界",
+            "src-dir": "第1章-环游密码世界",
+            "dst-dir": "chapter-1",
+            "filename": "Readme.md"
+        },
+        {
+            "title": "图解密码技术 —— 第 2 章-历史上的密码",
+            "src-dir": "第2章-历史上的密码",
+            "dst-dir": "chapter-2",
+            "filename": "Readme.md"
+        },
+        {
+            "title": "图解密码技术 —— 第 3 章-对称密码",
+            "src-dir": "第3章-对称密码",
+            "dst-dir": "chapter-3",
+            "filename": "Readme.md"
+        },
+        {
+            "title": "图解密码技术 —— 第 4 章-分组密码的模式",
+            "src-dir": "第4章-分组密码的模式",
+            "dst-dir": "chapter-4",
+            "filename": "Readme.md"
+        },
+        {
+            "title": "图解密码技术 —— 第 5 章-公钥密码",
+            "src-dir": "第5章-公钥密码",
+            "dst-dir": "chapter-5",
+            "filename": "Readme.md"
+        },
+        {
+            "title": "图解密码技术 —— 第 6 章-混合密码系统",
+            "src-dir": "第6章-混合密码系统",
+            "dst-dir": "chapter-6",
+            "filename": "Readme.md"
+        },
+        {
+            "title": "图解密码技术 —— 第7章-单向散列函数",
+            "src-dir": "第7章-单向散列函数",
+            "dst-dir": "chapter-7",
+            "filename": "Readme.md"
+        },
+        {
+            "title": "图解密码技术 —— 第8章-消息认证码",
+            "src-dir": "第8章-消息认证码",
+            "dst-dir": "chapter-8",
+            "filename": "Readme.md"
+        },
+        {
+            "title": "图解密码技术 —— 第9章-数字签名",
+            "src-dir": "第9章-数字签名",
+            "dst-dir": "chapter-9",
+            "filename": "Readme.md"
+        },
+        {
+            "title": "图解密码技术 —— 第10章-证书",
+            "src-dir": "第10章-证书",
+            "dst-dir": "chapter-10",
+            "filename": "Readme.md"
+        },
+        {
+            "title": "图解密码技术 —— 第11章-秘钥",
+            "src-dir": "第11章-秘钥",
+            "dst-dir": "chapter-11",
+            "filename": "Readme.md"
+        },
+        {
+            "title": "图解密码技术 —— 第12章-随机数",
+            "src-dir": "第12章-随机数",
+            "dst-dir": "chapter-12",
+            "filename": "Readme.md"
+        },
+        {
+            "title": "图解密码技术 —— 第13章-PGP",
+            "src-dir": "第13章-PGP",
+            "dst-dir": "chapter-13",
+            "filename": "Readme.md"
+        },
+        {
+            "title": "图解密码技术 —— 第14章-SSL-TLS",
+            "src-dir": "第14章-SSL-TLS",
+            "dst-dir": "chapter-14",
+            "filename": "Readme.md"
+        }
+    ]
+}

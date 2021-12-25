@@ -1,0 +1,96 @@
+{
+    "categories": [
+        "设计模式"
+    ],
+    "tags": [
+        "Design Pattern"
+    ],
+    "src-path": "E.Design-Pattern",
+    "dst-path": "coding-life/design-pattern",
+    "articles": [
+        {
+            "title": "设计模式 —— 观察者模式",
+            "src-dir": "1.观察者模式",
+            "dst-dir": "observer-pattern",
+            "filename": "Readme.md"
+        },
+        {
+            "title": "设计模式 —— 装饰者模式",
+            "src-dir": "2.装饰者模式",
+            "dst-dir": "decorator-pattern",
+            "filename": "Readme.md"
+        },
+        {
+            "title": "设计模式 —— 简单工厂模式",
+            "src-dir": "3.简单工厂模式",
+            "dst-dir": "simple-factory-pattern",
+            "filename": "Readme.md"
+        },
+        {
+            "title": "设计模式 —— 工厂方法模式",
+            "src-dir": "4.工厂方法模式",
+            "dst-dir": "factory-method-pattern",
+            "filename": "Readme.md"
+        },
+        {
+            "title": "设计模式 —— 抽象工厂模式",
+            "src-dir": "5.抽象工厂模式",
+            "dst-dir": "abstract-factory-pattern",
+            "filename": "Readme.md"
+        },
+        {
+            "title": "设计模式 —— 单件模式",
+            "src-dir": "6.单件模式",
+            "dst-dir": "singleton-pattern",
+            "filename": "Readme.md"
+        },
+        {
+            "title": "设计模式 —— 适配器模式",
+            "src-dir": "8.适配器模式",
+            "dst-dir": "adapter-pattern",
+            "filename": "Readme.md"
+        },
+        {
+            "title": "设计模式 —— 外观模式",
+            "src-dir": "9.外观模式",
+            "dst-dir": "facade-pattern",
+            "filename": "Readme.md"
+        },
+        {
+            "title": "设计模式 —— 策略模式",
+            "src-dir": "10.策略模式",
+            "dst-dir": "strategy-pattern",
+            "filename": "Readme.md"
+        },
+        {
+            "title": "设计模式 —— 模板方法模式",
+            "src-dir": "11.模板方法模式",
+            "dst-dir": "template-method-pattern",
+            "filename": "Readme.md"
+        },
+        {
+            "title": "设计模式 —— 迭代器模式",
+            "src-dir": "12.迭代器模式",
+            "dst-dir": "iterator-pattern",
+            "filename": "Readme.md"
+        },
+        {
+            "title": "设计模式 —— 组合模式",
+            "src-dir": "13.组合模式",
+            "dst-dir": "composite-pattern",
+            "filename": "Readme.md"
+        },
+        {
+            "title": "设计模式 —— 状态模式",
+            "src-dir": "14.状态模式",
+            "dst-dir": "state-pattern",
+            "filename": "Readme.md"
+        },
+        {
+            "title": "设计模式 —— 代理模式",
+            "src-dir": "15.代理模式",
+            "dst-dir": "proxy-pattern",
+            "filename": "Readme.md"
+        }
+    ]
+}

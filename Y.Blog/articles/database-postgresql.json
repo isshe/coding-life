@@ -1,0 +1,19 @@
+{
+    "categories": [
+        "数据库",
+        "Postgresql"
+    ],
+    "tags": [
+        "Database"
+    ],
+    "src-path": "F.Database/4.PostgreSQL",
+    "dst-path": "coding-life/database/postgresql",
+    "articles": [
+        {
+            "title": "数据库 —— Postgresql 慢查询分析",
+            "src-dir": "慢查询分析",
+            "dst-dir": "slow-query",
+            "filename": "README.md"
+        }
+    ]
+}

@@ -11,7 +11,7 @@ class Category(object):
             blog_path, category.replace(" ", "-"))
         self.name = category
         self.desc = desc
-        self.image_path = blog_path + "/static"
+        self.image_path = blog_path + "/static/images"
 
     def add(self):
         category_path = self.path
