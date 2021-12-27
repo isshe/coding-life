@@ -4,17 +4,14 @@ KERNAL_SOURCE = /usr/src/linux-source-5.4.0/linux-source-5.4.0
 
 all: compile
 
-prepare:
-	apt update
-	apt install systemtap-sdt-dev
-
 compile:
-	gcc -o $(EXECABLE) main.c
+	go build -o $(EXECABLE) main.go
 
 run:
 	@./$(EXECABLE)
-	@echo "please run ./main.out"
-	python3 ./main.py
+
+example:
+	python3 ./example.py
 
 # better tool: https://github.com/iovisor/bcc/blob/master/tools/tplist.py
 readelf: compile
@@ -25,3 +22,4 @@ tplist: compile
 
 clean:
 	rm -rf $(EXECABLE)
+

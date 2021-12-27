@@ -7,7 +7,7 @@ file_path = os.path.dirname(file_path)
 bpf_source = """
 int trace_main(struct pt_regs *ctx) {
   u64 pid = bpf_get_current_pid_tgid();
-  bpf_trace_printk("New hello-bpf process running with PID: %d", pid);
+  bpf_trace_printk("New hello-bpf process running with PID: %d\\n", pid);
   return 0;
 }
 """

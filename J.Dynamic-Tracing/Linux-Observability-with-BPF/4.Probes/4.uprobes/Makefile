@@ -5,12 +5,12 @@ all:
 	gcc -o $(NAME)-c.out $(NAME).c
 	go build -o $(NAME)-go.out $(NAME).go
 
-enable_event:
-	cat /sys/kernel/debug/tracing/events/enable
-	echo 1 > /sys/kernel/debug/tracing/events/enable
-	cat /sys/kernel/debug/tracing/events/enable
+# enable_event:
+# 	cat /sys/kernel/debug/tracing/events/enable
+# 	echo 1 > /sys/kernel/debug/tracing/events/enable
+# 	cat /sys/kernel/debug/tracing/events/enable
 
-run: enable_event
+run:
 	./$(NAME).out
 	python3 ./example.py
 
