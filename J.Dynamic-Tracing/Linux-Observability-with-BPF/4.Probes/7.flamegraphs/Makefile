@@ -7,11 +7,16 @@ all: compile
 compile:
 	go build -o $(EXECABLE) main.go
 
-run:
-	@./$(EXECABLE)
+kill:
+	@pid=$$(pgrep -nx $(EXECABLE)); \
+	if [ -n "$$pid" ]; then kill -9 $$pid; fi
 
-example:
-	python3 ./example.py
+run: compile kill
+	@./$(EXECABLE) &
+	sudo python3 example.py $$(pgrep -nx $(EXECABLE)) > out.profile
+
+flamegraph:
+	/root/persional/FlameGraph/flamegraph.pl out.profile > out.svg
 
 # better tool: https://github.com/iovisor/bcc/blob/master/tools/tplist.py
 readelf: compile
