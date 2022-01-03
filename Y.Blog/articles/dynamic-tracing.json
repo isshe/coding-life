@@ -1,0 +1,15 @@
+{
+    "categories": [
+        "动态追踪"
+    ],
+    "src-path": "J.Dynamic-Tracing",
+    "dst-path": "coding-life/dynamic-tracing",
+    "articles": [
+        {
+            "title": "动态追踪 —— BPFTool",
+            "src-dir": "bpftool",
+            "dst-dir": "bpftool",
+            "filename": "README.md"
+        }
+    ]
+}

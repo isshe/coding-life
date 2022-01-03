@@ -1,0 +1,14 @@
+BEGIN
+{
+    printf("starting BPFTrace program\n")
+}
+
+kprobe:do_sys_open /str(arg1) == "/etc/ld.so.cache"/
+{
+    printf("opening file descriptor: %s\n", str(arg1))
+}
+
+END
+{
+    printf("exiting BPFTrace program\n")
+}
