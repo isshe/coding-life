@@ -1,0 +1,18 @@
+{
+    "categories": [
+        "Lua"
+    ],
+    "tags": [
+        "Programming Language"
+    ],
+    "src-path": "D.Programming-Language/5.Lua",
+    "dst-path": "coding-life/programming-language/lua",
+    "articles": [
+        {
+            "title": "Lua —— 重载全局函数 require",
+            "src-dir": "global-function-overloading",
+            "dst-dir": "global-function-overloading",
+            "filename": "README.md"
+        }
+    ]
+}
