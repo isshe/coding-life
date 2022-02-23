@@ -13,7 +13,7 @@
 #include <sys/socket.h>
 #include <unistd.h>
 
-char bpf_log_buf[BPF_LOG_BUF_SIZE];
+// char bpf_log_buf[BPF_LOG_BUF_SIZE];
 
 int main(int argc, char **argv) {
   int sock = -1, i, key;
