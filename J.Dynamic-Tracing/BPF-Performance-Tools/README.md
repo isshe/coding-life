@@ -12,3 +12,14 @@ BPF 相关项目
 
 * https://github.com/cilium/ebpf
     * Pure-Go library to read, modify and load eBPF programs and attach them to various hooks in the Linux kernel.
+
+重要文档
+
+* [BPF Design Q&A](https://github.com/torvalds/linux/blob/master/Documentation/bpf/bpf_design_QA.rst)
+* [Linux Socket Filtering aka Berkeley Packet Filter (BPF)](https://github.com/torvalds/linux/blob/master/Documentation/networking/filter.rst)
+* https://github.com/torvalds/linux/tree/master/Documentation/bpf
+* bpf(2) man 帮助文档
+* bpf-helper(2) man 帮助文档
+* "BPF: the universal in-kernal virtual machine", 作者 Jonathan Corbet。
+* "BPF internals -II", 作者 Suchakra Sharma。
+* Cilium 项目的 "BPF and XDP Refernce Guide"。

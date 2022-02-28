@@ -57,3 +57,31 @@ BTF（BPF Type Format，BPF 类型格式）是一个元数据的格式，用来�
 [BPF 二进制文件：BTF，CO-RE 和 BPF 性能工具的未来](https://www.ebpf.top/post/bpf-co-re-btf-libbpf/)
 [BCC 到 libbpf 的转换指南](https://www.ebpf.top/post/bcc-to-libbpf-guid/)
 
+## 2.3.11 BPF 的局限性
+
+* BPF 程序不能随意调用内核函数；只能调用在 API 中定义的 BPF 辅助函数。
+* 不允许无限循环。
+* BPF 栈大小不能超过 MAX_BPF_STACK，值为 512。
+* BPF 程序的总指令数量有限制，Linux 5.2 后是 100 万个（BPF_COMPLEXITY_LIMIT_INSNS），非特权程序是 4096 个（BPF_MAXINSNS）。
+
+# 2.4 调用栈回溯
+
+帧指针并不是进行栈回溯的唯一方法，还可以使用调试信息（debuginfo）、最后分支记录（LBR）以及 Oops 回滚能力（ORC）。
+
+基于帧指针的调用栈回溯：
+
+![](frame-pointer-based-stack-walking.png)
+
+# 2.5 火焰图
+
+火焰图的特点：
+* 每个方块代表一个“栈帧”。
+* Y 轴显示了栈的深度（栈帧的数量），底部是根，顶部是叶子。
+* X 轴包含了全部的采样样本数量。从左到右只是按字母顺序排序，与时间无关。
+* 顶部的方块就是此刻运行在 CPU 上的函数。
+
+# 2.6 事件源
+
+BPF 对事件的支持：
+
+![](bpf-event-support.png)
