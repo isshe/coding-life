@@ -85,3 +85,90 @@ BTF（BPF Type Format，BPF 类型格式）是一个元数据的格式，用来�
 BPF 对事件的支持：
 
 ![](bpf-event-support.png)
+
+# 2.7 kprobes
+
+> kprobes 向 BCC 和 bpftrace提供了内核`动态插桩`的机制。
+
+BPF 接口：
+* BCC：attach_kprobe()、attach_kretprobe()
+* bpftrace：kprobes 和 kretprobe 探针类型
+
+bpftrace 示例：统计所有`vfs_`开头的函数的调用次数。
+
+```
+bpftrace -e 'kprobe:vfs_* { @[probe] = count() }'
+```
+
+kprobes 工作方式：
+
+* 将一个快速断点指令（如 int3）插入目标指令处，该指令将执行权转交给 kprobes 处理函数。
+* 当不再需要 kprobes 时，目标指令恢复成原来的样子。
+* kretprobes 也是在**函数入口**处使用**kprobe**进行插桩，在函数返回之前，使用一个蹦床函数对返回地址进行劫持。
+
+详见《PBF 之巅》第 50 页
+
+拓展阅读：
+
+* 内核代码 Documentation/kprobes.txt 或 Documentation/trace/kprobes.rst
+    * https://www.kernel.org/doc/Documentation/kprobes.txt
+* An introduction to kprobe
+* Kernal Debugging with kprobes
+
+# 2.8 uprobes
+
+> uprobes 提供了用户态程序的`动态插桩`。
+
+uprobes 可以在用户态程序以下位置插桩：函数入口、特定偏移处、函数返回处。
+
+uprobes 是基于文件的，当一个可执行文件中的一个函数被跟踪时，所有用到这个文件的进程都会被插桩。
+这样就可以再全系统范围内跟踪系统库调用。
+
+BPF 接口：
+* BCC：attach_uprobe()、attach_uretprobe()
+* bpftrace：uprobes 和 uretprobe 探针类型
+
+uprobes 工作方式：
+
+> 和 kprobes 类似
+
+bpftrace 示例：对 readline 函数进行插桩。
+
+* 新建窗口执行 `/bin/bash`
+* 新建窗口执行插桩
+
+```bpftrace
+bpftrace -e 'uprobe:/bin/bash:readline { @ = count() }'
+```
+
+* 新建窗口进行 gdb 跟踪：`gdb -p <pid of /bin/bash>`
+* 执行 gdb 命令：`disas readline`
+* 可以看到第一个指令是 int3（原来不是int3，已被替换成int3）
+* 此时退出跟踪；重新执行 gdb 命令查看，会发现指令恢复了。
+
+BCC 示例：对 DNS 跟踪。（通过对 getaddrinfo() 和 gethostbyname() 插桩）
+
+```
+gethostlatency-bpfcc
+
+# TIME      PID    COMM                  LATms HOST
+# 03:45:28  10144  curl                   3.63 baidu.com
+# 03:45:31  665    exe                    1.35 metrichub-cn-shenzhen.aliyun.com
+# 03:45:50  10302  curl                 450.70 ifconfig.io
+```
+
+**注意：uprobe 跟踪 malloc/free 之类的高频事件时，可能会导致性能问题。（不知道现在解了没有，详见 《BPF 之巅》 2.8.4 节）**
+
+拓展阅读：
+
+* Documentation/trace/uprobetracer.rst
+
+# 2.9 tracepoints 跟踪点
+
+> tracepoints 可以用来对内核进行`静态插桩`。
+
+tracepoints 的主要优势是：API 比较稳定。如果条件允许，应该先尝试使用跟踪点，再有在条件不满足时，才使用 kprobes。
+
+tracepoints 的格式 `子系统:事件名`（subsystem:eventname，如 kmem:kmalloc）
+
+
