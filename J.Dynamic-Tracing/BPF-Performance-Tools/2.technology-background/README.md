@@ -171,4 +171,25 @@ tracepoints 的主要优势是：API 比较稳定。如果条件允许，应该�
 
 tracepoints 的格式 `子系统:事件名`（subsystem:eventname，如 kmem:kmalloc）
 
+BPF 接口：
 
+* BCC: TRACEPOINT_PROBE()
+* bpftrace: 跟踪点探针类型
+
+bpftrace 使用跟踪点示例：对 sched:sched_process_exec 进行插桩
+
+```bpftrace
+bpftrace -e 'tracepoint:sched:sched_process_exec { printf("exec by %s\n", comm); }'
+```
+
+拓展阅读
+
+* Documentation/trace/tracepoints.rst
+
+# 2.10 USDT
+
+> USDT 是用户态的`静态插桩`。
+
+USDT：用户态预定义静态跟踪（user-level statically defined tracing）
+
+许多应用默认不开启 USDT，显式开启需要使用配置参数 `--enable-dtrace-probes` 或者 `--with-dtrace`。
