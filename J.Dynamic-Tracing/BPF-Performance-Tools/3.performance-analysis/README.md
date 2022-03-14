@@ -1,5 +1,5 @@
-第3章 性能分析
----
+# 第3章 性能分析
+
 
 开始性能分析之前，先思考一些问题：
 
@@ -13,3 +13,55 @@
 - 吞吐量：通常指每秒传输的数据量，以比特 （bit）或者字节（byte）为单位。
 - 利用率：以百分比形式表示的某资源在一段时间内的繁忙程度。
 - 成本：开销/性能的比例。
+
+## 3.2 性能分析方法论
+
+> 详见另一本书《性能之巅：洞悉系统、企业与云计算》
+
+- 业务负载画像
+- 下钻分析
+- USE方法论
+    - U：使用率
+    - S：饱和度
+    - E：错误
+
+## 3.3 Linux 60 秒分析
+
+> https://github.com/iovisor/bcc/blob/master/docs/tutorial.md#0-before-bcc
+
+- `uptime`：快速检查平均负载，3 个数字分别表示 1、5、15 分钟滑动窗口积累值。一个较高的 15 分钟负载与一个较低的 1 分钟负载同时出现，可能意味着已经错过了问题发生现场。
+- `dmesg | tail`：显示过去 10 条系统日志，注意寻找可能导致性能问题的错误。
+- `vmstat 1`：虚拟内存等统计。检查：
+    - r：CPU 上正在执行的和等待执行的进程数量，大于 CPU 数量表示 CPU 资源处于饱和状态。
+    - free：空间内存
+    - si 和 so：页换入和页换出，如果这些值不是 0，意味着内存紧张。这个值只有在配置开启了交换分区后才会起作用。
+    - us、sy、id、wa、st。分别表示用户态时间、系统态时间、空闲、等待 I/O、窃取时间。
+        - 窃取时间：stolen time，指虚拟化环境下，被其他客户机所挤占的时间。
+- `mpstat -P ALL 1`：打印各个 CPU 各状态时间占用分布。
+    - 较高的 %iowait，可以使用磁盘 IO 工具进一步分析；
+    - 较高的 %sys，可以使用系统调用跟踪和内核跟踪。
+- `pidstat 1`：按进程展示 CPU 的使用情况。
+- `iostat -xz 1`：显示存储设备的 IO 指标。
+- `free -m`：显示了用 MB 为单位的可用内存。
+- `sar -n DEV 1`：查看网络设备/接口指标。
+- `sar -n TCP,ETCP 1`：查看 TCP 指标和 TCP 错误信息
+    - active/s：每秒本地发起的 TCP 连接数量（通过调用 connect 创建）
+    - passive/s：每秒远端发起的 TCP 连接数量（通过调用 accept 创建）
+    - retrans/s：每秒 TCP 重传的数量
+- `top`：浏览系统和进程的摘要信息。
+
+## 3.4 BCC 工具检查清单
+
+> https://github.com/iovisor/bcc/blob/master/docs/tutorial.md#1-general-performance
+
+- execsnoop
+- opensnoop
+- ext4slower (or btrfs*, xfs*, zfs*)
+- biolatency
+- biosnoop
+- cachestat
+- tcpconnect
+- tcpaccept
+- tcpretrans
+- runqlat
+- profile
