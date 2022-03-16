@@ -1,6 +1,5 @@
 # 第3章 性能分析
 
-
 开始性能分析之前，先思考一些问题：
 
 - 性能分析的目标是什么？优化用户体验？降低运行成本？
@@ -54,14 +53,17 @@
 
 > https://github.com/iovisor/bcc/blob/master/docs/tutorial.md#1-general-performance
 
-- execsnoop
-- opensnoop
-- ext4slower (or btrfs*, xfs*, zfs*)
-- biolatency
-- biosnoop
-- cachestat
-- tcpconnect
-- tcpaccept
-- tcpretrans
-- runqlat
-- profile
+- execsnoop：跟踪 execve 系统调用。可用于发现存活时间短的进程。
+- opensnoop：跟踪 open 系统调用。可用户发现频繁打开的文件。
+- ext4slower：跟踪 ext4 文件系统中的常见操作。可用于发现慢 IO。
+    - or btrfs*, xfs*, zfs*
+- biolatency：跟踪磁盘 IO 延迟，并以直方图显示。
+- biosnoop：打印每次磁盘 IO 请求。
+- cachestat：统计文件系统缓存。
+- tcpconnect：跟踪每次**主动** TCP 连接。**在输出中应该寻找不寻常的连接请求。**
+- tcpaccept：跟踪每次**被动** TCP 连接。
+- tcpretrans：跟踪 TCP 重传，打印 源地址、目的地址、内核状态。
+    - 如果重传发生在 ESTABLISHED 状态，则进一步寻找外部网络坑存在的问题。
+    - 如果重传发生在 SYN_SENT 状态，则坑是 CPU 饱和的一个，也可能是内核丢包引发的。
+- runqlat：统计线程等待 CPU 运行的时间。
+- profile：CPU 剖析器，周期性对调用栈采样。用于理解哪些代码路径消耗了 CPU 资源。
