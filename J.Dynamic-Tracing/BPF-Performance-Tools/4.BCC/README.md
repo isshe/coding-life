@@ -58,3 +58,57 @@ argdist -H 'r::__tcp_select_window():int:$retval'
 ```shell
 argdist-bpfcc -C 'r::__vfs_read():u32:$PID:$latency > 100000'
 ```
+
+
+## 4.11 BCC 的内部实现
+
+![](bcc-internals.png)
+
+BCC 由以下几部分组成：
+
+- 一个 C++ 前端 API，用于内核态的 BPF 程序的编制；
+- 一个 C++ 后端驱动；
+- 用于编写 BCC 工具的语言前端：Python、Lua、C++。
+
+## 4.12 BCC 调试
+
+调试方法：
+
+- 打印调试信息：bpf_trace_printk()
+- 打印最终生成的 BPF 程序：`--ebpf`选项（现有调试工具如 opensnoop 支持）
+- 设置调试标志位
+- bpflist
+- bpftool
+- dmesg
+- reset-trace.sh：移除所有激活的事件源。Linux 4.17 前的内核中才需要。
+
+### 4.12.1 printf
+
+在代码中使用 bpf_trace_printk() 打印调试信息；
+在 `/sys/kernel/debug/tracing/trace_pipe` 或 `/sys/kernel/debug/tracing/trace` 中查看调试信息。
+
+### 4.12.3 BCC 调试标志位
+
+BPF 调试选项：
+
+|标志位|名称|调试|
+|---|---|---|
+|0x1|DEBUG_LLVM_IR|打印编译好的 LLVM 中间表达形式|
+|0x2|DEBUG_BPF|在分支处打印 BPF 字节码和寄存器状态|
+|0x4|DEBUG_PREPROCESSOR|打印预处理结果（与 --ebpf 类似）|
+|0x8|DEBUG_SOURCE|打印出源代码中内嵌的汇编指令|
+|0x10|DEBUG_BPF_REGISTER_STATE|打印所有指令中的寄存器状态|
+|0x20|DEBUG_BTF|打印出 BTF 调试信息（否则 BTF 错误会被忽略）|
+
+
+以 python 代码为例：
+
+```python
+b = BPF(text=bpf_text)
+# 改为
+b = BPF(text=bpf_text, debug=0x2)
+```
+
+### 4.12.4 bpflist
+
+bpflist 可以列出正在运行的 BPF 程序。

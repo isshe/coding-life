@@ -1,0 +1,9 @@
+tracepoint:syscalls:sys_enter_clone
+{
+    printf("-> clone() by %s PID %d\n", comm, pid);
+}
+
+tracepoint:syscalls:sys_exit_clone
+{
+    printf("<- clone() return %d, %s PID %d\n", args->ret, comm, pid);
+}
