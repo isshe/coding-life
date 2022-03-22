@@ -131,3 +131,37 @@ tracepoint:syscalls:sys_exit_clone
     printf("<- clone() return %d, %s PID %d\n", args->ret, comm, pid);
 }
 ```
+
+### 5.9.2 usdt
+
+格式
+
+```c
+// probe_name：二进制文件中 USDT 的探针名字
+usdt:binary_path:probe_name
+usdt:library_path:probe_name
+usdt:binary_path:probe_namespace:probe_name
+usdt:library_path:probe_namespace:probe_name
+```
+
+列出二进制文件中的所有探针：
+
+```
+bpftrace -l 'usdt:/usr/local/cpython/python'
+```
+
+### 5.9.3 kprobe 和 uretprobe
+
+格式：
+
+```
+uprobe:binary_path:function_name
+uprobe:binary_path:function_name
+uretprobe:binary_path:function_name
+uretprobe:binary_path:function_name
+```
+
+参数：
+
+- uprobe：arg0, arg1, ..., argN，类型是 64 位无符号整型。如果是指针可以强制类型转换。
+- uretprobe：retval，类型是无符号整型。
