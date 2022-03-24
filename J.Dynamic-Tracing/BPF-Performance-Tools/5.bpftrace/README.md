@@ -106,6 +106,8 @@ uprobe:/bin/bash/readline
 
 ## 5.9.1 tracepoint
 
+内核跟踪点探针。
+
 格式：
 
 ```c
@@ -134,6 +136,8 @@ tracepoint:syscalls:sys_exit_clone
 
 ### 5.9.2 usdt
 
+用户态静态探针。
+
 格式
 
 ```c
@@ -150,7 +154,25 @@ usdt:library_path:probe_namespace:probe_name
 bpftrace -l 'usdt:/usr/local/cpython/python'
 ```
 
-### 5.9.3 kprobe 和 uretprobe
+### 5.9.3 kprobe 和 kretprobe
+
+内核态动态插桩。
+
+格式：
+
+```
+kprobe:function_name
+kretprobe:function_name
+```
+
+参数：
+
+- kprobe：arg0, arg1, ..., argN，类型是 64 位无符号整型。如果是指针可以强制类型转换。
+- kretprobe：retval，类型是无符号整型。
+
+### 5.9.4 uprobe 和 uretprobe
+
+用户态动态插桩。
 
 格式：
 
@@ -165,3 +187,48 @@ uretprobe:binary_path:function_name
 
 - uprobe：arg0, arg1, ..., argN，类型是 64 位无符号整型。如果是指针可以强制类型转换。
 - uretprobe：retval，类型是无符号整型。
+
+### 5.9.5 software 和 hardware
+
+预先定义好的软件事件和硬件事件。
+
+格式：
+
+```c
+software:event_name:count
+software:event_name:
+hardware:event_name:count
+hardware:event_name:
+```
+
+count 表示 count 次才激活 1 次探针。
+
+### 5.9.6 profile 和 interval
+
+基于定时器的事件。
+
+格式：
+
+```
+profile:hz:rate
+profile:s:rate
+profile:ms:rate
+profile:us:rate
+interval:s:rate
+interval:ms:rate
+```
+
+- profile：在所有 CPU 上激活，可以用作对 CPU 的使用进行采样。
+- interval：只在单个 CPU 上激活，可以用于周期性地打印输出。
+
+示例：
+
+```c
+// 每秒在全部 CPU 上激活 99 次
+profile:hz:99
+```
+
+- 通常频率采用 99Hz 而不是 100Hz 是为了避免锁定步进（lockstep）采样的问题。
+
+> 什么是锁定步进（lockstep）采样？
+
