@@ -232,3 +232,6 @@ profile:hz:99
 
 > 什么是锁定步进（lockstep）采样？
 
+## 5.16 bpftrace 的内部运行
+
+![image](https://user-images.githubusercontent.com/13636347/160234672-f3cae51d-3725-4db1-8194-b3806cb99921.png)
