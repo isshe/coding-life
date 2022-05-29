@@ -23,3 +23,8 @@ BPF 相关项目
 * "BPF: the universal in-kernal virtual machine", 作者 Jonathan Corbet。
 * "BPF internals -II", 作者 Suchakra Sharma。
 * Cilium 项目的 "BPF and XDP Refernce Guide"。
+
+相关术语
+* PMC：CPU 性能监控计数器。
+* NMI：不可掩盖的中断。
+
