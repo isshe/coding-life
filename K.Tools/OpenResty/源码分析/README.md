@@ -11,3 +11,4 @@ OpenResty 源码分析
 # 参考
 - 源码：https://github.com/openresty/lua-nginx-module
 - https://github.com/LomoX-Offical/openresty-source-code-analysis/blob/master/lua-nginx-module
+- https://github.com/tokers/lua-nginx-module-digest
