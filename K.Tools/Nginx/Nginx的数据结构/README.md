@@ -10,3 +10,4 @@ Nginx 的数据结构
 - ngx_table_elt_t：用于存储 key/value 对。也可以是 ngx_hash_t 结构中的成员。
 - ngx_buf_t：Nginx 处理大数据的关键数据结构。它既应用于内存数据也应用于磁盘数据。
 - ngx_chain_t：与 ngx_buf_t 配合使用的链表结构。
+- ngx_command_t：用于定义一个配置指令。

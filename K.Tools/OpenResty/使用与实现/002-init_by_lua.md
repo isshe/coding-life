@@ -16,12 +16,24 @@ init_by_lua_file <path-to-lua-script-file>
 
 - 示例：
 ```
-
 init_by_lua 'print("Hello World")'
+
 init_by_lua_block {
     print("Hello World")
 }
+
 init_by_lua_file /usr/local/openresty/lua/init.lua
 ```
 
 ## 实现
+
+> 以 init_by_lua 为例
+
+```
+    { ngx_string("init_by_lua"),
+      NGX_HTTP_MAIN_CONF|NGX_CONF_TAKE1,
+      ngx_http_lua_init_by_lua,
+      NGX_HTTP_MAIN_CONF_OFFSET,
+      0,
+      (void *) ngx_http_lua_init_by_inline },
+```
