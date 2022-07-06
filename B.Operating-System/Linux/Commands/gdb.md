@@ -133,7 +133,7 @@ gdb [-help] [-nh] [-nx] [-q] [-batch] [-cd=dir] [-f] [-b bps]
     以批处理模式运行。
     在执行完用-x选项指定的所有命令文件(如果不禁止，则为.gdbinit)后，以0退出。
     如果在运行命令文件中的GDB命令时发生错误，则以非0退出。
-    批处理模式可用于将GDB作为过滤器运行，例如在另一台计算机上下载并运行程序; 
+    批处理模式可用于将GDB作为过滤器运行，例如在另一台计算机上下载并运行程序;
     为了使这个更有用，消息程序正常退出。【？？？】
 
 -cd=directory
@@ -157,7 +157,7 @@ gdb [-help] [-nh] [-nx] [-q] [-batch] [-cd=dir] [-f] [-b bps]
 ```bash
 gcc test.c -o test -g
 gdb test
-    <gdb命令> 
+    <gdb命令>
     <b main>: 断点
     <b 10>: 第10行设置断点
     <d 10>: 删除第10行的断点
@@ -172,11 +172,45 @@ gdb test
     <list 10>: 从第10行开始显示代码
 ```
 
-# 疑问
+## 跟踪实例
+
+```bash
+gdb sbin/nginx
+
+# 设置程序的相关参数
+> set args -p /root/nginx/test
+
+# 主要想跟踪 nginx 的 worker 进程，因此设置跟踪 fork
+> set follow-fork-mode child
+
+# 必要的地方打上断点
+> b ngx_http_log_module.c:294
+> b ngx_http_log_module.c:309
+
+# 执行
+> run
+
+# 另一个 shell，发送请求 curl localhost:xxx
+
+# 此时 gdb 这边到达断点
+#  打印想看的变量
+> p values[0]
+> p values[1]
+> p n
+> p log->script
+
+# 有分叉，单步调试看看
+> list
+> n
+> n
+
+# 重复上面的步骤，逐渐找到问题
+```
 
 # 拓展
 * shell命令：info gdb
 * [gdb在线文档](https://sourceware.org/gdb/current/onlinedocs/gdb/)
     * [A Guide to the GNU Source-Level Debugger](http://mermaja.act.uji.es/docencia/is37/data/gdb.pdf)
+
 # 参考
 * https://man.linuxde.net/gdb
