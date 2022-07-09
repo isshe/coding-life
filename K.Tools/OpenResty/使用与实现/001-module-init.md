@@ -2,22 +2,13 @@
 
 ## 实现
 
+lua_nginx_module 其实就是一个 Nginx 模块，定义及实现都需要安装 Nginx 模块的要求。
+
+- 定义个全局的模块变量：
+
+> ngx_http_lua_module.c
+
 ```
-static ngx_http_module_t ngx_http_lua_module_ctx = {
-    NULL,                             /*  preconfiguration */
-    ngx_http_lua_init,                /*  postconfiguration */
-
-    ngx_http_lua_create_main_conf,    /*  create main configuration */
-    ngx_http_lua_init_main_conf,      /*  init main configuration */
-
-    ngx_http_lua_create_srv_conf,     /*  create server configuration */
-    ngx_http_lua_merge_srv_conf,      /*  merge server configuration */
-
-    ngx_http_lua_create_loc_conf,     /*  create location configuration */
-    ngx_http_lua_merge_loc_conf       /*  merge location configuration */
-};
-
-
 ngx_module_t ngx_http_lua_module = {
     NGX_MODULE_V1,
     &ngx_http_lua_module_ctx,   /*  module context */
@@ -32,5 +23,39 @@ ngx_module_t ngx_http_lua_module = {
     NULL,                       /*  exit master */
     NGX_MODULE_V1_PADDING
 };
+```
+
+- 定义一个模块上下文
 
 ```
+static ngx_http_module_t ngx_http_lua_module_ctx = {
+    NULL,                             /*  preconfiguration */
+    ngx_http_lua_init,                /*  postconfiguration */
+
+    ngx_http_lua_create_main_conf,    /*  create main configuration */
+    ngx_http_lua_init_main_conf,      /*  init main configuration */
+
+    ngx_http_lua_create_srv_conf,     /*  create server configuration */
+    ngx_http_lua_merge_srv_conf,      /*  merge server configuration */
+
+    ngx_http_lua_create_loc_conf,     /*  create location configuration */
+    ngx_http_lua_merge_loc_conf       /*  merge location configuration */
+};
+```
+
+- 定义指令
+
+```
+static ngx_command_t ngx_http_lua_cmds[] = {
+
+    { ngx_string("lua_load_resty_core"),
+      NGX_HTTP_MAIN_CONF|NGX_CONF_FLAG,
+      ngx_http_lua_load_resty_core,
+      NGX_HTTP_MAIN_CONF_OFFSET,
+      0,
+      NULL },
+
+    ...
+}
+```
+

@@ -62,15 +62,19 @@ struct ngx_module_s {
 - init_process: master 进程创建一个或多个工作进程，并在每个进程调用此函数。
 
 
+# 模块上下文定义
+
+定义一个模块上下文，会在 `ngx_module_t` 引用：
+
 ```c
-// NGX_CORE_MODULE
+// 有 NGX_CORE_MODULE、NGX_HTTP_MODULE 等，下面是 NGX_CORE_MODULE：
 typedef struct {
     ngx_str_t             name;
     void               *(*create_conf)(ngx_cycle_t *cycle);
     char               *(*init_conf)(ngx_cycle_t *cycle, void *conf);
 } ngx_core_module_t;
 
-// NGX_HTTP_MODULE，示例
+// 以下是具体变量值，以 NGX_HTTP_MODULE 类型示例：
 ngx_http_module_t ngx_http_lua_module_ctx = {
     NULL,                             /*  preconfiguration */
     ngx_http_lua_init,                /*  postconfiguration */

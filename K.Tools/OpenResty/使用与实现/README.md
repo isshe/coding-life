@@ -16,6 +16,7 @@ OpenResty 使用与实现
 # 说明
 
 - "实现"部分需对 Nginx 的模块实现有了解。
+- 基于 lua-nginx-module [v0.10.21](https://github.com/openresty/lua-nginx-module/commits/v0.10.21)
 
 # 参考
 - 源码：https://github.com/openresty/lua-nginx-module
