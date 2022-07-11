@@ -7,6 +7,8 @@ lua_nginx_module 其实就是一个 Nginx 模块，定义及实现都需要安�
 - 定义个全局的模块变量：
 
 > ngx_http_lua_module.c
+> 此结构的详细解释可见 Nginx 源码分析系列文章的 《Nginx 模块》
+
 
 ```
 ngx_module_t ngx_http_lua_module = {

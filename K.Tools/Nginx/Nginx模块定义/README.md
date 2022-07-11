@@ -49,18 +49,8 @@ struct ngx_module_s {
     /* stubs for future extensions are omitted */
 };
 ```
-- "private part is omitted" 包含版本和签名，直接使用 NGX_MODULE_V1 即可。
-- ctx: 存储模块的私有数据。
-- commands: 定义模块的配置指令。
-- type: 表明在 ctx 字段中存储的是什么数据。取值
-    - NGX_CORE_MODULE: 最基础、最通用、最底层的模块类型，其他模块类型都是在它之上实现的。像 ngx_core_module、ngx_errlog_module、ngx_regex_module、ngx_thread_pool_module、ngx_openssl_module 都是核心模块。
-    - NGX_EVENT_MODULE
-    - NGX_HTTP_MODULE
-    - NGX_MAIL_MODULE
-    - NGX_STREAM_MODULE
-- init_module: 配置解析成功后，调用这个函数。
-- init_process: master 进程创建一个或多个工作进程，并在每个进程调用此函数。
 
+> 此结构的详细解释可见 Nginx 源码分析系列文章的 《Nginx 模块》
 
 # 模块上下文定义
 
