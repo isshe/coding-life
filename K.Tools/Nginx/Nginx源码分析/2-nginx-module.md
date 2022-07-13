@@ -7,9 +7,9 @@ Nginx 基本上都是以模块的形式进行组织的，无论是 Nginx 核心�
 
 # Nginx 模块结构
 
-> src/core/ngx_module.h
+## struct ngx_module_s (ngx_module_t)
 
-- ngx_module_t/struct ngx_module_s
+> src/core/ngx_module.h
 
 ```c
 struct ngx_module_s {
@@ -71,7 +71,7 @@ struct ngx_module_s {
 
 # Nginx 模块变量
 
-- ngx_modules
+## ngx_modules
 
 > objs/ngx_modules.c：此文件在执行 ./auto/configure 后生成。
 
@@ -84,7 +84,7 @@ ngx_module_t *ngx_modules[] = {
 }
 ```
 
-- ngx_module_names
+## ngx_module_names
 
 > objs/ngx_modules.c：此文件在执行 ./auto/configure 后生成。
 
@@ -95,7 +95,9 @@ char *ngx_module_names[] = {
 }
 ```
 
-# Nginx 模块函数及调用过程
+# Nginx 模块相关函数及调用过程
+
+## ngx_preinit_modules
 
 > src/core/nginx.c
 
@@ -125,6 +127,51 @@ ngx_preinit_modules(void)
 }
 ```
 
-初始化阶段，对所有模块进行编号。
+预初始化阶段，对所有模块进行编号，并填充名字——从全局变量 ngx_modules 指向全局变量 ngx_module_names。
 
+## ngx_cycle_modules
 
+> src/core/ngx_cycle.c
+
+```c
+ngx_cycle_t *
+ngx_init_cycle(ngx_cycle_t *old_cycle)
+{
+    // ...
+
+    if (ngx_cycle_modules(cycle) != NGX_OK) {
+        ngx_destroy_pool(pool);
+        return NULL;
+    }
+
+    // ...
+}
+```
+
+> src/core/ngx_module.c
+
+```c
+ngx_int_t
+ngx_cycle_modules(ngx_cycle_t *cycle)
+{
+    /*
+     * create a list of modules to be used for this cycle,
+     * copy static modules to it
+     */
+
+    cycle->modules = ngx_pcalloc(cycle->pool, (ngx_max_module + 1)
+                                              * sizeof(ngx_module_t *));
+    if (cycle->modules == NULL) {
+        return NGX_ERROR;
+    }
+
+    ngx_memcpy(cycle->modules, ngx_modules,
+               ngx_modules_n * sizeof(ngx_module_t *));
+
+    cycle->modules_n = ngx_modules_n;
+
+    return NGX_OK;
+}
+```
+
+ 从当前 cycle 的内存池中分配一块内存，把全局变量 ngx_modules 中记录的模块信息复制一份过来，用于当前 cycle，使用 cycle->modules 指针指向。
