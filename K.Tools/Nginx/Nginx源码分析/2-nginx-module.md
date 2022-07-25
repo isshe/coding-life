@@ -1,9 +1,77 @@
 Nginx 模块
 ---
 
-Nginx 基本上都是以模块的形式进行组织的，无论是 Nginx 核心还是第三方模块。
+Nginx 都是以模块的形式进行组织的，无论是 Nginx 核心还是第三方模块。
+
 我们按照 Nginx 的约定，可以比较方便地定义模块，详见：http://nginx.org/en/docs/dev/development_guide.html#Modules
+
 不过，这里我们想了解的不是 Nginx 模块的定义，而是 Nginx 本身的模块功能是如何实现的，包含了哪些内容。
+
+# 调用关系图
+
+```
+main: core/nginx.c
+  |
+   \ ngx_preinit_modules: core/ngx_module.c, populate global variable "ngx_modules"
+  |
+   \ ngx_init_cycle: core/ngx_cycle.c,
+        |
+         \ ngx_cycle_modules: core/ngx_module.c, copy "ngx_modules" to cycle
+        |
+         \ create_conf: prioritize core modules
+        |
+         \ ngx_conf_parse: core/ngx_conf_file.c
+            |
+             \ ngx_conf_handler: core/ngx_conf_file.c
+                |
+                 \ cmd->set: defined by module, processes a directive and stores parsed values into the corresponding configuration
+                    - such as:
+                    - http/ngx_http.c, stream/ngx_stream.c, event/ngx_event.c, mail/ngx_mail.c
+                    - ngx_http_block, ngx_stream_block, ngx_events_block, ngx_mail_block
+                    |
+                    | (http or stream module)
+                     \ create_main_conf
+                     \ create_srv_conf
+                     \ create_loc_conf: http module only
+                     \ preconfiguration
+                     \ init_main_conf
+                     \ ngx_http_merge_servers: http module only
+                        |
+                         \ merge_srv_conf
+                         \ merge_loc_conf
+                     \ merge_srv_conf: stream module only
+                     \ postconfiguration
+                    |
+                    | (event module)
+                     \ create_conf
+                     \ init_conf
+                    |
+                    | (mail module)
+                     \ create_main_conf
+                     \ create_srv_conf
+                     \ init_main_conf
+                     \ merge_srv_conf
+        |
+         \ init_conf: core modules
+        |
+         \ ngx_init_modules: core/ngx_module.c
+            |
+             \ init_module: defined by module
+    |
+     \ ngx_single_process_cycle: core/nginx.c
+        |
+         \ init_process: defined by module
+         \ exit_process: defined by module
+         \ ngx_master_process_exit
+            |
+             \ exit_master
+```
+
+- cmd->set：处理**指令**并将解析后的值存储到相应的配置中。
+    - 在 NGX_CORE_MODULE 类型的模块 “http” 的 cmd->set (也就是 ngx_http_block) 中，逐个处理 NGX_HTTP_MODULE 类型的模块的上下文；NGX_HTTP_MODULE 的 cmd 还是和其他模块的一起处理了。
+    - 因为有顺序，因此是 “http” 模块的指令（cmd）处理完以后，再处理其他 NGX_HTTP_MODULE 类型模块的指令。
+- 配置解析完以后，进行模块初始化 ngx_init_modules。
+
 
 # Nginx 模块结构
 
@@ -69,6 +137,106 @@ struct ngx_module_s {
 - exit_process：当 worker 进程接收到 master 的退出或终止信号时，调用此函数。
 - exit_master：master 进程退出前，调用此函数。
 
+
+## struct ngx_command_s (ngx_command_t)
+
+> src/core/ngx_conf_file.h
+
+```c
+struct ngx_command_s {
+    ngx_str_t             name;
+    ngx_uint_t            type;
+    char               *(*set)(ngx_conf_t *cf, ngx_command_t *cmd, void *conf);
+    ngx_uint_t            conf;
+    ngx_uint_t            offset;
+    void                 *post;
+};
+```
+- set:
+
+## ngx_core_module_t
+
+> src/core/ngx_module.h
+
+```c
+typedef struct {
+    ngx_str_t             name;
+    void               *(*create_conf)(ngx_cycle_t *cycle);
+    char               *(*init_conf)(ngx_cycle_t *cycle, void *conf);
+} ngx_core_module_t;
+```
+
+## ngx_event_module_t
+
+> src/event/ngx_event.h
+
+```c
+typedef struct {
+    ngx_str_t              *name;
+
+    void                 *(*create_conf)(ngx_cycle_t *cycle);
+    char                 *(*init_conf)(ngx_cycle_t *cycle, void *conf);
+
+    ngx_event_actions_t     actions;
+} ngx_event_module_t;
+```
+
+## ngx_http_module_t
+
+> src/http/ngx_http_config.h
+
+```c
+typedef struct {
+    ngx_int_t   (*preconfiguration)(ngx_conf_t *cf);
+    ngx_int_t   (*postconfiguration)(ngx_conf_t *cf);
+
+    void       *(*create_main_conf)(ngx_conf_t *cf);
+    char       *(*init_main_conf)(ngx_conf_t *cf, void *conf);
+
+    void       *(*create_srv_conf)(ngx_conf_t *cf);
+    char       *(*merge_srv_conf)(ngx_conf_t *cf, void *prev, void *conf);
+
+    void       *(*create_loc_conf)(ngx_conf_t *cf);
+    char       *(*merge_loc_conf)(ngx_conf_t *cf, void *prev, void *conf);
+} ngx_http_module_t;
+```
+
+## ngx_stream_module_t
+
+> src/http/ngx_stream.h
+
+```c
+typedef struct {
+    ngx_int_t                    (*preconfiguration)(ngx_conf_t *cf);
+    ngx_int_t                    (*postconfiguration)(ngx_conf_t *cf);
+
+    void                        *(*create_main_conf)(ngx_conf_t *cf);
+    char                        *(*init_main_conf)(ngx_conf_t *cf, void *conf);
+
+    void                        *(*create_srv_conf)(ngx_conf_t *cf);
+    char                        *(*merge_srv_conf)(ngx_conf_t *cf, void *prev,
+                                                   void *conf);
+} ngx_stream_module_t;
+```
+
+## ngx_mail_module_t
+
+> src/http/ngx_mail.h
+
+```c
+typedef struct {
+    ngx_mail_protocol_t        *protocol;
+
+    void                       *(*create_main_conf)(ngx_conf_t *cf);
+    char                       *(*init_main_conf)(ngx_conf_t *cf, void *conf);
+
+    void                       *(*create_srv_conf)(ngx_conf_t *cf);
+    char                       *(*merge_srv_conf)(ngx_conf_t *cf, void *prev,
+                                                  void *conf);
+} ngx_mail_module_t;
+```
+
+
 # Nginx 模块变量
 
 ## ngx_modules
@@ -99,6 +267,8 @@ char *ngx_module_names[] = {
 
 ## ngx_preinit_modules
 
+调用：
+
 > src/core/nginx.c
 
 ```c
@@ -106,6 +276,8 @@ char *ngx_module_names[] = {
         return 1;
     }
 ```
+
+定义：
 
 > src/core/ngx_module.c
 
@@ -127,9 +299,11 @@ ngx_preinit_modules(void)
 }
 ```
 
-预初始化阶段，对所有模块进行编号，并填充名字——从全局变量 ngx_modules 指向全局变量 ngx_module_names。
+此函数在上一篇的入口函数中调用，预初始化阶段，对所有模块进行编号，并填充名字——从全局变量 ngx_modules 指向全局变量 ngx_module_names。
 
 ## ngx_cycle_modules
+
+调用：
 
 > src/core/ngx_cycle.c
 
@@ -147,6 +321,8 @@ ngx_init_cycle(ngx_cycle_t *old_cycle)
     // ...
 }
 ```
+
+定义：
 
 > src/core/ngx_module.c
 
@@ -174,4 +350,7 @@ ngx_cycle_modules(ngx_cycle_t *cycle)
 }
 ```
 
- 从当前 cycle 的内存池中分配一块内存，把全局变量 ngx_modules 中记录的模块信息复制一份过来，用于当前 cycle，使用 cycle->modules 指针指向。
+在前面 ngx_preinit_modules() 时，已经填充了 ngx_modules。
+在这里就从当前 cycle 的内存池中分配一块内存，把前面填充到全局变量 ngx_modules 中的模块信息复制一份，用于当前 cycle，使用 cycle->modules 指针指向。
+
+注：每次 nginx reload时 都会新建一个 cycle，销毁旧 cycle。详见：http://nginx.org/en/docs/dev/development_guide.html#cycle
