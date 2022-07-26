@@ -7,71 +7,6 @@ Nginx 都是以模块的形式进行组织的，无论是 Nginx 核心还是第�
 
 不过，这里我们想了解的不是 Nginx 模块的定义，而是 Nginx 本身的模块功能是如何实现的，包含了哪些内容。
 
-# 调用关系图
-
-```
-main: core/nginx.c
-  |
-   \ ngx_preinit_modules: core/ngx_module.c, populate global variable "ngx_modules"
-  |
-   \ ngx_init_cycle: core/ngx_cycle.c,
-        |
-         \ ngx_cycle_modules: core/ngx_module.c, copy "ngx_modules" to cycle
-        |
-         \ create_conf: prioritize core modules
-        |
-         \ ngx_conf_parse: core/ngx_conf_file.c
-            |
-             \ ngx_conf_handler: core/ngx_conf_file.c
-                |
-                 \ cmd->set: defined by module, processes a directive and stores parsed values into the corresponding configuration
-                    - such as:
-                    - http/ngx_http.c, stream/ngx_stream.c, event/ngx_event.c, mail/ngx_mail.c
-                    - ngx_http_block, ngx_stream_block, ngx_events_block, ngx_mail_block
-                    |
-                    | (http or stream module)
-                     \ create_main_conf
-                     \ create_srv_conf
-                     \ create_loc_conf: http module only
-                     \ preconfiguration
-                     \ init_main_conf
-                     \ ngx_http_merge_servers: http module only
-                        |
-                         \ merge_srv_conf
-                         \ merge_loc_conf
-                     \ merge_srv_conf: stream module only
-                     \ postconfiguration
-                    |
-                    | (event module)
-                     \ create_conf
-                     \ init_conf
-                    |
-                    | (mail module)
-                     \ create_main_conf
-                     \ create_srv_conf
-                     \ init_main_conf
-                     \ merge_srv_conf
-        |
-         \ init_conf: core modules
-        |
-         \ ngx_init_modules: core/ngx_module.c
-            |
-             \ init_module: defined by module
-    |
-     \ ngx_single_process_cycle: core/nginx.c
-        |
-         \ init_process: defined by module
-         \ exit_process: defined by module
-         \ ngx_master_process_exit
-            |
-             \ exit_master
-```
-
-- cmd->set：处理**指令**并将解析后的值存储到相应的配置中。
-    - 在 NGX_CORE_MODULE 类型的模块 “http” 的 cmd->set (也就是 ngx_http_block) 中，逐个处理 NGX_HTTP_MODULE 类型的模块的上下文；NGX_HTTP_MODULE 的 cmd 还是和其他模块的一起处理了。
-    - 因为有顺序，因此是 “http” 模块的指令（cmd）处理完以后，再处理其他 NGX_HTTP_MODULE 类型模块的指令。
-- 配置解析完以后，进行模块初始化 ngx_init_modules。
-
 
 # Nginx 模块结构
 
@@ -152,7 +87,17 @@ struct ngx_command_s {
     void                 *post;
 };
 ```
-- set:
+
+定义 1 个配置指令。
+
+- name：在配置文件中使用的指令名称，如 listen。
+- type：按位的标志，指定指令接受的参数数量、类型和出现的上下文。
+- set：定义一个处理程序来处理指令并将解析后的值存储到相应的配置中。
+- conf：定义传递给目录处理程序的配置结构。(?)
+    - 核心模块只有全局配置，并通过设置 NGX_DIRECT_CONF 标志来访问它。
+    - HTTP、Stream 或 Mail 这样的模块创建了配置的层次结构。
+- offset：定义模块配置结构中保存此指令值的字段的偏移量。
+- post：用于向主处理程序传递数据或者定义主处理程序完成后调用的处理程序。
 
 ## ngx_core_module_t
 
@@ -265,6 +210,70 @@ char *ngx_module_names[] = {
 
 # Nginx 模块相关函数及调用过程
 
+```
+main: core/nginx.c
+  |
+   \ ngx_preinit_modules: core/ngx_module.c, populate global variable "ngx_modules"
+  |
+   \ ngx_init_cycle: core/ngx_cycle.c,
+        |
+         \ ngx_cycle_modules: core/ngx_module.c, copy "ngx_modules" to cycle
+        |
+         \ create_conf: prioritize core modules
+        |
+         \ ngx_conf_parse: core/ngx_conf_file.c
+            |
+             \ ngx_conf_handler: core/ngx_conf_file.c
+                |
+                 \ cmd->set: defined by module, processes a directive and stores parsed values into the corresponding configuration
+                    - such as:
+                    - http/ngx_http.c, stream/ngx_stream.c, event/ngx_event.c, mail/ngx_mail.c
+                    - ngx_http_block, ngx_stream_block, ngx_events_block, ngx_mail_block
+                    |
+                    | (http or stream module)
+                     \ create_main_conf
+                     \ create_srv_conf
+                     \ create_loc_conf: http module only
+                     \ preconfiguration
+                     \ init_main_conf
+                     \ ngx_http_merge_servers: http module only
+                        |
+                         \ merge_srv_conf
+                         \ merge_loc_conf
+                     \ merge_srv_conf: stream module only
+                     \ postconfiguration
+                    |
+                    | (event module)
+                     \ create_conf
+                     \ init_conf
+                    |
+                    | (mail module)
+                     \ create_main_conf
+                     \ create_srv_conf
+                     \ init_main_conf
+                     \ merge_srv_conf
+        |
+         \ init_conf: core modules
+        |
+         \ ngx_init_modules: core/ngx_module.c
+            |
+             \ init_module: defined by module
+    |
+     \ ngx_single_process_cycle: core/nginx.c
+        |
+         \ init_process: defined by module
+         \ exit_process: defined by module
+         \ ngx_master_process_exit
+            |
+             \ exit_master
+```
+
+- cmd->set：处理**指令**并将解析后的值存储到相应的配置中。
+    - 在 NGX_CORE_MODULE 类型的模块 “http” 的 cmd->set (也就是 ngx_http_block) 中，逐个处理 NGX_HTTP_MODULE 类型的模块的上下文；NGX_HTTP_MODULE 的 cmd 还是和其他模块的一起处理了。
+    - 因为有顺序，因此是 “http” 模块的指令（cmd）处理完以后，再处理其他 NGX_HTTP_MODULE 类型模块的指令。
+- 配置解析完以后，进行模块初始化 ngx_init_modules。
+
+
 ## ngx_preinit_modules
 
 调用：
@@ -353,4 +362,34 @@ ngx_cycle_modules(ngx_cycle_t *cycle)
 在前面 ngx_preinit_modules() 时，已经填充了 ngx_modules。
 在这里就从当前 cycle 的内存池中分配一块内存，把前面填充到全局变量 ngx_modules 中的模块信息复制一份，用于当前 cycle，使用 cycle->modules 指针指向。
 
-注：每次 nginx reload时 都会新建一个 cycle，销毁旧 cycle。详见：http://nginx.org/en/docs/dev/development_guide.html#cycle
+注：每次 nginx reload 时都会新建一个 cycle，销毁旧 cycle。详见：http://nginx.org/en/docs/dev/development_guide.html#cycle
+
+
+## cmd->set
+
+原型：
+
+```c
+char *(*set)(ngx_conf_t *cf, ngx_command_t *cmd, void *conf);
+```
+
+在前面把模块信息复制到 cycle 后，便开始配置解析，配置解析时逐个调用各个模块，然后对其支持的指令进行解析存储。
+
+```c
+static ngx_int_t
+ngx_conf_handler(ngx_conf_t *cf, ngx_int_t last)
+{
+    ...
+
+            rv = cmd->set(cf, cmd, conf);
+
+            if (rv == NGX_CONF_OK) {
+                return NGX_OK;
+            }
+
+    ...
+}
+```
+
+以上是关于模块初始化、配置解析部分。
+这些步骤完成以后，是如何知道什么时候跑什么模块的呢？我们在接下来的文章中继续跟踪。
