@@ -268,6 +268,7 @@ main: core/nginx.c
              \ exit_master
 ```
 
+- 配置解析时，每获取完一项配置，就遍历模块，比较配置指令名称，相同后就调用相应的 cmd->set 函数。
 - cmd->set：处理**指令**并将解析后的值存储到相应的配置中。
     - 在 NGX_CORE_MODULE 类型的模块 “http” 的 cmd->set (也就是 ngx_http_block) 中，逐个处理 NGX_HTTP_MODULE 类型的模块的上下文；NGX_HTTP_MODULE 的 cmd 还是和其他模块的一起处理了。
     - 因为有顺序，因此是 “http” 模块的指令（cmd）处理完以后，再处理其他 NGX_HTTP_MODULE 类型模块的指令。
