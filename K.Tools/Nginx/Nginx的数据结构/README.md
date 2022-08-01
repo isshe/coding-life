@@ -13,3 +13,4 @@ Nginx 的数据结构
 - ngx_command_t：用于定义一个配置指令。
 - ngx_cycle_t：存储由特定配置创建的运行时上下文，每次 reload 都重新创建一个 cycle，新 cycle 创建成功后删除旧的 cycle。当前的 cycle 被 ngx_cycle 引用并被 worker 进程继承。
     - 详见：http://nginx.org/en/docs/dev/development_guide.html#cycle
+- ngx_listening_t：用于定义监听端口，每个 ngx_listening_t 表示 1 个监听端口。
