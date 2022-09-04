@@ -181,7 +181,6 @@ typedef struct {
 } ngx_mail_module_t;
 ```
 
-
 # Nginx 模块变量
 
 ## ngx_modules
@@ -223,7 +222,7 @@ main: core/nginx.c
         |
          \ ngx_conf_parse: core/ngx_conf_file.c
             |
-             \ ngx_conf_handler: core/ngx_conf_file.c
+             \ ngx_conf_handler: core/ngx_conf_file.c,
                 |
                  \ cmd->set: defined by module, processes a directive and stores parsed values into the corresponding configuration
                     - such as:
@@ -235,6 +234,15 @@ main: core/nginx.c
                      \ create_srv_conf
                      \ create_loc_conf: http module only
                      \ preconfiguration
+                     \ ngx_conf_parse: continue parsing the configuration in the http{}/stream{} block. (!!!)
+                        |
+                         \ ngx_http_core_server
+                            \ ngx_conf_parse
+                               \ ngx_http_core_listen
+                               \ ngx_http_core_location
+                                  \ ngx_conf_parse
+                                     \ ...
+                               \ ...
                      \ init_main_conf
                      \ ngx_http_merge_servers: http module only
                         |
@@ -268,7 +276,11 @@ main: core/nginx.c
              \ exit_master
 ```
 
-- 配置解析时，每获取完一项配置，就遍历模块，比较配置指令名称，相同后就调用相应的 cmd->set 函数。
+- 配置解析时，每获取完一项配置，就遍历模块，比较配置指令名称，匹配后调用相应的 cmd->set 函数。
+  - 以 HTTP 模块示例：
+    - 解析到 http 指令时，执行 ngx_http_block 函数，函数内部继续调用 ngx_conf_parse 对 `http { ... }` 块内的配置进行解析；
+    - 解析到 server 指令时，执行 ngx_http_core_server 函数，函数内部继续调用 ngx_conf_parse 对 ` server { ... }` 块内的配置进行解析；
+    - 解析到 listen 指令时，执行 ngx_http_core_listen 函数进行端口监听(ngx_http_add_listen)等动作。
 - cmd->set：处理**指令**并将解析后的值存储到相应的配置中。
     - 在 NGX_CORE_MODULE 类型的模块 “http” 的 cmd->set (也就是 ngx_http_block) 中，逐个处理 NGX_HTTP_MODULE 类型的模块的上下文；NGX_HTTP_MODULE 的 cmd 还是和其他模块的一起处理了。
     - 因为有顺序，因此是 “http” 模块的指令（cmd）处理完以后，再处理其他 NGX_HTTP_MODULE 类型模块的指令。
@@ -392,5 +404,5 @@ ngx_conf_handler(ngx_conf_t *cf, ngx_int_t last)
 }
 ```
 
-以上是关于模块初始化、配置解析部分。
-这些步骤完成以后，是如何知道什么时候跑什么模块的呢？我们在接下来的文章中继续跟踪。
+以上是关于模块初始化、配置解析的调用过程。
+一句话总结：程序启动后会进行一系列初始化，并解析配置文件，遇到配置指令就执行对应指令的 set 回调，逐级深入。
