@@ -56,16 +56,22 @@ Nginx 模块数据处理
 
 为便于理解，先插播一条 listen 指令的用法：
 
-[listen]()
-
+[listen](../Nginx指令/http-listen.md)
 
 
 调用流程：
 
 ```
 - ngx_http_core_listen: src/http/ngx_http_core_module.c
-    \ - ngx_parse_url: src/core/ngx_inet.c, 解析 listen 指令后的第一部分（URL），先检查是否是 unix domain 类型，再检查是否是 IPv6 类型，都不是就调用 IPv4 的 URL 解析。
-
+    \ - ngx_parse_url: src/core/ngx_inet.c，解析 listen 指令后的第一部分（URL），先检查是否是 unix domain 类型，再检查是否是 IPv6 类型，都不是就调用 IPv4 的 URL 解析。
+    \ - ngx_strcmp: 解析指令的各个部分。
+    \ - ngx_inet_wildcard: src/core/ngx_inet.c，判断地址是否是通配地址（如 IPv4 的 INADDR_ANY）。
+    \ - ngx_http_add_listen:
+        \ - ngx_http_add_addresses:
+            \ - ngx_cmp_sockaddr: src/core/ngx_inet.c，对比当前列表中的地址与即将添加的地址。
+            \ - ngx_http_add_server: 将 server（虚拟主机） 添加到 address:port 对应的虚拟主机列表中（如果地址已经存在在当前列表中，则进行次操作，否则进行 ngx_http_add_address）
+            \ - ngx_http_add_address:
+        \ - ngx_http_add_address:
 
 
 

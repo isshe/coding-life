@@ -23,13 +23,14 @@ Context:
 - backlog=number：待处理连接队列的最大长度
 - rcvbuf=size：设置接收缓冲区的大小（SO_RCVBUF）
 - sndbuf=size：设置发送缓冲区的大小（SO_SNDBUF）
-- accept_filter=filter
+- accept_filter=filter：在 accept() 之前，对连接进行过滤。仅支持 FreeBSD 及 NetBSD 5.0+ 。
 - deferred：使用延迟的 accept()（TCP_DEFER_ACCEPT 套接字选项）。数据到来时再 accept，而不是接收到 ACK 后就 accept，能避免过早进行相关初始化，并且数据包从 3+1 变成 2+1，减少延迟。
   - 3+1：3 次握手 + 1 次数据包。
   - 2+1：2 次握手 + 1 次数据包。
 - bind：对给定的 address:port 进行单独的 bind() 调用。常用于将相同端口 bind 到不同地址。
 - ipv6only=on|off：只接受 IPv6 的连接，还是同时接受 IPv6 和 IPv4 的连接。
 - reuseport：为每个工作进程创建一个单独的监听套接字（SO_REUSEPORT/SO_REUSEPORT_LB），让内核自动做负载均衡，将请求平均地让多个进程进行处理。主要用于提高性能。
+- so_keepalive=on|off|[keepidle]:[keepintvl]:[keepcnt]：配置监听套接字的“TCP keepalive”行为。
 
 参考
 
