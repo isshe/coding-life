@@ -70,9 +70,10 @@ Nginx 模块数据处理
         \ - ngx_http_add_addresses:
             \ - ngx_cmp_sockaddr: src/core/ngx_inet.c，对比当前列表中的地址与即将添加的地址。
             \ - ngx_http_add_server: 将 server（虚拟主机） 添加到 address:port 对应的虚拟主机列表中（如果地址已经存在在当前列表中，则进行次操作，否则进行 ngx_http_add_address）
-            \ - ngx_http_add_address:
-        \ - ngx_http_add_address:
-
+            \ - ngx_http_add_address: 将 server 地址、server 名、server 对应类型的核心模块配置添加到端口列表。
+                \ - ngx_http_add_server: 将 server 对应类型的核心模块配置添加到 address:port
+        \ - ngx_http_add_address: 将 server 地址、server 名、server 对应类型的核心模块配置添加到端口列表。
+            \ - ngx_http_add_server: 将 server 对应类型的核心模块配置添加到 address:port
 
 
 ```
