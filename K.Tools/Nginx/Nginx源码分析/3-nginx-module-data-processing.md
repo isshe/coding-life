@@ -90,23 +90,32 @@ Nginx 模块数据处理
         \ - bind
         \ - listen
 
+```
+
+以上是监听的流程，相关操作是在 master 进程中，然后 fork 以后，worker 进程也得到了相关套接字信息。
+worker 进程调用 ngx_worker_process_cycle 进入自身循环。
+listen 之后，就能 accept 了，那么是如何处理 accept 的呢？
+
+### 调用流程：event 初始化
+
+```
 - ngx_master_process_cycle: 起工作进程、cache 管理进程等，然后进入循环
     \ - sigemptyset: 清空信号集
     \ - sigaddset: 添加信号到信号集
     \ - sigprocmask: 屏蔽（SIG_BLOCK）信号集
-    \ - sigemptyset: 清空信号集——不会影响到进程信号屏蔽字
+    \ - sigemptyset: 清空信号集——只是清空变量不会实际影响到进程信号屏蔽字
     \ - ngx_setproctitle: 设置进程标题
     \ - ngx_get_conf: 获取核心模块配置
     \ - ngx_start_worker_processes: 启动工作进程
         \ - ngx_spawn_process: 生成进程
             \ - fork
-            \ - proc(ngx_worker_process_cycle): 子进程调用此函数
+            \ - proc = ngx_worker_process_cycle: 子进程调用此函数
+                \ - ngx_worker_process_init
+
         \ - ngx_pass_open_channel
     \ - ngx_start_cache_manager_processes: 启动 cache 管理进程
     \ - sigsuspend: 进入循环，开放信号，挂起进程等待信号
 ```
-
-以上是监听的流程，相关操作是在 master 进程中。listen 之后，就能 accept 了，这个是如何处理的呢？
 
 ### 调用流程：请求处理
 
@@ -114,9 +123,9 @@ Nginx 模块数据处理
 
 ```
 
-# event
 
 
-另见：
+
+# 参考
 
 - [How nginx processes a request](http://nginx.org/en/docs/http/request_processing.html)
