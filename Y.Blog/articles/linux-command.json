@@ -6,7 +6,7 @@
         "command",
         "linux"
     ],
-    "src-path": "B.Operating-System/Linux/Commands",
+    "src-path": "B.操作系统/Linux/Commands",
     "dst-path": "coding-life/linux/commands",
     "articles": [
         {

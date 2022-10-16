@@ -1,0 +1,7 @@
+probe process("/home/xxx/.local/openresty/nginx/sbin/nginx").function("ngx_http_*") {
+    printf("%s -> %s\n", thread_indent(4), probefunc());
+}
+
+probe process("/home/xxx/.local/openresty/nginx/sbin/nginx").function("ngx_http_*").return {
+    printf("%s <- %s\n", thread_indent(-4), probefunc());
+}

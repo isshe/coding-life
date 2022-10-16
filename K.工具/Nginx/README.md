@@ -45,3 +45,8 @@ nginx
   * 回退到`find-config`阶段.
   * 在`post-rewrite`阶段发生回退。
   * rewrite/access/content之类的都会重新执行。
+
+
+# 参考
+
+- [Nginx开发从入门到精通](http://tengine.taobao.org/book/)

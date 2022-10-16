@@ -92,11 +92,86 @@ Nginx 模块数据处理
 
 ```
 
-以上是监听的流程，相关操作是在 master 进程中，然后 fork 以后，worker 进程也得到了相关套接字信息。
+以上是监听的流程，相关操作是在 master 进程中进行，然后 fork worker 进程以后，worker 进程也得到了相关套接字信息。
 worker 进程调用 ngx_worker_process_cycle 进入自身循环。
 listen 之后，就能 accept 了，那么是如何处理 accept 的呢？
 
-### 调用流程：event 初始化
+通过在源码中搜索 `accept(`，我们知道 accept 是在 ngx_event_accept 中进行的：
+
+```c
+void
+ngx_event_accept(ngx_event_t *ev)
+{
+    ...
+
+#if (NGX_HAVE_ACCEPT4)
+        if (use_accept4) {
+            s = accept4(lc->fd, &sa.sockaddr, &socklen, SOCK_NONBLOCK);
+        } else {
+            s = accept(lc->fd, &sa.sockaddr, &socklen);
+        }
+#else
+        s = accept(lc->fd, &sa.sockaddr, &socklen);
+#endif
+
+    ...
+}
+```
+
+而 ngx_event_accept 是被像下面的代码设置到连接的 handler 变量中：
+
+```c
+static ngx_int_t
+ngx_event_process_init(ngx_cycle_t *cycle)
+{
+    ...
+        rev->handler = ngx_event_accept;
+
+        ...
+
+        rev->handler = (c->type == SOCK_STREAM) ? ngx_event_accept
+                                                : ngx_event_recvmsg;
+
+    ...
+}
+```
+
+继续搜索 ngx_event_process_init，发现：
+
+```c
+ngx_module_t  ngx_event_core_module = {
+    NGX_MODULE_V1,
+    &ngx_event_core_module_ctx,            /* module context */
+    ngx_event_core_commands,               /* module directives */
+    NGX_EVENT_MODULE,                      /* module type */
+    NULL,                                  /* init master */
+    ngx_event_module_init,                 /* init module */
+    ngx_event_process_init,                /* init process */
+    NULL,                                  /* init thread */
+    NULL,                                  /* exit thread */
+    NULL,                                  /* exit process */
+    NULL,                                  /* exit master */
+    NGX_MODULE_V1_PADDING
+};
+```
+
+可以看到 ngx_event_process_init 是 event 模块的进程初始化函数，
+
+```c
+struct ngx_module_s {
+    ...
+
+    ngx_int_t           (*init_process)(ngx_cycle_t *cycle);
+
+    ...
+}
+```
+
+也就是初始化工作进程时，会调用到。
+
+因此，我们可以得到 accept 相关函数被设置为 event 读事件的调用流程。
+
+### 调用流程：读事件初始化
 
 ```
 - ngx_master_process_cycle: 起工作进程、cache 管理进程等，然后进入循环
@@ -110,22 +185,53 @@ listen 之后，就能 accept 了，那么是如何处理 accept 的呢？
         \ - ngx_spawn_process: 生成进程
             \ - fork
             \ - proc = ngx_worker_process_cycle: 子进程调用此函数
-                \ - ngx_worker_process_init
-
+                \ - ngx_worker_process_init: worker 进程初始化，设置 CPU 亲缘性等
+                    \ - init_process: 调用所有模块的初始化进程函数
+                        \ - ngx_event_process_init: 此函数是 event 的 init_process
+                            \ - rev->handler = ngx_event_accept：设置连接的读事件为 ngx_event_accept
+                \ - for: 进入无限循环等待事件
+                    - ngx_process_events_and_timers
         \ - ngx_pass_open_channel
     \ - ngx_start_cache_manager_processes: 启动 cache 管理进程
     \ - sigsuspend: 进入循环，开放信号，挂起进程等待信号
 ```
 
+把连接（connection）的读事件设置为 ngx_event_accept 后，可以想象到连接有读事件时，就会调用此函数。
+
+不过由于现在目的不是了解 event，因此像
+
+- 如何决定使用什么类型的 IO 多路复用？epoll、poll、select ... ？
+- event 是如何工作的？
+
+等 event 相关内容我们先跳过，继续跟踪 ngx_event_accept。
+
 ### 调用流程：请求处理
 
 ```
-
+- ngx_event_accept
+    \ - ngx_enable_accept_events: 把连接的读事件加入到事件系统中
+    \ - ngx_event_get_conf: 获取事件模块的配置
+    \ - accept4/accept4: accept 连接
+    \ - ngx_get_connection: 获取连接
+    \ - ngx_close_accepted_connection: 如果内存池之类的分配失败，则调用此函数
+    \ - ls->handler: 具体的 http/mail/stream 处理函数，如 ngx_http_init_connection；也就是这里决定监听的端口是什么类型。
+        \ - HTTP: ngx_http_init_connection
+            \ - ngx_handle_read_event：添加到事件系统中
+        \ - MAIL: ngx_mail_init_connection
+        \ - STREAM: ngx_stream_init_connection
 ```
 
+在这里，解答了我们最开始的疑问：Nginx 是如何知道从端口接收到的数据，应该交给哪些模块进行处理的呢？
+Nginx 通过设置不同的 handler，来处理不同类型的请求。
 
-
+总结：
+- Nginx（worker 进程）为每个服务器 socket 分配了一个连接结构（ngx_connection_t），读事件设置为 ngx_event_accept；
+  - 可以看到这里是每个 worker 进程都添加了 accept 事件到事件系统中，也就是一个连接请求过来时，会导致所有进程都被唤醒，这也就是所谓的惊群现象。Nginx 的解决方法是添加一个 accept 锁 ngx_accept_mutex。
+- Nginx 为每个客户端 socket 分配了一个对应类型的连接结构（ngx_http_connection_t），读事件设置为对应类型的事件。
+    - 以 HTTP 为例，不同的阶段会使用不同的事件 handler，来读取 HTTP 头部或者是 body 等。
 
 # 参考
 
 - [How nginx processes a request](http://nginx.org/en/docs/http/request_processing.html)
+- https://blog.csdn.net/weixin_39399883/article/details/109700162
+- https://blog.csdn.net/weixin_39399883/article/details/110197613

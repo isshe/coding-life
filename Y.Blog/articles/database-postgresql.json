@@ -6,7 +6,7 @@
     "tags": [
         "Database"
     ],
-    "src-path": "F.Database/4.PostgreSQL",
+    "src-path": "F.数据库/4.PostgreSQL",
     "dst-path": "coding-life/database/postgresql",
     "articles": [
         {

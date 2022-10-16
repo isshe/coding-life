@@ -6,7 +6,7 @@
         "kernel",
         "linux"
     ],
-    "src-path": "B.Operating-System/Linux/Kernel",
+    "src-path": "B.操作系统/Linux/Kernel",
     "dst-path": "coding-life/linux/kernel",
     "articles": [
         {

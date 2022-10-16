@@ -7,7 +7,7 @@
         "linux",
         "IO 多路复用"
     ],
-    "src-path": "B.Operating-System/Linux/Application/7.IO多路复用",
+    "src-path": "B.操作系统/Linux/Application/7.IO多路复用",
     "dst-path": "coding-life/linux/application-io-multiplexing",
     "articles": [
         {

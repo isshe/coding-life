@@ -6,7 +6,7 @@
         "application",
         "linux"
     ],
-    "src-path": "B.Operating-System/Linux/Application/3.进程通信",
+    "src-path": "B.操作系统/Linux/Application/3.进程通信",
     "dst-path": "coding-life/linux/application-ipc",
     "articles": [
         {
