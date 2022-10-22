@@ -1,0 +1,4 @@
+probe process("/root/persional/nginx-bin/sbin/nginx").function("ngx_handle_read_event") {
+    # print_usyms(ubacktrace());
+    print_backtrace();
+}
