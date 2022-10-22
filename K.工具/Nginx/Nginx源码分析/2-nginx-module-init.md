@@ -113,6 +113,8 @@ main: core/nginx.c
             |
              \ init_module: defined by module
     |
+     \ ngx_cycle_post_init
+    |
      \ ngx_single_process_cycle: core/nginx.c
         |
          \ init_process: defined by module
