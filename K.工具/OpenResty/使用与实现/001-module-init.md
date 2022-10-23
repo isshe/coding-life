@@ -108,7 +108,7 @@ Nginx 模块的初始化流程见：[Nginx 模块初始化](../../Nginx/Nginx源
 
 从前面的模块定义可以看到 OpenResty 只指定了 ngx_http_lua_init_worker 和 ngx_http_lua_exit_worker 两个 worker 进程的处理函数。
 配置解析完成后，接下来会 fork 出子进程，然后就会调用 ngx_http_lua_init_worker 函数。
-用头发想都能知道，init_worker_by_lua 的代码将会在这里被执行。我们来具体看看。
+用头发想都能知道，init_worker_by_lua 设置的 Lua 代码大概率会在这里被执行。我们来具体看看。
 
 ```c
 - init_worker_by_lua
