@@ -29,6 +29,8 @@ init_by_lua_file /usr/local/openresty/lua/init.lua
 
 > 以 init_by_lua 为例
 
+### 指令定义
+
 ```
     { ngx_string("init_by_lua"),
       NGX_HTTP_MAIN_CONF|NGX_CONF_TAKE1,
@@ -36,4 +38,42 @@ init_by_lua_file /usr/local/openresty/lua/init.lua
       NGX_HTTP_MAIN_CONF_OFFSET,
       0,
       (void *) ngx_http_lua_init_by_inline },
+```
+
+可以看到，在解析到 init_by_lua 指令时，会调用 ngx_http_lua_init_by_lua 函数进行处理，那么
+- ngx_http_lua_init_by_lua 这个函数中会执行 Lua 代码吗？
+- ngx_http_lua_init_by_inline 函数又是做什么用？
+
+### ngx_http_lua_init_by_lua 执行流程
+
+```
+- ngx_http_lua_init_by_lua
+    \- if (cmd->post == NULL)：检查是否有 handler，没有直接报错。
+    \- if (lmcf->init_handler)：检查是否已经配置过 init_handler 了，配置过直接返回。
+    \- lmcf->init_handler = (ngx_http_lua_main_conf_handler_pt) cmd->post;：设置 init_handler，也就是把 init_handler 设置为 ngx_http_lua_init_by_inline。
+    \- ngx_http_lua_rebase_path：Lua 代码在文件中，则调用此函数获取 Lua 文件的绝对路径。
+    \- ngx_http_lua_gen_chunk_name：是 Lua 代码块，则调用此函数生成 chunk name。
+    \- lmcf->init_src：设置 Lua 文件路径或 Lua 代码到此变量中
+```
+
+可以看到，此函数中只是设置了 init_handler，并没有执行对应的 Lua 代码，那么 Lua 代码应该是在 ngx_http_lua_init_by_inline 中执行了。
+
+### ngx_http_lua_init_by_inline 执行流程
+
+上篇文章《[模块初始化](001-module-init.md)》 的 “ngx_http_lua_init 执行流程” 中，已经有提到 ngx_http_lua_init_by_inline 如何被调用，
+这里我们直接贴过来。
+
+- ngx_http_lua_init_by_inline 的调用栈
+
+```
+- ngx_cycle_post_init：在 main 函数中调用
+    \- post_init(ngx_http_lua_post_init_handler)
+        \- init_handler(ngx_http_lua_init_by_inline)
+```
+
+
+- ngx_http_lua_init_by_inline 的执行流程
+
+```
+
 ```

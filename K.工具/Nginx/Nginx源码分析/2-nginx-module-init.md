@@ -53,7 +53,7 @@ char *ngx_module_names[] = {
 }
 ```
 
-# Nginx 模块初始化调用过程
+# Nginx 模块初始化执行流程
 
 ```
 main: core/nginx.c
@@ -95,7 +95,7 @@ main: core/nginx.c
                          \ merge_srv_conf
                          \ merge_loc_conf
                      \ merge_srv_conf: stream module only
-                     \ postconfiguration
+                     \ postconfiguration：调用 postconfiguration 函数，到这里整个 http block 内的配置指令已经解析完了
                     |
                     | (event module)
                      \ create_conf

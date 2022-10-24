@@ -50,16 +50,16 @@ Nginx 模块数据处理
 
 可以看到，各个类型，都有自己的 listen 指令，因此 nginx.conf 中，不同配置块（block）下的 listen 指令是不同。
 
-我们以 HTTP 为例，看下调用流程。
+我们以 HTTP 为例，看下执行流程。
 
-## HTTP 模块中 listen 的调用流程
+## HTTP 模块中 listen 的执行流程
 
 为便于理解，先插播一条 listen 指令的用法：
 
 [listen](../Nginx指令/http-listen.md)
 
 
-### 调用流程：端口监听
+### 执行流程：端口监听
 
 ```
 - ngx_init_cycle: core/ngx_cycle.c
@@ -169,9 +169,9 @@ struct ngx_module_s {
 
 也就是初始化工作进程时，会调用到。
 
-因此，我们可以得到 accept 相关函数被设置为 event 读事件的调用流程。
+因此，我们可以得到 accept 相关函数被设置为 event 读事件的执行流程。
 
-### 调用流程：读事件初始化
+### 执行流程：读事件初始化
 
 ```
 - ngx_master_process_cycle: 起工作进程、cache 管理进程等，然后进入循环
@@ -205,7 +205,7 @@ struct ngx_module_s {
 
 等 event 相关内容我们先跳过，继续跟踪 ngx_event_accept。
 
-### 调用流程：请求处理
+### 执行流程：请求处理
 
 ```
 - ngx_event_accept
