@@ -141,3 +141,9 @@ echo $@
 ```
 arr=($(awk -v RS=' ' '!a[$1]++' <<< ${arr[@]}))
 ```
+
+# 只删除文件名大于某文件名的文件
+
+```
+ls dir | awk '{if ($0 <= "filename.t" ) print "dir/"$0}' | sort | xargs rm -f
+```

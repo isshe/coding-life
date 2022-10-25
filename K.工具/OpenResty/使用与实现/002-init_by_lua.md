@@ -75,5 +75,40 @@ init_by_lua_file /usr/local/openresty/lua/init.lua
 - ngx_http_lua_init_by_inline 的执行流程
 
 ```
+- ngx_http_lua_init_by_inline
+    \- if (lmcf->init_chunkname == NULL)：没设置就使用 "=init_by_lua"
+    \- lua_getexdata：获取请求（request），使用了 Luajit，就调用这个接口。
+    \- lua_touserdata：获取请求（request），没使用 Luajit，就调用这个接口。
+    \- ngx_http_lua_cache_loadbuffer：加载 Lua 代码
+        \- ngx_http_lua_cache_load_code：从缓存中加载代码
+        \- ngx_http_lua_clfactory_loadbuffer：加载 Lua 脚本的闭包工厂[?]到 Lua 堆栈顶部
+            \- lua_load：Luajit 加载 lua 代码函数，后续有必要挪到 Luajit 目录下
+                \- lua_loadx
+                    \- lj_buf_init
+                    \- lj_vm_cpcall
+                    \- lj_lex_cleanup
+                    \- lj_gc_check
+        \- ngx_http_lua_cache_store_code：保存加载的代码到缓存中
+    \- ngx_http_lua_init_by_chunk：执行 Lua 代码
+        \- ngx_http_get_module_ctx：获取模块上下文
+        \- ngx_http_lua_create_ctx：如果获取不到，就创建
+        \- ngx_http_lua_reset_ctx：获取到了，就重置[?]
+        \- ngx_http_lua_new_thread：新建协程（coroutine）
+        \- lua_xmove：移动代码闭包到新协程
+        \- ngx_http_lua_get_globals_table：获取协程的 global 表
+        \- lua_setfenv：将闭包的 env 表设置为新协程的 global 表
+        \- ngx_http_lua_set_req：保存 nginx 请求到协程 global 表中
+        \- ngx_http_lua_attach_co_ctx_to_L：[?]
+        \- ngx_http_cleanup_add：注册请求的清理回调
+        \- ngx_http_lua_run_thread：跑协程
+        \- ngx_http_lua_init_run_posted_threads：[?]
+        \- ngx_http_lua_finalize_request：结束请求
 
 ```
+
+- 闭包工厂（closure factory）是什么？
+  - 猜测是生成闭包函数的工厂？
+  - FIXME
+
+- 为何要重置模块上下文呢？
+  - 猜测是为了避免互相影响
