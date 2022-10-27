@@ -52,7 +52,7 @@ init_by_lua_file /usr/local/openresty/lua/init.lua
 - ngx_http_lua_init_by_lua
     \- if (cmd->post == NULL)：检查是否有 handler，没有直接报错。
     \- if (lmcf->init_handler)：检查是否已经配置过 init_handler 了，配置过直接返回。
-    \- lmcf->init_handler = (ngx_http_lua_main_conf_handler_pt) cmd->post;：设置 init_handler，也就是把 init_handler 设置为 ngx_http_lua_init_by_inline。
+    \- lmcf->init_handler = (ngx_http_lua_main_conf_handler_pt) cmd->post：设置 init_handler，也就是把 init_handler 设置为 ngx_http_lua_init_by_inline。
     \- ngx_http_lua_rebase_path：Lua 代码在文件中，则调用此函数获取 Lua 文件的绝对路径。
     \- ngx_http_lua_gen_chunk_name：是 Lua 代码块，则调用此函数生成 chunk name。
     \- lmcf->init_src：设置 Lua 文件路径或 Lua 代码到此变量中
@@ -77,70 +77,34 @@ init_by_lua_file /usr/local/openresty/lua/init.lua
 
 ```
 - ngx_http_lua_init_by_inline
-    \- if (lmcf->init_chunkname == NULL)：没设置就使用 "=init_by_lua"
-    \- lua_getexdata：获取请求（request），使用了 OpenResty Luajit，就调用这个接口。
-    \- lua_touserdata：获取请求（request），没使用 OpenResty Luajit，就调用这个接口。
-    \- ngx_http_lua_cache_loadbuffer：加载 Lua 代码
-        \- ngx_http_lua_cache_load_code：从缓存中加载代码
-        \- ngx_http_lua_clfactory_loadbuffer：加载 Lua 脚本的闭包工厂[?]到 Lua 堆栈顶部
-            \- lua_load：Luajit 加载 lua 代码的函数
-                \- lua_loadx：后续如有必要再挪到 Luajit 目录下
-                    \- lj_buf_init
-                    \- lj_vm_cpcall
-                    \- lj_lex_cleanup
-                    \- lj_gc_check
-        \- ngx_http_lua_cache_store_code：保存加载的代码到缓存中
-    \- ngx_http_lua_init_by_chunk：执行 Lua 代码
-        \- ngx_http_get_module_ctx：获取模块上下文
-        \- ngx_http_lua_create_ctx：如果获取不到上下文，就创建
-        \- ngx_http_lua_reset_ctx：获取到了，就重置[?]
-        \- ngx_http_lua_new_thread：新建协程（coroutine）
-        \- lua_xmove：移动代码闭包到新协程
-        \- ngx_http_lua_get_globals_table：获取协程的 global 表
-        \- lua_setfenv：将闭包的 env 表设置为新协程的 global 表
-        \- ngx_http_lua_set_req：保存 nginx 请求到协程 global 表中
-        \- ngx_http_lua_attach_co_ctx_to_L：attach 协程上下文 到 L（lua_State）
-        \- ngx_http_cleanup_add：注册请求的清理回调
-        \- ngx_http_lua_run_thread：跑协程
-            \- lua_resume：跑 Lua 代码
-        \- ngx_http_lua_init_run_posted_threads：[?]
-            \- ngx_http_lua_probe_run_posted_thread
-            \- ngx_http_lua_run_thread
-            \- ngx_http_lua_finalize_request：结束请求（请求引用计数减 1）
-        \- ngx_http_lua_finalize_request：结束请求
+    \- luaL_loadbuffer：加载 Lua 代码，这是 luajit 的接口
+        \- luaL_loadbufferx：这部分后续放到 Luajit 目录下
+        \- lua_loadx
+            \- lj_buf_init
+            \- lj_vm_cpcall
+            \- lj_lex_cleanup
+            \- lj_gc_check
+    \- ngx_http_lua_do_call：执行代码
+        \- lua_gettop：获取函数在堆栈的索引/位置[?]
+        \- lua_insert：索引压栈
+        \- lua_pushcfunction： traceback 压栈函数/异常处理函数（值：ngx_http_lua_traceback），出错时调用。
+        \- ngx_http_lua_pcre_malloc_init：PCRE 内存分配函数及内存池修改，改为使用 cycle 的内存池（ngx_cycle->pool）
+        \- lua_pcall：执行 Lua 代码
+        \- ngx_http_lua_pcre_malloc_done：代码执行完了，还原回去
+        \- lua_remove：索引出栈
+    \- ngx_http_lua_report：
+        \- if (status && !lua_isnil(L, -1))：状态不为 0（出错了）并且 Lua 类型不是 nil
+            \- lua_tostring：把错误消息取出来
+            \- ngx_log_error：打印到 nginx log 中
+        \- lua_gc：强制执行一次完整的垃圾收集
 ```
 
 这个函数主要做了以下事情：
 
-- 获取请求 —— Lua 代码的执行都依赖于请求。
-- 从缓存或配置中加载 Lua 代码
-- 保存 Lua 代码到缓存中
-- 起协程执行 Lua 代码 —— 每次代码执行都在独立的上下文中
+- 从缓冲区加载 Lua 代码
+- 执行 Lua 代码
+- 出错则打印错误日志
+- 代码执行完进行垃圾回收
 
 到目前为止，我们得到了一个比较上层的 Lua 代码执行流程。
-更详细的 Lua 代码执行细节 及 与 OpenResty 协程协作的细节，后续再来探索。
-
-- Lua 代码执行细节：指 lua_load、lua_resume 等具体行为。
-  - （看起来 Luajit 里面也是用了协程？后续继续考究）
-- OpenResty 协程协作的细节：指 OpenResty 协程 与 lua_resume 等是如何配合的，为什么能跑起来？
-
-## 示例
-
-TODO：通过具体示例，看下 “闭包工厂” 及 “闭包工厂产出的内容” 之类的是什么样子。**猜测**应该是像：
-
-```
-function()
-    -- do something
-end
-
-```
-
-## 疑问
-
-- 闭包工厂（closure factory）是什么？
-  - 毫无疑问生成闭包的工厂，不过具体还需再探究。
-  - FIXME
-
-- 为何要重置模块上下文呢？
-  - 猜测是为了避免互相影响
-  - FIXME
+更详细的 Lua 代码执行细节（如 lua_loadx、lua_pcall 等函数的行为），后续再来探索。
