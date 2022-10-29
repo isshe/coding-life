@@ -102,8 +102,15 @@ ngx_worker_process_init 是 nginx 框架里面的函数，而 ngx_http_lua_init_
 ### ngx_http_lua_init_worker_by_file 执行流程
 
 ```
-
+- ngx_http_lua_init_worker_by_file
+    \- luaL_loadfile
+    \- ngx_http_lua_do_call
+    \- ngx_http_lua_report
 ```
+
+和 init_by_lua 指令的区别在于 luaL_loadbuffer 换成了 luaL_loadfile。
+luaL_loadfile 也就是读文件，然后加载代码；
+这些 Luajit 相关的函数，我们后续再探究。
 
 ## TODO
 
