@@ -75,7 +75,9 @@ static ngx_command_t ngx_http_lua_cmds[] = {
 
 # 初始化
 
-## 配置初始化
+接下来，我们粗略地了解一下 `模块初始化` 和 `进程初始化`。
+
+## 模块初始化
 
 Nginx 模块的初始化流程见：[Nginx 模块初始化](../../Nginx/Nginx源码分析/2-nginx-module-init.md)
 
@@ -98,22 +100,10 @@ Nginx 模块的初始化流程见：[Nginx 模块初始化](../../Nginx/Nginx源
     \- ngx_pool_cleanup_add：添加内存池清理函数
     \- ngx_http_lua_pipe_init：初始化一颗红黑树，用于管道处理，见 [pipe](./015-pipe.md)。
     \- ngx_http_lua_init_vm：如果没有初始化 Lua VM，则初始化。lua_State 设置在 lmcf->lua 中。
-    \- ngx_cycle_set_post_init：设置 handler（ngx_http_lua_post_init_handler），此 handler 将在 ngx_cycle_post_init 中被调用。
-        \- cycle->post_init_handlers[module.index] = post_init: post_init 即是 ngx_http_lua_post_init_handler。
-
-...
-
-- ngx_cycle_post_init：在 main 函数中调用
-    \- post_init(ngx_http_lua_post_init_handler)
-        \- init_handler(ngx_http_lua_init_by_inline)
+    \- init_handler(ngx_http_lua_init_by_inline)：执行 Lua 代码
 ```
 
-可以看到，配置解析完后（postconfiguration），也会设置 handler 为 ngx_http_lua_post_init_handler，但没有实际调用。
-后续对于 ngx_http_lua_post_init_handler 的调用在 ngx_cycle_post_init 中，这是为什么呢？
-- 为什么在 postconfiguration 时相关 block 配置已经解析完了，为什么还不能调用 ngx_http_lua_post_init_handler，而是放到 ngx_http_lua_post_init_handler？[1]
-    - 猜测是缺了什么。继续探索，看后续是否有答案。
-    - FIXME
-- 相关 Lua 代码（如 init_by_lua 指令设置的）会在哪里执行呢？[2]
+可以看到，配置解析完后（postconfiguration）， 立即初始化 Lua VM ，然后调用了 ngx_http_lua_init_by_inline。
 
 ## 进程初始化
 
@@ -128,8 +118,3 @@ Nginx 模块的初始化流程见：[Nginx 模块初始化](../../Nginx/Nginx源
 ```
 
 init_worker_handler 从哪里来的呢？是 init_worker_by_lua 指令设置的，这个我们在后续的文章中再去验证一下。
-如果是 init_worker_by_lua 指令的 Lua 代码是在 init_worker_handler 中执行；
-可想而知，init_by_lua 指令设置的代码，大概率在 init_handler 中执行了。那这也就是问题 [2] 的答案了，我们也在后续的文章中再去验证。
-
-> 这个函数中还伪造了 cycle 、连接、请求等很多东西，是为什么呢？有何作用？
-目前了解到是所有 Lua 代码都要依赖请求（request），因此需要进行相关的 fake。

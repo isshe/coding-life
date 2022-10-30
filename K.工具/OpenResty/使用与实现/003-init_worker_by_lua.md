@@ -1,18 +1,22 @@
 # init_worker_by_lua*
 
+如果没有启用 master 进程则此指令的 Lua 代码将在 init_by_lua* 指令的 Lua 代码之后运行。
+- 启用 master 进程：表示非 master-worker 的模式
+
 ## 用法
 
-`init_worker_by_lua*` 系列指令会在 worker 进程启动阶段(starting-worker) 执行，上下文是 "http"。
-如果没有启用 master 进程则此指令的 Lua 代码将在 init_by_lua* 指令的 Lua 代码之后运行。
-- 启用 master 进程：非 master-worker 的模式
+- 使用场景
+  - 通常用于启动定时器执行每 worker 相关的内容，或者后端健康检查等。
 
-通常用于启动定时器执行每 worker 相关的内容，或者后端健康检查等。
-
+- 执行阶段：starting-worker，工作进程启动阶段
+- 上下文：http
 - 语法：
 
 与 `init_by_lua*` 类似，不再赘述。
 
 ## 实现
+
+> 以 init_worker_by_lua_file 为例
 
 通过前面的探索，我们已经知道指令的解析会在配置解析阶段，而对应的 Lua 代码会在后续才执行。
 因此，我们接下来目的很明确：
@@ -53,7 +57,7 @@
 - 设置好回调函数。
 - 设置好 Lua 代码或代码路径。
 
-### ngx_http_lua_init_worker_by_file 的执行位置
+### ngx_http_lua_init_worker_by_file 的调用位置
 
 根据上面我们知道会调用 init_worker_handler，因此可以反向跟踪代码来得到调用栈。
 不过这里我直接使用 bpftrace 来获取：（bpftrace 相关内容见：[M.方法论/阅读源码的方法.md](../../../M.方法论/阅读源码的方法.md)）
@@ -109,13 +113,11 @@ ngx_worker_process_init 是 nginx 框架里面的函数，而 ngx_http_lua_init_
 ```
 
 和 init_by_lua 指令的区别在于 luaL_loadbuffer 换成了 luaL_loadfile。
-luaL_loadfile 也就是读文件，然后加载代码；
-这些 Luajit 相关的函数，我们后续再探究。
+luaL_loadfile 也就是读文件，然后加载代码。
 
 ## TODO
 
 - 探究 “为什么调用栈少了一帧”。
-
 
 ## 参考
 

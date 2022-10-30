@@ -2,11 +2,26 @@
 
 > 实际跟踪 Lua 代码的执行情况（主要是出错情况）。
 
-由于前面 2
-
 ## 异常情况
 
 由于使用 bpftrace 得到的堆栈不符合预期，直接用 gdb 来获取：
+
+指令：
+
+```
+    # index a nil value
+    init_by_lua 'return a.b';
+```
+
+对 nil 值进行索引。
+
+错误输出：
+
+```
+nginx: [error] init_by_lua error: init_by_lua:1: attempt to index global 'a' (a nil value)
+stack traceback:
+        init_by_lua:1: in main chunk
+```
 
 命令：
 
@@ -40,3 +55,44 @@ $ gdb sbin/nginx
 #14 0x00005555555b4f87 in ngx_init_cycle (old_cycle=0x7fffffffd9b0) at src/core/ngx_cycle.c:284
 #15 0x0000555555592fe8 in main (argc=3, argv=0x7fffffffdd58) at src/core/nginx.c:295
 ```
+
+可以看到最终 ngx_http_lua_traceback 是被 Luajit 调用了，这是在 ngx_http_lua_do_call 中设置的。
+
+- ngx_http_lua_traceback 函数源码：
+
+```
+int
+ngx_http_lua_traceback(lua_State *L)
+{
+    if (!lua_isstring(L, 1)) { /* 'message' not a string? */
+        return 1;  /* keep it intact */
+    }
+
+    lua_getglobal(L, "debug");
+    if (!lua_istable(L, -1)) {
+        lua_pop(L, 1);
+        return 1;
+    }
+
+    lua_getfield(L, -1, "traceback");
+    if (!lua_isfunction(L, -1)) {
+        lua_pop(L, 2);
+        return 1;
+    }
+
+    lua_pushvalue(L, 1);  /* pass error message */
+    lua_pushinteger(L, 2);  /* skip this function and traceback */
+    lua_call(L, 2, 1);  /* call debug.traceback */
+    return 1;
+}
+```
+
+根据注释可以看到，主要做了：
+
+- 设置错误信息
+- 跳过 2 个栈帧：当前 Lua 函数和栈帧 [?, 猜测]
+- 调用 debug.traceback
+
+因此，此函数看起来是获取调用栈，然后在后续打印到日志中（由 ngx_http_lua_report 调用 ngx_log_error）。
+
+由于缺乏对 `lua_*` 相关函数的了解，还是没法继续深入，先作罢，后续再读下 luajit 源码去了解。

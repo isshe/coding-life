@@ -2,11 +2,18 @@
 
 > 相关代码逻辑出自 lua-nginx-module v0.10.21 版本
 
+当 Nginx 收到 HUP 信号并开始重新加载配置文件时，Lua VM 会被重新创建，并且 `init_by_lua*` 会在新的 Lua VM 上再次运行。
+如果关闭 lua_code_cache 指令（默认打开），`init_by_lua*` 处理程序（Lua 代码）将在每个请求上运行，因为在这种特殊模式下，需要为每个请求创建一个独立的 Lua VM。
+
 ## 用法
 
-`init_by_lua*` 系列指令会在配置加载阶段(loading-config)执行，上下文是 "http"。
-init_by_lua 已不建议使用，使用 init_by_lua_block 和 init_by_lua_file 代替。
+> init_by_lua 已不建议使用，使用 init_by_lua_block 和 init_by_lua_file 代替。
 
+- 使用场景：
+  - 在 `init_by_lua*` 中，加载 Lua 模块，如 `require "cjson"`，再在其他阶段（如 content_by_lua*）使用：再次 require，这次 require 会很快，直接从 package.loaded 中获取返回。
+
+- 执行阶段：loading-config，配置加载阶段
+- 上下文：http
 - 语法：
 
 ```bash
@@ -68,9 +75,15 @@ init_by_lua_file /usr/local/openresty/lua/init.lua
 - ngx_http_lua_init_by_inline 的调用栈
 
 ```
-- ngx_cycle_post_init：在 main 函数中调用
-    \- post_init(ngx_http_lua_post_init_handler)
-        \- init_handler(ngx_http_lua_init_by_inline)
+- ngx_http_lua_init
+    \- ngx_array_push：判断是否需要介入 rewrite、access、log 阶段的处理，如果需要，就设置对应的 handler。
+        \- 如：ngx_array_push(&cmcf->phases[NGX_HTTP_REWRITE_PHASE].handlers);
+    \- ngx_http_lua_header_filter_init：如果需要介入 header_fitler 阶段，则会调用此函数把相关处理函数设置到调用链中。
+    \- ngx_http_lua_body_filter_init：如果需要介入 body_fitler 阶段，则会调用此函数把相关处理函数设置到调用链中。
+    \- ngx_pool_cleanup_add：添加内存池清理函数
+    \- ngx_http_lua_pipe_init：初始化一颗红黑树，用于管道处理，见 [pipe](./015-pipe.md)。
+    \- ngx_http_lua_init_vm：如果没有初始化 Lua VM，则初始化。lua_State 设置在 lmcf->lua 中。
+    \- init_handler(ngx_http_lua_init_by_inline)：执行 Lua 代码
 ```
 
 - ngx_http_lua_init_by_inline 的执行流程
@@ -101,10 +114,14 @@ init_by_lua_file /usr/local/openresty/lua/init.lua
 
 这个函数主要做了以下事情：
 
-- 从缓冲区加载 Lua 代码
-- 执行 Lua 代码
-- 出错则打印错误日志
-- 代码执行完进行垃圾回收
+- 调用 luaL_loadbuffer 函数从缓冲区加载 Lua 代码
+- 调用 ngx_http_lua_do_call 设置处理函数，并执行 Lua 代码
+- 调用 ngx_http_lua_report 检查执行状态，出错则打印错误日志，并进行垃圾回收
 
 到目前为止，我们得到了一个比较上层的 Lua 代码执行流程。
 更详细的 Lua 代码执行细节（如 lua_loadx、lua_pcall 等函数的行为），后续再来探索。
+
+
+## TODO
+
+- 学习执行 Lua 代码相关的内容。
