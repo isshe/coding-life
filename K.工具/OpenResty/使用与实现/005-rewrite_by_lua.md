@@ -1,6 +1,6 @@
 # rewrite_by_lua*
 
-充当一个 rewrite 阶段的处理程序，对**每个请求**执行指定的 Lua 代码，代码会在独立的全局环境（沙箱）中执行。
+`rewrite_by_lua*` 充当一个 rewrite 阶段的处理程序，对**每个请求**执行指定的 Lua 代码，代码会在独立的全局环境（沙箱）中执行。
 
 ## 用法
 
@@ -66,5 +66,62 @@
 
 ### ngx_http_lua_rewrite_handler_inline 的调用位置
 
+根据前面的执行流程，我们知道处理程序是被设置在了 `rewrite_handler` 中，通过搜索，我们得到
 
-### ngx_http_lua_rewrite_handler_inline 执行流程
+```
+- ngx_http_lua_rewrite_handler
+    \- rewrite_handler
+```
+
+那么 `ngx_http_lua_rewrite_handler` 是通过在哪里调用了呢？
+通过搜索 `ngx_http_lua_rewrite_handler`，在 `ngx_http_lua_init` 函数中找到以下代码：
+
+> ngx_http_lua_init 相关内容可见 [001-module-init.md)](001-module-init.md) 或 [002-init_by_lua.md](002-init_by_lua.md)
+
+```
+    if (lmcf->requires_rewrite) {
+        h = ngx_array_push(&cmcf->phases[NGX_HTTP_REWRITE_PHASE].handlers);
+        if (h == NULL) {
+            return NGX_ERROR;
+        }
+
+        *h = ngx_http_lua_rewrite_handler;
+    }
+```
+
+可见，`ngx_http_lua_rewrite_handler` 被添加到了 `REWRITE` 阶段的处理程序数组中。
+
+接下来我们直接使用 gdb 获取调用栈：
+
+> $ gdb -p PID
+> > b ngx_http_lua_rewrite_handler
+> > bt
+
+
+```lua
+#0  ngx_http_lua_rewrite_handler (r=0x0) at ../ngx_lua-0.10.21/src/ngx_http_lua_rewriteby.c:26
+#1  0x0000564c0906158e in ngx_http_core_rewrite_phase (r=0x564c09c74750, ph=0x564c09c9bea0)
+    at src/http/ngx_http_core_module.c:939
+#2  0x0000564c090613de in ngx_http_core_run_phases (r=0x564c09c74750) at src/http/ngx_http_core_module.c:885
+#3  0x0000564c09061347 in ngx_http_handler (r=0x564c09c74750) at src/http/ngx_http_core_module.c:868
+#4  0x0000564c09072044 in ngx_http_process_request (r=0x564c09c74750) at src/http/ngx_http_request.c:2120
+#5  0x0000564c09070710 in ngx_http_process_request_headers (rev=0x564c09cb2f00) at src/http/ngx_http_request.c:1498
+#6  0x0000564c0906fa6a in ngx_http_process_request_line (rev=0x564c09cb2f00) at src/http/ngx_http_request.c:1165
+#7  0x0000564c0906e061 in ngx_http_wait_request_handler (rev=0x564c09cb2f00) at src/http/ngx_http_request.c:503
+#8  0x0000564c0904a223 in ngx_epoll_process_events (cycle=0x564c09c70740, timer=60000, flags=1)
+    at src/event/modules/ngx_epoll_module.c:901
+#9  0x0000564c09035ee2 in ngx_process_events_and_timers (cycle=0x564c09c70740) at src/event/ngx_event.c:257
+#10 0x0000564c09047402 in ngx_worker_process_cycle (cycle=0x564c09c70740, data=0x0)
+    at src/os/unix/ngx_process_cycle.c:793
+...
+```
+
+读事件到达 worker 进程后，相应的事件处理模块（不同系统应当是使用了不同的事件模块，例如 Linux 使用 epoll，Unix 使用 kqueue ）调用读事件处理程序对请求进行读取并解析，然后调用各个阶段的处理程序。
+
+（请求的处理过程及阶段切换过程，在后续的 Nginx 系列文章中进行补充。）
+
+### ngx_http_lua_rewrite_handler 执行流程
+
+```
+
+```
