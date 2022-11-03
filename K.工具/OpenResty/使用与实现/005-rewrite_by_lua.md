@@ -123,5 +123,30 @@
 ### ngx_http_lua_rewrite_handler 执行流程
 
 ```
-
+- ngx_http_lua_rewrite_handler
+    \- if (r->uri_changed)：URI 已经改变了，直接进行下一个模块 [1]
+    \- ngx_http_get_module_main_conf：获取模块配置
+    \- if (!lmcf->postponed_to_rewrite_phase_end)：是否作为 rewrite 阶段最后一个处理程序，默认为会放到最后。做法是交换当前处理程序和最后处理程序，然后 r->phase_handler-- 来重跑当前位置的处理程序（交换成新的了），避免执行漏了交换过来的这个。
+    \- ngx_http_get_module_loc_conf：获取模块的 location 配置
+    \- if (llcf->rewrite_handler == NULL)：如果处理程序没有设置，则不用继续了，直接下一个。
+    \- ngx_http_get_module_ctx：获取模块上下文
+    \- ngx_http_lua_create_ctx：没获取到模块上下文，则创建一个
+    \- if (ctx->entered_rewrite_phase)：如果已经进入过了，那么说明处理只是暂停了（等待更多资源之类的）
+        \- resume_handler：恢复
+    \- if (ctx->waiting_more_body)：需要更多请求体，返回等下次调用
+    \- if (llcf->force_read_body && !ctx->read_body_done)：如果需要读取请求体并且请求体没读完
+        \- ngx_http_read_client_request_body：读取请求体，处理程序是 ngx_http_lua_generic_phase_post_read
+    \- rewrite_handler：调用 ngx_http_lua_rewrite_handler_inline，执行 Lua 代码
+        \- ngx_http_get_module_loc_conf：获取 location 配置
+        \- ngx_http_lua_get_lua_vm：获取 Lua VM
+        \- ngx_http_lua_cache_loadbuffer：加载 Lua 代码
+            \- ngx_http_lua_cache_load_code：从缓存中加载，有直接返回，没则继续。
+            \- ngx_http_lua_clfactory_loadbuffer：加载闭包工厂
+            \- ngx_http_lua_cache_store_code：存到 cache 中
+        \- ngx_http_lua_rewrite_by_chunk：执行 Lua 代码
 ```
+
+- ngx_http_lua_cache_loadbuffer 相关函数见：[020-ngx_lua_cache.md](020-ngx_lua_cache.md)
+
+## 疑问
+- [1]：uri 变了，为什么不能再变？
