@@ -149,4 +149,37 @@
 - ngx_http_lua_cache_loadbuffer 相关函数见：[020-ngx_lua_cache.md](020-ngx_lua_cache.md)
 
 ## 疑问
-- [1]：uri 变了，为什么不能再变？
+
+[1]：uri 变了为什么就不再执行 rewrite_by_lua* ？
+
+```
+        location / {
+            rewrite ^/xyz\.html$ /abc.html;
+            # rewrite ^/xyz\.html$ /abc.html last;
+            # rewrite ^/xyz\.html$ /abc.html break;
+            rewrite_by_lua_block {
+                return ngx.exec("/after.html")
+            }
+        }
+```
+- 无论是否使用 last/break，应该都是进了 ngx_http_lua_rewrite_handler 处理函数，只是 r->uri_changed 控制了是否继续执行 Lua 处理程序。
+  - TODO：通过 GDB 验证一下
+- 大概还是需要了解 rewrite 指令如何实现才能解答这个问题。（与 last、break 搭配使用时等情况）
+- 后续可参考文档：
+  - http://chenzhenianqing.com/articles/576.html
+  - https://github.com/openresty/lua-nginx-module/blob/master/t/023-rewrite/sanity.t#L710
+- ngx_http_script.c 中有这么一段代码，其中 `if (code->break_cycle)` 中设置 `r->uri_changed = 0` 就是导致使用 `rewrite x y break;` 后，`rewrite_by_lua*` 还继续执行的原因。（实际其实 uri 是变了）
+```
+    if (code->uri) {
+        r->internal = 1;
+        r->valid_unparsed_uri = 0;
+
+        if (code->break_cycle) {
+            r->valid_location = 0;
+            r->uri_changed = 0;
+
+        } else {
+            r->uri_changed = 1;
+        }
+    }
+```
