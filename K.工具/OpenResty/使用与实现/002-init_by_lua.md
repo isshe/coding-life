@@ -39,7 +39,7 @@ init_by_lua_file /usr/local/openresty/lua/init.lua
 
 ### 指令定义
 
-```
+```c
     { ngx_string("init_by_lua"),
       NGX_HTTP_MAIN_CONF|NGX_CONF_TAKE1,
       ngx_http_lua_init_by_lua,
@@ -69,22 +69,9 @@ init_by_lua_file /usr/local/openresty/lua/init.lua
 
 ### ngx_http_lua_init_by_inline 执行流程
 
-上篇文章《[模块初始化](001-module-init.md)》 的 “ngx_http_lua_init 执行流程” 中，已经有提到 ngx_http_lua_init_by_inline 如何被调用，
-这里我们直接贴过来。
+- ngx_http_lua_init_by_inline 如何被调用？
 
-- ngx_http_lua_init_by_inline 的调用栈
-
-```
-- ngx_http_lua_init
-    \- ngx_array_push：判断是否需要介入 rewrite、access、log 阶段的处理，如果需要，就设置对应的 handler。
-        \- 如：ngx_array_push(&cmcf->phases[NGX_HTTP_REWRITE_PHASE].handlers);
-    \- ngx_http_lua_header_filter_init：如果需要介入 header_fitler 阶段，则会调用此函数把相关处理函数设置到调用链中。
-    \- ngx_http_lua_body_filter_init：如果需要介入 body_fitler 阶段，则会调用此函数把相关处理函数设置到调用链中。
-    \- ngx_pool_cleanup_add：添加内存池清理函数
-    \- ngx_http_lua_pipe_init：初始化一颗红黑树，用于管道处理，见 [pipe](./015-pipe.md)。
-    \- ngx_http_lua_init_vm：如果没有初始化 Lua VM，则初始化。lua_State 设置在 lmcf->lua 中。
-    \- init_handler(ngx_http_lua_init_by_inline)：执行 Lua 代码
-```
+详见上篇文章《[模块初始化](001-module-init.md)》 的 “ngx_http_lua_init 执行流程”
 
 - ngx_http_lua_init_by_inline 的执行流程
 

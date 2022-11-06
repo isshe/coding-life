@@ -1,21 +1,15 @@
-Lua 代码的加载与运行
----
+# access_by_lua*
 
-以 access_by_lua_file/access_by_lua_block/access_by_lua 为例。
+`access_by_lua*` 充当一个 access 阶段的处理程序，对**每个请求**执行指定的 Lua 代码，代码会在独立的全局环境（沙箱）中执行。
 
-# 定义 Nginx 配置命令
+## 用法
 
-> ngx_http_lua_module.c
+- 上下文: http, server, location, location if
+- 阶段: access tail
+  - **注意：执行阶段晚于标准 ngx_http_access_module 模块。**
+- 语法：
+    - 与 `init_by_lua*` 类似，不再赘述。
 
-```c
-    { ngx_string("access_by_lua_file"),
-      NGX_HTTP_MAIN_CONF|NGX_HTTP_SRV_CONF|NGX_HTTP_LOC_CONF|NGX_HTTP_LIF_CONF
-                        |NGX_CONF_TAKE1,
-      ngx_http_lua_access_by_lua,
-      NGX_HTTP_LOC_CONF_OFFSET,
-      0,
-      (void *) ngx_http_lua_access_handler_file },
-```
+## 实现
 
-- 配置解析：ngx_http_lua_access_by_lua
-- 执行 Lua 代码：ngx_http_lua_access_handler_file
+实现逻辑与 `rewrite_by_lua*` 别无二致，不再赘述。

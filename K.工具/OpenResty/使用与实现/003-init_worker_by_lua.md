@@ -25,9 +25,10 @@
 - 在什么时候实际执行了 Lua 代码？如何执行的？
 
 我们以 init_worker_by_lua_file 指令为例。
-先看指令定义：
 
-```
+### 指令定义
+
+```c
     { ngx_string("init_worker_by_lua_file"),
       NGX_HTTP_MAIN_CONF|NGX_CONF_TAKE1,
       ngx_http_lua_init_worker_by_lua,

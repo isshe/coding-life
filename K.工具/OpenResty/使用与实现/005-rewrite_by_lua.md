@@ -6,7 +6,7 @@
 
 - 上下文: http, server, location, location if
 - 阶段: rewrite tail
-  - 执行阶段晚于标准 ngx_http_rewrite_module 模块。
+  - **注意：执行阶段晚于标准 ngx_http_rewrite_module 模块。**
 - 语法：
     - 与 `init_by_lua*` 类似，不再赘述。
 - 注意：
@@ -22,9 +22,9 @@
 - 在什么时候实际执行了 Lua 代码？如何执行的？每个请求都会执行这个，想必处理方法应该不同以往。
 - 还提到“全局环境（沙箱）”，是什么呢？
 
-指令定义：
+### 指令定义
 
-```
+```c
     { ngx_string("rewrite_by_lua_block"),
       NGX_HTTP_MAIN_CONF|NGX_HTTP_SRV_CONF|NGX_HTTP_LOC_CONF|NGX_HTTP_LIF_CONF
                         |NGX_CONF_BLOCK|NGX_CONF_NOARGS,
@@ -33,7 +33,7 @@
       0,
       (void *) ngx_http_lua_rewrite_handler_inline },
 ```
-
+- NGX_HTTP_LIF_CONF：location if 配置
 - ngx_http_lua_rewrite_by_lua_block：配置解析时执行的函数。
 - ngx_http_lua_rewrite_handler_inline：实际执行 Lua 代码的函数。
 
@@ -62,6 +62,15 @@
                     \- ngx_http_lua_gen_file_cache_key：生成 cache key（注意文件名如果有变量，则不进行 cache）
             \- llcf->rewrite_handler = (ngx_http_handler_pt) cmd->post;：设置回调，也就是 ngx_http_lua_rewrite_handler_inline
             \- ngx_http_conf_get_module_main_conf：获取配置，然后设置一些必要的标记，如 requires_rewrite
+```
+
+文件名中允许变量的示例：
+
+```
+ location ~ ^/app/([-_a-zA-Z0-9/]+) {
+     set $path $1;
+     rewrite_by_lua_file /path/to/lua/app/root/$path.lua;
+ }
 ```
 
 ### ngx_http_lua_rewrite_handler_inline 的调用位置
@@ -144,9 +153,15 @@
             \- ngx_http_lua_clfactory_loadbuffer：加载闭包工厂
             \- ngx_http_lua_cache_store_code：存到 cache 中
         \- ngx_http_lua_rewrite_by_chunk：执行 Lua 代码
+            \- ngx_http_lua_new_thread：创建新协程
+            \- ngx_http_lua_get_globals_table
+            \- lua_setfenv：把新协程的 global 表成闭包的 env 表。
 ```
 
 - ngx_http_lua_cache_loadbuffer 相关函数见：[020-ngx_lua_cache.md](020-ngx_lua_cache.md)
+- 执行代码前，把 Lua 代码闭包的 env 表设置成了新协程的 global 表了，因此相当于在 “沙箱”中执行 Lua 代码。
+
+（到此，我们前面提到的“目的”，就都知道答案了。）
 
 ## 疑问
 
@@ -163,7 +178,6 @@
         }
 ```
 - 无论是否使用 last/break，应该都是进了 ngx_http_lua_rewrite_handler 处理函数，只是 r->uri_changed 控制了是否继续执行 Lua 处理程序。
-  - TODO：通过 GDB 验证一下
 - 大概还是需要了解 rewrite 指令如何实现才能解答这个问题。（与 last、break 搭配使用时等情况）
 - 后续可参考文档：
   - http://chenzhenianqing.com/articles/576.html

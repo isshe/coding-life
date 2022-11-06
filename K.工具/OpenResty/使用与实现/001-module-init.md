@@ -93,10 +93,15 @@ Nginx 模块的初始化流程见：[Nginx 模块初始化](../../Nginx/Nginx源
 
 ```
 - ngx_http_lua_init
-    \- ngx_array_push：判断是否需要介入 rewrite、access、log 阶段的处理，如果需要，就设置对应的 handler。
-        \- 如：ngx_array_push(&cmcf->phases[NGX_HTTP_REWRITE_PHASE].handlers);
-    \- ngx_http_lua_header_filter_init：如果需要介入 header_fitler 阶段，则会调用此函数把相关处理函数设置到调用链中。
-    \- ngx_http_lua_body_filter_init：如果需要介入 body_fitler 阶段，则会调用此函数把相关处理函数设置到调用链中。
+    \- if (lmcf->requires_rewrite)：判断是否需要介入 rewrite 阶段的处理
+    \- if (lmcf->requires_access)：判断是否需要介入 access 阶段的处理
+    \- if (lmcf->requires_log)：判断是否需要介入 log 阶段的处理
+        \- ngx_array_push：如果需要，就设置对应的 handler。
+            \- 如：ngx_array_push(&cmcf->phases[NGX_HTTP_REWRITE_PHASE].handlers);
+    \- if (multi_http_blocks || lmcf->requires_header_filter)：判断是否需要接入 header_fitler 阶段
+        \- ngx_http_lua_header_filter_init：如果需要介入，则会调用此函数把相关处理函数设置到调用链中。
+    \= if (multi_http_blocks || lmcf->requires_body_filter)：判断是否需要接入 body_fitler 阶段
+        \- ngx_http_lua_body_filter_init：如果需要介入，则会调用此函数把相关处理函数设置到调用链中。
     \- ngx_pool_cleanup_add：添加内存池清理函数
     \- ngx_http_lua_pipe_init：初始化一颗红黑树，用于管道处理，见 [pipe](./015-pipe.md)。
     \- ngx_http_lua_init_vm：如果没有初始化 Lua VM，则初始化。lua_State 设置在 lmcf->lua 中。
@@ -104,6 +109,7 @@ Nginx 模块的初始化流程见：[Nginx 模块初始化](../../Nginx/Nginx源
 ```
 
 可以看到，配置解析完后（postconfiguration）， 立即初始化 Lua VM ，然后调用了 ngx_http_lua_init_by_inline。
+注意：上面并没有类似于 `lmcf->requires_content` 相关的判断，那么是 content 阶段不需要相关标记么？
 
 ## 进程初始化
 
