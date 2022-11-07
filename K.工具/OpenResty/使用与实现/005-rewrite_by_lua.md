@@ -60,8 +60,10 @@
                 \- ngx_http_compile_complex_value：文件名中可能有变量，场景：从请求 URL 中取一部分作为文件名。
                 \- if (llcf->rewrite_src.lengths == NULL)：文件名中没有变量
                     \- ngx_http_lua_gen_file_cache_key：生成 cache key（注意文件名如果有变量，则不进行 cache）
-            \- llcf->rewrite_handler = (ngx_http_handler_pt) cmd->post;：设置回调，也就是 ngx_http_lua_rewrite_handler_inline
-            \- ngx_http_conf_get_module_main_conf：获取配置，然后设置一些必要的标记，如 requires_rewrite
+            \- llcf->rewrite_handler = (ngx_http_handler_pt) cmd->post：设置回调，也就是 ngx_http_lua_rewrite_handler_inline
+            \- ngx_http_conf_get_module_main_conf：获取配置
+            \- lmcf->requires_rewrite = 1：设置标记，表示需要注册 rewrite handler
+            \- lmcf->requires_capture_filter = 1：设置标记，表示需要设置过滤器拦截请求的响应。
 ```
 
 文件名中允许变量的示例：
