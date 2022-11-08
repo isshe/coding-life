@@ -108,7 +108,12 @@ $ curl localhost    # 其他 shell
 #15 0x000056030b9cb3b9 in main (argc=3, argv=0x7ffce805c458) at src/core/nginx.c:386
 ```
 
-与 [005-rewrite_by_lua.md](005-rewrite_by_lua.md) 中获取到的调用栈对比，发现并没有什么差别，都是在以下代码中进行调用：
+与 [005-rewrite_by_lua.md](005-rewrite_by_lua.md) 中获取到的调用栈对比，发现并没有什么差别。
+
+> 什么时候执行的问题也解答了：和 rewrite/access 阶段的处理程序一样，都是在相同的地方执行。（都是通过 phase 索引进行控制）
+
+都是在以下代码中进行调用：
+
 
 ```c
 void
@@ -147,7 +152,24 @@ ngx_http_core_run_phases(ngx_http_request_t *r)
         \- r->content_handler = clcf->handler;
 ```
 
-ngx_http_core_find_config_phase 是配置查找阶段（NGX_HTTP_FIND_CONFIG_PHASE）的处理函数，也就是配置查找阶段，找到了相关的 location，才设置的处理函数。
-更多关于 Nginx 阶段的内容，我们在 Nginx 系列文章 《6-nginx-phase.md》 中进行探索。
+再结合前面的“ngx_http_lua_content_by_lua 执行过程”，得到调用流程 —— 和 GDB 获取的一致：
+
+```lua
+- ngx_http_core_content_phase
+    \- r->content_handler：ngx_http_lua_content_handler（clcf->handler）
+        \- llcf->content_handler：ngx_http_lua_content_handler_inline
+```
+
+更多关于 Nginx 阶段的内容，我们在 Nginx 系列文章《6-nginx-phase.md》中进行探索。
 
 ### ngx_http_lua_content_handler_inline 执行过程
+
+与 ngx_http_lua_access_handler_inline、ngx_http_lua_rewrite_handler_inline 没差别。
+
+```lua
+- ngx_http_lua_content_handler_inline
+    \- ngx_http_get_module_loc_conf：获取 location 配置
+    \- ngx_http_lua_get_lua_vm：获取 Lua VM
+    \- ngx_http_lua_cache_loadbuffer：加载 Lua 代码
+    \- ngx_http_lua_content_by_chunk：执行 Lua 代码
+```
