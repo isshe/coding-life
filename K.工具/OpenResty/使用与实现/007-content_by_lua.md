@@ -114,7 +114,6 @@ $ curl localhost    # 其他 shell
 
 都是在以下代码中进行调用：
 
-
 ```c
 void
 ngx_http_core_run_phases(ngx_http_request_t *r)
@@ -164,8 +163,6 @@ ngx_http_core_run_phases(ngx_http_request_t *r)
 
 ### ngx_http_lua_content_handler_inline 执行过程
 
-与 ngx_http_lua_access_handler_inline、ngx_http_lua_rewrite_handler_inline 没差别。
-
 ```lua
 - ngx_http_lua_content_handler_inline
     \- ngx_http_get_module_loc_conf：获取 location 配置
@@ -173,3 +170,5 @@ ngx_http_core_run_phases(ngx_http_request_t *r)
     \- ngx_http_lua_cache_loadbuffer：加载 Lua 代码
     \- ngx_http_lua_content_by_chunk：执行 Lua 代码
 ```
+
+与 ngx_http_lua_access_handler_inline、ngx_http_lua_rewrite_handler_inline 没差别。
