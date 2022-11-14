@@ -16,7 +16,7 @@
 
 - 语法：`ngx.log(log_level, ...)`
 - 注意：
-  - Lua `nil` 会被输出为字符串 "nil"；Lua 的布尔类型会输出为 "true" or "false"；`ngx.null` 被输出为 "null" 字符串；Lua table 将会调用其元表的 __tostring 函数，调用失败则抛出异常，异常也被输出到错误日志中；如果是 userdata，则尝试获取其起始地址，获取不到则输出字符串 "null"；其他类型一律抛出异常。
+  - Lua `nil` 会被输出为字符串 "nil"；Lua 的布尔类型会输出为 "true" or "false"；`ngx.null` 被输出为 "null" 字符串；Lua table 将会调用其元表的 __tostring 函数，调用失败则抛出异常，异常也被输出到错误日志中；如果是 userdata，则输出字符串 "null"；其他类型一律抛出异常。
   - Nginx 内核中的错误消息长度有一个硬编码的 2048 字节限制。此限制包括尾部换行符和前置时间戳。如果消息大小超过此限制，Nginx 将相应地截断消息。可以通过编辑 Nginx 源代码树中 src/core/ngx_log.h 文件中的 NGX_MAX_ERROR_STR 宏定义来手动修改此限制。
 
 ## 实现
@@ -160,6 +160,19 @@ ngx_http_lua_inject_log_consts(lua_State *L)
 ngx_http_lua_inject_log_consts 注册了一些**日志等级**的常量。
 `ngx.log` 的定义流程我们了解了，接下来继续看下 ngx.log 执行时做了什么。
 
+### ngx.log(ngx_http_lua_ngx_log) 的执行流程
 
-如果行不通，那就只能通过源码搜索相关关键字或者是通过搜索引擎搜索介绍相关内容的文章了。
+```c
+- ngx_http_lua_ngx_log：nginx 日志功能的包裹函数。
+    \- ngx_http_lua_get_req：从 lua_State 中获取请求
+    \- luaL_checkint：获取 log level 的值
+    \- lua_remove： 从栈中删除 log level
+    \- log_wrapper
+        \- if (level > log->log_level)：检查日志级别，级别不够则直接返回
+        \- nargs = lua_gettop(L)：获取参数数量
+        \- type = lua_type(L, i)：获取每个参数的类型，计算格式化参数需要的大小，格式化参数。（不同类型的处理见上文“使用”章节的注意部分）
+        \- ngx_log_error：调用 nginx 核心提供的日志函数打印日志
+```
+
+> 如果前面的方法行不通，接下来就会通过源码搜索相关关键字或者是通过搜索引擎搜索介绍相关内容的文章。
 
