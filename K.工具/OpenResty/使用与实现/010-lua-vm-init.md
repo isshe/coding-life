@@ -35,8 +35,25 @@
 
 显然，是在解析 lua-nginx-module 配置阶段（准确来说是 postconfiguration 阶段）。
 
+```lua
+#0  ngx_http_lua_init_vm (new_vm=0x1, parent_vm=0x0, cycle=0x0, pool=0x0,
+    lmcf=0xffffffffffffffff, log=0x400002001, pcln=0x7ffe9ee23400)
+    at ../ngx_lua-0.10.21/src/ngx_http_lua_util.c:3882
+#1  0x0000558146dea07f in ngx_http_lua_create_ctx (r=0x5581471b6120)
+    at ../ngx_lua-0.10.21/src/ngx_http_lua_util.h:305
+#2  0x0000558146dea50d in ngx_http_lua_rewrite_handler (r=0x5581471b6120)
+    at ../ngx_lua-0.10.21/src/ngx_http_lua_rewriteby.c:92
+#3  0x0000558146cd558e in ngx_http_core_rewrite_phase (r=0x5581471b6120,
+    ph=0x5581471bcf08) at src/http/ngx_http_core_module.c:939
+#4  0x0000558146cd53de in ngx_http_core_run_phases (r=0x5581471b6120)
+...
+```
+
+设置 `lua_code_cache off` 指令关闭缓存后，每次请求都会重新初始化 Lua VM。
+
 ## Lua VM 初始化流程
 
 ```
-
+- ngx_http_lua_init_vm
+    \- ngx_pool_cleanup_add：添加内存池清理函数——用于清理 Lua VM（ngx_http_lua_cleanup_vm）
 ```
