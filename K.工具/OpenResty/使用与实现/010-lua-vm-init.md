@@ -56,4 +56,6 @@
 ```
 - ngx_http_lua_init_vm
     \- ngx_pool_cleanup_add：添加内存池清理函数——用于清理 Lua VM（ngx_http_lua_cleanup_vm）
+    \- ngx_http_lua_new_state：创建 Lua VM 实例
+    \- luaopen_ffi：加载 FFI 库，因为 cdata 需要
 ```
