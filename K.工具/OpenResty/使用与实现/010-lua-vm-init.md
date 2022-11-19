@@ -57,5 +57,14 @@
 - ngx_http_lua_init_vm
     \- ngx_pool_cleanup_add：添加内存池清理函数——用于清理 Lua VM（ngx_http_lua_cleanup_vm）
     \- ngx_http_lua_new_state：创建 Lua VM 实例
+        \- luaL_newstate：新分配一个 lua_State 结构
     \- luaopen_ffi：加载 FFI 库，因为 cdata 需要
+    \- if (lmcf->preload_hooks)：检查是否有需要预加载的 hook
+        \- ngx_http_lua_probe_register_preload_package：注册第 3 方模块的预加载 hook
+            \- 示例：package=ngx.upstream，loader=ngx_http_lua_upstream_create_module
+        \- lua_pushcfunction
+        \- lua_setfield
+    \- lua_pcall：调用 require("resty.core")，不知何意
+    \- ngx_http_lua_inject_global_write_guard：注入全局写保护，使用全局变量时会得到告警提示
+        \- 执行了一段 Lua 代码，设置了 _G 的元表，重载了 __newindex
 ```
