@@ -58,13 +58,28 @@
     \- ngx_pool_cleanup_add：添加内存池清理函数——用于清理 Lua VM（ngx_http_lua_cleanup_vm）
     \- ngx_http_lua_new_state：创建 Lua VM 实例
         \- luaL_newstate：新分配一个 lua_State 结构
+        \- luaL_openlibs：打开所有标准 Lua 库到给定 state
+        \- lua_getglobal(L, "package")：将全局 package 的值压入堆栈。返回该值的类型
+            \- 返回值是代表类型，那为什么不直接用，而是下面进行 istable 判断？[1]
+        \- if (!lua_istable(L, -1))：检查栈顶值是否是 table（package 是一个 table）
+        \- if (parent_vm)：如果有父级 VM，则使用它的 path 和 cpath，
+        \- else：否则自行解析设置 path、cpath，从编译指定的默认路径和从 nginx 配置中得到相关路径
+        \- ngx_http_lua_init_registry：初始化 Lua 注册表 [2]
+        \- ngx_http_lua_init_globals：初始化 lua 全局变量
+            \- ngx_http_lua_inject_ndk_api：注入 ngx devel kit 的 API（如果有定义 NDK 宏的话）
+            \- ngx_http_lua_inject_ngx_api：注入 ngx API，实际上就是创建 ngx 表和填充这个表。
+                \- 例如：把 ngx.log 等于 ngx_http_lua_ngx_log
+                \- 例如：ngx.HTTP_GET = NGX_HTTP_GET
     \- luaopen_ffi：加载 FFI 库，因为 cdata 需要
     \- if (lmcf->preload_hooks)：检查是否有需要预加载的 hook
         \- ngx_http_lua_probe_register_preload_package：注册第 3 方模块的预加载 hook
             \- 示例：package=ngx.upstream，loader=ngx_http_lua_upstream_create_module
-        \- lua_pushcfunction
-        \- lua_setfield
     \- lua_pcall：调用 require("resty.core")，不知何意
     \- ngx_http_lua_inject_global_write_guard：注入全局写保护，使用全局变量时会得到告警提示
         \- 执行了一段 Lua 代码，设置了 _G 的元表，重载了 __newindex
 ```
+
+## 疑问
+
+- [1]：lua_getglobal 能直接返回类型，为什么不直接用而是用 istable 来判断？
+- [2]：注册的几个表的用途是什么？在哪里用了？
