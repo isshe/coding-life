@@ -1,4 +1,3 @@
-
 # Lua VM 初始化
 
 上一篇关于 ngx.log 文章中，跟踪相关代码时思路几近断裂，因此赶紧来补补 Lua VM 初始化相关内容。
@@ -33,7 +32,7 @@
     at src/core/nginx.c:295
 ```
 
-显然，是在解析 lua-nginx-module 配置阶段（准确来说是 postconfiguration 阶段）。
+从这个调用栈可以看到，是在解析 lua-nginx-module 配置阶段（准确来说是 postconfiguration 阶段）初始化的 Lua VM。
 
 ```lua
 #0  ngx_http_lua_init_vm (new_vm=0x1, parent_vm=0x0, cycle=0x0, pool=0x0,
@@ -61,10 +60,13 @@
         \- luaL_openlibs：打开所有标准 Lua 库到给定 state
         \- lua_getglobal(L, "package")：将全局 package 的值压入堆栈。返回该值的类型
             \- 返回值是代表类型，那为什么不直接用，而是下面进行 istable 判断？[1]
-        \- if (!lua_istable(L, -1))：检查栈顶值是否是 table（package 是一个 table）
+        \- if (!lua_istable(L, -1))：检查栈顶值是否是 table（package 是一个 table），不是直接报错返回。
         \- if (parent_vm)：如果有父级 VM，则使用它的 path 和 cpath，
         \- else：否则自行解析设置 path、cpath，从编译指定的默认路径和从 nginx 配置中得到相关路径
         \- ngx_http_lua_init_registry：初始化 Lua 注册表 [2]
+            \- 注册一个表以可靠地锚定 lua 协程，初始大小为 32 个 KV。
+            \- 为 Lua 套接字连接池表注册一个表
+            \- 注册一个表以缓存用户代码
         \- ngx_http_lua_init_globals：初始化 lua 全局变量
             \- ngx_http_lua_inject_ndk_api：注入 ngx devel kit 的 API（如果有定义 NDK 宏的话）
             \- ngx_http_lua_inject_ngx_api：注入 ngx API，实际上就是创建 ngx 表和填充这个表。
@@ -78,6 +80,21 @@
     \- ngx_http_lua_inject_global_write_guard：注入全局写保护，使用全局变量时会得到告警提示
         \- 执行了一段 Lua 代码，设置了 _G 的元表，重载了 __newindex
 ```
+
+可以看到，Lua VM 初始化主要做了以下事情：
+- 新建 state 实例
+- 打开标准库
+- 设置搜索路径（path、cpath）
+- 注册一些表
+- 注入 Lua 接口、变量
+- 预加载第三方 hook
+- 对 _G 进行写保护
+
+
+那么，Lua 虚拟机是共用一个？还是每次调用 Lua 代码起一个？
+
+- lua_code_cache 开启时，公用一个
+- lua_code_cache 关闭时，每个请求一个
 
 ## 疑问
 
