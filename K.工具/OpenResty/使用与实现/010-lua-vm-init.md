@@ -93,10 +93,10 @@
 
 那么，Lua 虚拟机是共用一个？还是每次调用 Lua 代码起一个？
 
-- lua_code_cache 开启时，公用一个
+- lua_code_cache 开启时，共用一个
 - lua_code_cache 关闭时，每个请求一个
 
 ## 疑问
 
 - [1]：lua_getglobal 能直接返回类型，为什么不直接用而是用 istable 来判断？
-- [2]：注册的几个表的用途是什么？在哪里用了？
+- [2]：注册的几个表的用途是什么？在哪里用了？（ngx_http_lua_init_registry）

@@ -50,3 +50,4 @@ nginx
 # 参考
 
 - [Nginx开发从入门到精通](http://tengine.taobao.org/book/)
+- [agentzh 的 Nginx 教程](https://openresty.org/download/agentzh-nginx-tutorials-zhcn.html)

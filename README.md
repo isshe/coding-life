@@ -1,20 +1,15 @@
 # Coding-life
 
-> keep reading  
-> keep writing  
+> keep reading
+> keep writing
 > keep coding
 > my life
 
 > 详见: https://mubu.com/doc/18cYLDcne8
 
-## 1. Done
+正在进行
+- coding-life/K.工具/OpenResty/使用与实现/000-source-code-structure.md
 
-## 2. Doing
-
-## 3. Todo
-
-
-
-
-
-
+下一步
+- coding-life/K.工具/Nginx/Nginx源码分析/4-nginx-phase.md
+- coding-life/K.工具/OpenResty/使用与实现/016-cosocket.md
