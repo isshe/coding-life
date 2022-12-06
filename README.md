@@ -5,8 +5,6 @@
 > keep coding
 > my life
 
-> 详见: https://mubu.com/doc/18cYLDcne8
-
 正在进行
 - coding-life/K.工具/OpenResty/使用与实现/000-source-code-structure.md
 
