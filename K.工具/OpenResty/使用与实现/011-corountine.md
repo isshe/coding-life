@@ -5,6 +5,8 @@ lua-nginx-module 提供了 coroutine 系列 Lua 接口，用于操作协程。
 
 这个与 ngx_http_lua_new_thread 相关的 lua-nginx-module 内部使用的协程不同，切勿搞混了。
 
+**这系列函数较为少用，并行进行事务通常使用轻量级线程（light thread）。**
+
 目的：
 
 - coroutine Lua 接口的使用？主要使用场景？
@@ -130,8 +132,15 @@ package.loaded.coroutine = coroutine
         \- luaL_argcheck：参数检查。首先检查 coroutine.create 的传参是否是函数。
         \- ngx_http_lua_check_context：检查这个接口是否能在当前上下文中被调用。这是一个宏，实际上就是对相关标记位进行"按位与"。
         \- ngx_http_lua_get_lua_vm(r, ctx)：获取 Lua VM
+        \- lua_newthread/ngx_http_lua_new_cached_thread：在根 Lua State 上创建新的 coroutine，使之总是 yield 到主 Lua 线程
+        \- ngx_http_lua_probe_user_coroutine_create：一个 dtrace 挂载点，没有定义 NGX_DTRACE 时，此宏为空。
         \- TODO
 
 ```
 
 可以看到，与前面一致，新的 coroutine 函数需要 request 和 ngx_http_lua_module 的 ctx。
+
+
+## 疑问
+
+- 如何判断一个 Lua State 是 root Lua State？
