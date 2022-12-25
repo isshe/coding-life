@@ -5,11 +5,12 @@ lua-nginx-module 提供了 coroutine 系列 Lua 接口，用于操作协程。
 
 这个与 ngx_http_lua_new_thread 相关的 lua-nginx-module 内部使用的协程不同，切勿搞混了。
 
-**这系列函数较为少用，并行进行事务通常使用轻量级线程（light thread）。**
+**这系列函数较为少用，需要并行操作时通常使用[轻量级线程（light thread）](./012-ngx-lightthread.md)。**
 
 目的：
 
 - coroutine Lua 接口的使用？主要使用场景？
+    - 如前面提到，这个较为少用。lua-nginx-module 支持，主要应该是为了兼容第三方 Lua 模块。
 - coroutine 是如何实现的？
 - 与 Luajit 的协程是什么关系？
 
@@ -122,25 +123,78 @@ package.loaded.coroutine = coroutine
 
 新的 coroutine 函数是怎样的呢？有什么特殊的吗？我们继续看。
 
-### ngx_http_lua_coroutine_create
+### ngx_http_lua_coroutine_create VS lj_cf_coroutine_create
 
-```
 - ngx_http_lua_coroutine_create
-    \- ngx_http_lua_get_req(L)：获取请求
-    \- ngx_http_get_module_ctx(r, ngx_http_lua_module)：获取 ctx
-    \- ngx_http_lua_coroutine_create_helper：在 wrap 中也用了，因此封装了个 helper 函数
-        \- luaL_argcheck：参数检查。首先检查 coroutine.create 的传参是否是函数。
-        \- ngx_http_lua_check_context：检查这个接口是否能在当前上下文中被调用。这是一个宏，实际上就是对相关标记位进行"按位与"。
-        \- ngx_http_lua_get_lua_vm(r, ctx)：获取 Lua VM
-        \- lua_newthread/ngx_http_lua_new_cached_thread：在根 Lua State 上创建新的 coroutine，使之总是 yield 到主 Lua 线程
-        \- ngx_http_lua_probe_user_coroutine_create：一个 dtrace 挂载点，没有定义 NGX_DTRACE 时，此宏为空。
-        \- TODO
 
-```
+    ```lua
+    - ngx_http_lua_coroutine_create
+        \- ngx_http_lua_get_req(L)：获取请求。
+        \- ngx_http_get_module_ctx(r, ngx_http_lua_module)：获取 ctx。
+        \- ngx_http_lua_coroutine_create_helper：在 wrap 中也用了，因此封装了个 helper 函数。
+            \- luaL_argcheck：参数检查。首先检查 coroutine.create 的传参是否是函数。
+            \- ngx_http_lua_check_context：检查这个接口是否能在当前上下文中被调用。这是一个宏，实际上就是对相关标记位进行"按位与"。
+            \- ngx_http_lua_get_lua_vm(r, ctx)：获取 Lua VM。
+            \- lua_newthread/ngx_http_lua_new_cached_thread：在根 Lua State 上创建新的 coroutine，使之总是 yield 到主 Lua 线程。
+            \- ngx_http_lua_probe_user_coroutine_create：一个 dtrace 挂载点，没有定义 NGX_DTRACE 时，此宏为空。
+            \- ngx_http_lua_get_co_ctx：从模块 ctx 中获取协程 ctx，如果没获取到，就创建；获取到就初始化一下。
+            \- ngx_http_lua_create_co_ctx：创建协程 ctx。
+            \- ngx_http_lua_set_req：把协程和请求关联起来。
+            \- ngx_http_lua_attach_co_ctx_to_L：把协程 ctx 关联到协程。
+            \- lua_xmove(vm, L, 1)：把协程从主线程移到 L。lua_xmove：从 vm 栈中弹出 1 个元素压到 L 栈中。
+            \- lua_pushvalue(L, 1)：把入口函数复制到 L 的栈顶。
+            \- lua_xmove(L, co, 1)：把入口函数从 L 移动到协程 co。
+    ```
 
 可以看到，与前面一致，新的 coroutine 函数需要 request 和 ngx_http_lua_module 的 ctx。
 
+- lj_cf_coroutine_create:
+
+    ```c
+    // static int lj_cf_coroutine_create(lua_State *L)
+    LJLIB_CF(coroutine_create)
+    {
+    lua_State *L1;
+    if (!(L->base < L->top && tvisfunc(L->base)))
+        lj_err_argt(L, 1, LUA_TFUNCTION);
+    L1 = lua_newthread(L);
+    setfuncV(L, L1->top++, funcV(L->base));
+    return 1;
+    }
+    ```
+
+主要差别是 ngx_http_lua_coroutine_create 依赖 ctx 和 r，并且可能从 cache 中取协程；lj_cf_coroutine_create 直接 lua_newthread 了一个协程。
+
+### ngx_http_lua_coroutine_resume VS lj_cf_coroutine_resume
+
+- ngx_http_lua_coroutine_resume
+
+    ```lua
+    - ngx_http_lua_coroutine_resume
+        \- co = lua_tothread(L, 1)：从栈中 index = 1 的地方取出值，转换成 Lua 线程。不是线程会返回 NULL。
+        \- luaL_argcheck：检查 co 是否有效。
+        \- ngx_http_lua_get_req：获取请求。
+        \- ngx_http_get_module_ctx：获取模块 ctx。
+        \- ngx_http_lua_check_context：检查这个接口是否能在当前上下文中被调用。
+        \- p_coctx = ctx->cur_co_ctx：获取当前 ctx 作为父 ctx。
+        \- ngx_http_lua_get_co_ctx：从 co 中获取协程 ctx。
+        \- ngx_http_lua_probe_user_coroutine_resume：dtrace 钩子。
+        \- if (coctx->co_status != NGX_HTTP_LUA_CO_SUSPENDED)：检查进程状态，如果不是 NGX_HTTP_LUA_CO_SUSPENDED 则不能进行 resume，直接返回错误。
+        \- p_coctx->co_status = NGX_HTTP_LUA_CO_NORMAL：设置父协程 ctx 的状态。
+        \- coctx->parent_co_ctx = p_coctx：设置协程的父协程 ctx。
+        \- coctx->co_status = NGX_HTTP_LUA_CO_RUNNING：设置协程的状态。
+        \- ctx->co_op = NGX_HTTP_LUA_USER_CORO_RESUME：设置协程操作是用户进行 RESUME。
+        \- ctx->cur_co_ctx = coctx：设置 ctx 的 cur_co_ctx 为即将 resume 的 coctx，当前协程 yield 后，将执行此协程。
+        \- lua_yield：yeild 回主线程，然后让主线程来 resume。
+    ```
+
+不是应该 resume 吗？这里为什么调用的 lua_yield 呢？看到这里或许会有这样的疑惑。
+其实 review、access 等阶段的 Lua 代码，都是通过 ngx_http_lua_run_thread 来执行的，ngx_http_lua_coroutine_resume 这里执行完 lua_yield 后，会回到 ngx_http_lua_run_thread 中，由于状态是 LUA_YIELD 和操作是 NGX_HTTP_LUA_USER_CORO_RESUME，会继续(continue) ngx_http_lua_run_thread 的死循环，进而执行到刚刚要 resume 的协程。
+
+TODO：lj_cf_coroutine_create 及 lj_cf_coroutine_resume 貌似有误，再确认。
 
 ## 疑问
 
 - 如何判断一个 Lua State 是 root Lua State？
+- Luajit 中栈是如何分布的呢？1,-1 等索引的值代表什么？
+    - 后续见此文档：[1-luajit-stack.md](../../Luajit/设计与实现/1-luajit-stack.md)

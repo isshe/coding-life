@@ -158,6 +158,7 @@
             \- ngx_http_lua_new_thread：创建新协程
             \- ngx_http_lua_get_globals_table
             \- lua_setfenv：把新协程的 global 表成闭包的 env 表。
+            \- ngx_http_lua_run_thread：执行 Lua 代码
 ```
 
 - ngx_http_lua_cache_loadbuffer 相关函数见：[020-ngx_lua_cache.md](020-ngx_lua_cache.md)

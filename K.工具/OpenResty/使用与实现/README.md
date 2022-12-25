@@ -30,3 +30,5 @@ OpenResty 使用与实现
 - https://github.com/tokers/lua-nginx-module-digest
 - http://wangzhangtao.com/2020/12/19/%E7%AC%AC%E5%85%AD%E7%AB%A0%EF%BC%9A%E4%BB%8E%E6%BA%90%E7%A0%81%E8%A7%86%E8%A7%92%E6%B7%B1%E5%85%A5%E4%BD%BF%E7%94%A8nginx%E4%B8%8Eopenresty-18%E8%AE%B2/
 - https://catbro666.github.io/categories/%E7%BC%96%E7%A8%8B%E5%BC%80%E5%8F%91/Nginx-OpenResty/
+- Lua 中文手册：https://cloudwu.github.io/lua53doc/manual.html
+- Lua 英文手册：https://www.lua.org/manual/5.1/manual.html
