@@ -165,7 +165,7 @@ package.loaded.coroutine = coroutine
 
 主要差别是 ngx_http_lua_coroutine_create 依赖 ctx 和 r，并且可能从 cache 中取协程；lj_cf_coroutine_create 直接 lua_newthread 了一个协程。
 
-### ngx_http_lua_coroutine_resume VS lj_cf_coroutine_resume
+### ngx_http_lua_coroutine_resume VS lj_ffh_coroutine_resume
 
 - ngx_http_lua_coroutine_resume
 
@@ -191,10 +191,28 @@ package.loaded.coroutine = coroutine
 不是应该 resume 吗？这里为什么调用的 lua_yield 呢？看到这里或许会有这样的疑惑。
 其实 review、access 等阶段的 Lua 代码，都是通过 ngx_http_lua_run_thread 来执行的，ngx_http_lua_coroutine_resume 这里执行完 lua_yield 后，会回到 ngx_http_lua_run_thread 中，由于状态是 LUA_YIELD 和操作是 NGX_HTTP_LUA_USER_CORO_RESUME，会继续(continue) ngx_http_lua_run_thread 的死循环，进而执行到刚刚要 resume 的协程。
 
-TODO：lj_cf_coroutine_create 及 lj_cf_coroutine_resume 貌似有误，再确认。
+- lj_ffh_coroutine_resume
+
+在 header filter 或 body filter 阶段，都是调用的 Luajit 的 coroutine 接口，都是在 ngx_http_lua_header_filter_by_chunk 中调用 lua_pcall 来执行的，与 lua-nginx-module 的接口不同。
+不过 Luajit 的 coroutine.resume 是如何实现的，还没搞清楚，跟踪 lj_ffh_coroutine_resume 并没有发现有被调用，最终调用的 lj_vm_resume 这个汇编接口。后续学习 Luajit 时，再继续探究。
+Luajit 的 coroutine.resume 及 coroutine.yield 底层接口看起来都是汇编的（使用 LJLIB_ASM 修饰）。
+
+## 总结
+
+回到我们前面提出的问题，
+
+- coroutine Lua 接口的使用？主要使用场景？
+答：这个较为少用。lua-nginx-module 支持，主要应该是为了兼容第三方 Lua 模块。
+
+- coroutine 是如何实现的？
+答：不同阶段使用不同的底层函数，access 等阶段时候的是 lua-nginx-module 实现的函数，相关调度也是 lua-nginx-module 接管。header filter 等阶段则是使用 Luajit 实现的函数，相关调度由 Luajit 接管。
+
+- 与 Luajit 的协程是什么关系？
+答：最终都是用了 Luajit 的 lua_resume、lua_yield 等函数。
 
 ## 疑问
 
 - 如何判断一个 Lua State 是 root Lua State？
 - Luajit 中栈是如何分布的呢？1,-1 等索引的值代表什么？
     - 后续见此文档：[1-luajit-stack.md](../../Luajit/设计与实现/1-luajit-stack.md)
+- Luajit 的 coroutine.resume 是如何实现的？
