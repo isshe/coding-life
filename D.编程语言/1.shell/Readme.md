@@ -119,7 +119,7 @@ done
 # 循环遍历参数
 for((i = 1;i <= nargs; i++));
 do
-    name=${!i}
+    name=${!i}、
     echo "$name"
 done
 
