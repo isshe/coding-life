@@ -86,6 +86,59 @@
 
 ## 实现
 
+可以预想到，相关 Lua 接口还是通过注入的方式注册到 lua-nginx-module 中，我们来追踪一下。
+
+### Lua 接口注入
+
+1. 调用栈
+
+```lua
+- main
+    \- ngx_init_cycle
+        \- ngx_conf_parse
+            \- ngx_conf_handler
+                \- ngx_http_block
+                    \- ngx_http_lua_init
+                        \- ngx_http_lua_init_vm
+                            \- ngx_http_lua_new_state
+                                \- ngx_http_lua_init_globals
+                                    \- ngx_http_lua_inject_ngx_api
+                                        \- ngx_http_lua_inject_uthread_api
+```
+
+调用栈和之前在 [010-lua-vm-init.md](./010-lua-vm-init.md) 中拿到的一样，没什么特殊的地方。
+
+2. ngx_http_lua_inject_uthread_api
+
+```c
+void
+ngx_http_lua_inject_uthread_api(ngx_log_t *log, lua_State *L)
+{
+    /* new thread table */
+    lua_createtable(L, 0 /* narr */, 3 /* nrec */);
+
+    lua_pushcfunction(L, ngx_http_lua_uthread_spawn);
+    lua_setfield(L, -2, "spawn");
+
+    lua_pushcfunction(L, ngx_http_lua_uthread_wait);
+    lua_setfield(L, -2, "wait");
+
+    lua_pushcfunction(L, ngx_http_lua_uthread_kill);
+    lua_setfield(L, -2, "kill");
+
+    lua_setfield(L, -2, "thread");
+}
+```
+
+在这个函数中，拿到了 “spawn” 等操作实际调用的 C 函数，我们后续从这些函数着手进行探索。
+
+### ngx.thread.spawn: ngx_http_lua_uthread_spawn
+
+### ngx.thread.wait: ngx_http_lua_uthread_wait
+
+### ngx.thread.kill: ngx_http_lua_uthread_kill
+
+
 ## 总结
 
 - 轻线程的使用场景？
