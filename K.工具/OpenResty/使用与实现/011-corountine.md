@@ -135,7 +135,8 @@ package.loaded.coroutine = coroutine
             \- luaL_argcheck：参数检查。首先检查 coroutine.create 的传参是否是函数。
             \- ngx_http_lua_check_context：检查这个接口是否能在当前上下文中被调用。这是一个宏，实际上就是对相关标记位进行"按位与"。
             \- ngx_http_lua_get_lua_vm(r, ctx)：获取 Lua VM。
-            \- lua_newthread/ngx_http_lua_new_cached_thread：在根 Lua State 上创建新的 coroutine，使之总是 yield 到主 Lua 线程。
+            \- lua_newthread：如果不需要 co_ref 就直接创建线程。在根 Lua State 创建新线程，使之总是 yield 到主线程。
+            \- ngx_http_lua_new_cached_thread：如果需要 co_ref（一个整数，用于查找线程，速度快），则调用此函数来创建。在根 Lua State 创建新线程，使之总是 yield 到主线程。
             \- ngx_http_lua_probe_user_coroutine_create：一个 dtrace 挂载点，没有定义 NGX_DTRACE 时，此宏为空。
             \- ngx_http_lua_get_co_ctx：从模块 ctx 中获取协程 ctx，如果没获取到，就创建；获取到就初始化一下。
             \- ngx_http_lua_create_co_ctx：创建协程 ctx。
@@ -147,6 +148,49 @@ package.loaded.coroutine = coroutine
     ```
 
 可以看到，与前面一致，新的 coroutine 函数需要 request 和 ngx_http_lua_module 的 ctx。
+为了更清晰整个原理，我们完整地跟踪一下栈变化：（无关代码已经省去）
+
+```c
+int ngx_http_lua_coroutine_create_helper(lua_State *L, ngx_http_request_t *r,
+    ngx_http_lua_ctx_t *ctx, ngx_http_lua_co_ctx_t **pcoctx, int *co_ref)
+{
+    // L: entry_func
+    luaL_argcheck(L, lua_isfunction(L, 1) && !lua_iscfunction(L, 1), 1,
+                  "Lua function expected");
+
+    if (co_ref == NULL) {
+        // vm: co
+        co = lua_newthread(vm);
+
+    } else {
+        // vm: coroutines_key registry co co
+        lmcf = ngx_http_get_module_main_conf(r, ngx_http_lua_module);
+        *co_ref = ngx_http_lua_new_cached_thread(vm, &co, lmcf, 0);
+    }
+
+    // co(extdata) = r
+    // co(extdata2) = coctx
+    ngx_http_lua_set_req(co, r);
+    ngx_http_lua_attach_co_ctx_to_L(co, coctx);
+
+    // vm: coroutines_key registry co
+    // L: entry_func arg1 ... argn co
+    lua_xmove(vm, L, 1);    /* move coroutine from main thread to L */
+
+    if (co_ref) {
+        // vm: coroutines_key registry
+        lua_pop(vm, 1);  /* pop coroutines */
+    }
+
+    // L: entry_func arg1 ... argn co entry_func
+    lua_pushvalue(L, 1);    /* copy entry function to top of L*/
+    // L: entry_func arg1 ... argn co
+    // co: entry_func
+    lua_xmove(L, co, 1);    /* move entry function from L to co */
+}
+```
+
+可以看到，co 栈中只有一个 entry_func（此时 coroutine.create 接口也没有传髯口函数的参数）。
 
 - lj_cf_coroutine_create:
 

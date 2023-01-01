@@ -134,6 +134,27 @@ ngx_http_lua_inject_uthread_api(ngx_log_t *log, lua_State *L)
 
 ### ngx.thread.spawn: ngx_http_lua_uthread_spawn
 
+```
+- ngx_http_lua_uthread_spawn
+    \- lua_gettop：获取栈中元素数量。
+    \- ngx_http_lua_get_req：获取请求。
+    \- ngx_http_get_module_ctx：获取模块上下文。
+    \- ngx_http_lua_coroutine_create_helper：创建协程，和 [011-corountine.md](./011-corountine.md) 用的同一个函数，co 栈中只有一个 entry_func —— 入口函数。
+    \- if (n > 1)：如果入口函数有参数。
+        \- lua_replace(L, 1)：用 co 掉栈底元素，此时 L 的栈：co arg1 ... argn co。
+        \- lua_xmove(L, coctx->co, n - 1)：从 L 移动 n - 1 个元素到 coctx->co 栈中，此市场 coctx->co 的栈：entry_func arg1 ... argn co。
+    \- ngx_http_lua_post_thread：加入到 post thread 链表中。
+    \- ctx->cur_co_ctx = coctx：设置当前协程上下文成新的协程，下次调度时，会 resume 此协程。
+    \- ngx_http_lua_attach_co_ctx_to_L(coctx->co, coctx)：关联 coctx 和 co。
+    \- lua_yield：让出当前协程的执行权限。
+```
+
+主要做了以下事情：
+
+- 创建新协程
+- 配置好堆栈（设置好参数）
+- yield 当前协程以开始调度新的协程
+
 ### ngx.thread.wait: ngx_http_lua_uthread_wait
 
 ### ngx.thread.kill: ngx_http_lua_uthread_kill
