@@ -157,8 +157,64 @@ ngx_http_lua_inject_uthread_api(ngx_log_t *log, lua_State *L)
 
 ### ngx.thread.wait: ngx_http_lua_uthread_wait
 
+```
+- ngx_http_lua_uthread_wait
+    \- ngx_http_lua_get_req
+    \- ngx_http_get_module_ctx
+    \- ngx_http_lua_check_context：检查上下文是否是可以 yield 的
+    \- nargs = lua_gettop(L)：获取参数数量，参数是协程对象
+    \- for (i = 1; i <= nargs; i++)：逐个遍历检查要 wait 的协程
+        \- sub_co = lua_tothread(L, i)：获取协程对象
+        \- ngx_http_lua_get_co_ctx：后协程上下文
+        \- switch (sub_coctx->co_status)：检查协程状态
+            \- case NGX_HTTP_LUA_CO_ZOMBIE：是僵尸协程
+                \- nrets = lua_gettop(sub_coctx->co)：获取返回值
+                \- lua_xmove(sub_coctx->co, L, nrets：设置成当前协程的返回值，作为 wait 方法的返回值
+                \- ngx_http_lua_del_thread：从协程列表中删除协程
+            \- case NGX_HTTP_LUA_CO_DEAD：已经是终止的协程了
+                \- if (i < nargs)：如果还有其他协程需要检查，则继续
+                \- else：否则就返回错误
+                    \- lua_pushnil
+                    \- lua_pushliteral(L, "already waited or killed")
+            \- default：协程还活着，则继续等待
+    \- lua_yield(L, 0)：让出执行权限，让子协程继续执行
+```
+
+此函数做了以下事情：
+
+- 遍历传入的参数，逐个检查是否是僵尸协程，返回第一个僵尸协程；
+- 当前检查的协程如果已经终止，则继续检查其他协程；如果是最后一个，则报错返回。
+- 如果没有协程终止或是僵尸协程，则让出执行权限，让子协程继续被调度。
+    - yield 前并没有设置 ctx->cur_co_ctx，那么是如何进行后续的调度的呢？
+        - 说明是子协程让出了执行权限（因为 IO 或其他原因），后续依赖于 Nginx 的事件模型进行调度。
+
 ### ngx.thread.kill: ngx_http_lua_uthread_kill
 
+```
+- ngx_http_lua_uthread_kill
+    \- ngx_http_lua_get_req
+    \- ngx_http_get_module_ctx
+    \- ngx_http_lua_check_context
+    \- sub_co = lua_tothread(L, 1)：获取参数
+    \- luaL_argcheck：检查参数是否是协程
+    \- ngx_http_lua_get_co_ctx：获取协程的上下文
+    \- if (sub_coctx->parent_co_ctx != coctx)：检查当前协程是否是要 kill 协程的父协程，不是不能 kill
+    \- if (sub_coctx->pending_subreqs > 0)：检查协程是否还有未处理的请求
+    \- switch (sub_coctx->co_status)：检查协程状态
+        \- NGX_HTTP_LUA_CO_ZOMBIE：删除协程并返回错误
+            \- ngx_http_lua_del_thread
+            \- lua_pushnil
+            \- lua_pushliteral
+        \- NGX_HTTP_LUA_CO_DEAD：直接返回错误
+            \- lua_pushnil
+            \- lua_pushliteral
+        \- default：执行清理函数并删除协程
+            \- ngx_http_lua_cleanup_pending_operation
+            \- ngx_http_lua_del_thread
+            \- lua_pushinteger：设置返回值
+```
+
+从这个流程中，我们可以知道，只有父协程能 kill 子协程。
 
 ## 总结
 
@@ -167,6 +223,8 @@ ngx_http_lua_inject_uthread_api(ngx_log_t *log, lua_State *L)
 答：主要用于并行操作，如并行发送请求到上游服务器。
 
 - OpenResty 的协程与 Luajit 的协程是什么关系？有什么区别？
+
+答：底层用的就是 Luajit 的协程，只是调度是 lua-nginx-module 进行。
 
 ## 参考
 
