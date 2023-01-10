@@ -37,7 +37,6 @@ typedef enum {
 - NGX_HTTP_LUA_CO_DEAD：协程死亡/终止了
 - NGX_HTTP_LUA_CO_ZOMBIE：是僵尸协程，等待父协程回收
 
-
 ### 新建协程：ngx_http_lua_new_thread
 
 ```
@@ -154,7 +153,6 @@ typedef enum {
 - 输出 Lua VM 奔溃原因到 Nginx 错误日志中
 - 跳到 setjmp 处恢复执行
     - 疑问：所以 ngx_quit 生效了么？最终是恢复执行还是退出了呢？
-
 
 ## 总结
 
