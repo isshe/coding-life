@@ -11,11 +11,11 @@
 
 ngx.socket.udp 和 ngx.socket.tcp 都是使用 cosocket 的方式实现的，由于 TCP 更常用，因此下面以 TCP 相关接口为例。
 
+以下接口的上下文皆是：`rewrite_by_lua*`, `access_by_lua*`, `content_by_lua*`, `ngx.timer.*`, `ssl_certificate_by_lua*`, `ssl_session_fetch_by_lua*`, `ssl_client_hello_by_lua*`。
+
 ### ngx.socket.tcp
 
 - 语法：`tcpsock = ngx.socket.tcp()`
-
-- 上下文：rewrite_by_lua*, access_by_lua*, content_by_lua*, ngx.timer.*, ssl_certificate_by_lua*, ssl_session_fetch_by_lua*, ssl_client_hello_by_lua*
 
 - 作用：创建并返回一个 TCP 或 面向流的 UNIX 套接字对象。
 
@@ -30,8 +30,6 @@ ngx.socket.udp 和 ngx.socket.tcp 都是使用 cosocket 的方式实现的，由
 
 - 语法：`ok, err = tcpsock:bind(address)`
 
-- 上下文：rewrite_by_lua*, access_by_lua*, content_by_lua*, ngx.timer.*, ssl_certificate_by_lua*,ssl_session_fetch_by_lua*,ssl_client_hello_by_lua*
-
 - 作用：像标准的 proxy_bind 指令一样，此 api 使到上游服务器的传出连接源自指定的本地 IP 地址。
 
 - 注意：
@@ -42,13 +40,23 @@ ngx.socket.udp 和 ngx.socket.tcp 都是使用 cosocket 的方式实现的，由
 - 语法：`ok, err = tcpsock:connect(host, port, options_table?)`
 
 - 参数：
-    - options_tables：TODO
+    - host：地址或者是 UNIX 域套接字文件。
+    - port：端口
+    - options_tables：
+        - pool：内存池名称，如果不指定，则是 `<host>:<port>` 或 `<unix-socket-path>`。
+        - pool_size：
+            - 粒度是 worker 进程级别，不是程序级别，并且连接池创建后，大小就无法修改了。
+            - 如果没有指定此参数并且 `backlog` 参数也没有指定，则不会创建连接池。
+            - 如果没有指定此参数但指定 `backlog`，则连接池大小为 backlog。
+            - 如果连接池内连接数量超了，则会根据最近最少使用的方式关闭连接。
+        - backlog：限制指定连接池打开的连接总数。
+            - 任何时候，打开的连接都不能超过 pool_size 指定的数量。
+            - 如果连接池满了，就会积压到 backlog 队列中，如果队列也满了，就会返回 `nil` 并报错。
+            - 如果等待时间超过 connect_timeout（可通过 settimeouts 指定），则会返回 `nil` 并报错。
 
 - 返回值：
     - ok：成功时返回 1，失败返回 nil。
     - err：失败时的错误信息。
-
-- 上下文：rewrite_by_lua*, access_by_lua*, content_by_lua*, ngx.timer.*, ssl_certificate_by_lua*, ssl_session_fetch_by_lua*, ssl_client_hello_by_lua*
 
 - 作用：尝试在不阻塞的情况下将 TCP 套接字对象连接到远程服务器或 UNIX 域套接字文件。
 
@@ -58,21 +66,84 @@ ngx.socket.udp 和 ngx.socket.tcp 都是使用 cosocket 的方式实现的，由
     - 如果域名解析返回多个 IP，将随机选择一个 IP 进行连接。
     - 对已经连接 cosocket 对象再次调用此接口，将会首先关闭原始连接。
 
-> TODO：补充前面的参数部分。
-> 对应：An optional Lua table can be specified as the last argument to this method to specify various connect options:
+### tcpsock:send
+
+- 语法：`bytes, err = tcpsock:send(data)`
+
+- 参数：
+    - data：需要发送的数据。字符串或者是一个字符串数组（table）。
+
+- 返回值：
+    - bytes：发送了的字节数，失败返回 nil。
+    - err：失败时的错误信息
+
+- 作用：在当前连接上发送数据。
+
+- 注意：这是一个同步操作。直到所有数据发送到系统 socket 发送缓冲区或者出错才返回。
+
+### tcpsock:receive
+
+- 语法：
+    - `data, err, partial = tcpsock:receive(size)`
+    - `data, err, partial = tcpsock:receive(pattern?)`
+
+- 参数：
+    - size：接收指定字节的数据，支持数字或者字符串。
+    - pattern：支持 `*l` 和 `*a`，默认是行模式 `*l`。
+        - `*l`：从套接字中读取**一行**文本。该行以换行 (LF) 结束，前面可以选择回车 (CR)。返回行中不包含 CR 和 LF 字符。事实上，所有 CR 字符都被该模式忽略。
+        - `*a`：从套接字读取直到连接关闭。
+
+- 返回值：
+    - data：接收到的数据。出错时是 nil。
+    - err：出错时的错误信息。
+    - partial：出错时返回当前以接收到的数据。
+
+- 作用：根据读取模式或大小从 socket 连接上接收数据。
+
+- 注意：
+    - 可通过 `settimeout` 指定读取超时时间。（发送时，也可用此函数指定发送超时时间）。
+
+
+### tcpsock:settimeout
+
+- 语法：`tcpsock:settimeout(time)`
+
+- 参数：
+    - time：超时时间，单位是毫秒。
+
+- 作用：为接下来的操作设置超时时间。
+    - 读取时，设置的是读取超时时间。
+    - 发送时，设置的是发送超时时间。
+    - 连接时，设置的是连接超时时间。
+
+- 注意：设置 keepalive 超时需使用 `setkeepalive` 方法。
+
+### tcpsock:close
+
+- 语法：`ok, err = tcpsock:close()`
+
+- 返回值：
+    - ok：成功时返回 `1`，失败时返回 `nil`。
+    - err：失败时的错误信息。
+
+- 作用：关闭当前 socket 套接字。
+
+- 注意：
+    - 调用过 setkeepalive 的 socket 对象，不用再调用 close，因为 socket 对象已经关闭并且连接已经被保存到内置连接池中。
+    - 没有调用 close 方法的 socket 对象（以及关联的连接）将在 Lua GC 释放 socket 对象或当前客户端 HTTP 请求处理完毕时关闭。
 
 ### 使用示例
 
 ```lua
 local sock = ngx.socket.tcp()
--- assume "192.168.1.10" is the local ip address
-local ok, err = sock:bind("192.168.1.10")
+local local_ip = "127.0.0.1"
+local ok, err = sock:bind(local_ip)
 if not ok then
     ngx.say("failed to bind")
     return
 end
 
-local ok, err = sock:connect("192.168.1.67", 80)
+local ok, err = sock:connect("ifconfig.io", 80)
 if not ok then
     ngx.say("failed to connect server: ", err)
     return
@@ -86,3 +157,4 @@ ngx.say("successfully connected!")
 sock:close()
 ```
 
+> TODO：加个完整示例。
