@@ -28,6 +28,8 @@ ngx.socket.udp 和 ngx.socket.tcp 都是使用 cosocket 的方式实现的，由
 
 ### tcpsock:bind
 
+> 此接口需要更新的版本，v0.10.21 版本中还未实现。
+
 - 语法：`ok, err = tcpsock:bind(address)`
 
 - 作用：像标准的 proxy_bind 指令一样，此 api 使到上游服务器的传出连接源自指定的本地 IP 地址。
@@ -103,7 +105,6 @@ ngx.socket.udp 和 ngx.socket.tcp 都是使用 cosocket 的方式实现的，由
 - 注意：
     - 可通过 `settimeout` 指定读取超时时间。（发送时，也可用此函数指定发送超时时间）。
 
-
 ### tcpsock:settimeout
 
 - 语法：`tcpsock:settimeout(time)`
@@ -136,25 +137,46 @@ ngx.socket.udp 和 ngx.socket.tcp 都是使用 cosocket 的方式实现的，由
 
 ```lua
 local sock = ngx.socket.tcp()
-local local_ip = "127.0.0.1"
-local ok, err = sock:bind(local_ip)
-if not ok then
-    ngx.say("failed to bind")
-    return
-end
+-- bind 接口在更新的版本才有
+-- local ok, err = sock:bind("172.22.49.3")
+-- if not ok then
+--     ngx.say("failed to bind")
+--     return
+-- end
 
-local ok, err = sock:connect("ifconfig.io", 80)
+local ok, err = sock:connect("172.64.138.14", 80)
 if not ok then
     ngx.say("failed to connect server: ", err)
     return
 end
 ngx.say("successfully connected!")
 
+local req = "GET / HTTP/1.1\r\n"
+            .. "Host: ifconfig.io\r\n"
+            .. "User-Agent: curl/7.68.0\r\n"
+            .. "Accept: */*\r\n\r\n"
+
 -- send
+sock:settimeout(3000)
+local bytes, err = sock:send(req)
+if not bytes then
+    ngx.say("failed to send data to server: ", err)
+    return
+end
+
+ngx.say("successfully sent, bytes: ", bytes)
 
 -- receive
+sock:settimeout(3000)
+local data, err, partial = sock:receive()
+if not data then
+    ngx.say("failed to read data from server: ", err)
+    return
+end
+
+ngx.say("successfully read: ", data)
 
 sock:close()
 ```
 
-> TODO：加个完整示例。
+## 实现
