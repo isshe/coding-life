@@ -180,3 +180,21 @@ sock:close()
 ```
 
 ## 实现
+
+### Lua 接口注入
+
+毫无疑问，还是类似的注入方式
+
+```lua
+- main
+    \- ngx_init_cycle
+        \- ngx_conf_parse
+            \- ngx_conf_handler
+                \- ngx_http_block
+                    \- ngx_http_lua_init
+                        \- ngx_http_lua_init_vm
+                            \- ngx_http_lua_new_state
+                                \- ngx_http_lua_init_globals
+                                    \- ngx_http_lua_inject_ngx_api
+                                        \- ngx_http_lua_inject_socket_tcp_api
+```
