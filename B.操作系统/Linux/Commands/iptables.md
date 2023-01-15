@@ -15,17 +15,28 @@ iptables可以检测、修改、转发、重定向、丢弃IPv4数据包。
 
 # 选项
 ```bash
--j          --jump
-                    指定目标，目标可以是用户定义的链。
+-j          --jump 指定目标，目标可以是用户定义的链。
+-t          --table 指定表，取值有 filter、nat、mangle、raw，默认是 filter。
 ```
 
 # 示例
+
+- 列出所有规则
+
+    ```bash
+    # default table: filter
+    iptables -S
+
+    # table: filter/nat/mangle/raw
+    iptables -S -t nat
+    ```
 
 # 疑问
 
 
 
 # 拓展
-* nftables是会取代iptables成为主要的Linux防火墙工具。
+
+- nftables 是会取代 iptables 成为主要的 Linux 防火墙工具。
 
 # 参考
