@@ -31,6 +31,25 @@ iptables可以检测、修改、转发、重定向、丢弃IPv4数据包。
     iptables -S -t nat
     ```
 
+- 源地址转换
+
+```bash
+# 增加
+sudo iptables -t nat -A POSTROUTING -p tcp -j MASQUERADE
+
+# 删除
+sudo iptables -t nat -D POSTROUTING -p tcp -j MASQUERADE
+```
+
+- 目的地址转换
+
+```bash
+# 增加
+sudo iptables -t nat -A PREROUTING -p tcp -m tcp --dport 20228 -j DNAT --to-destination 10.0.0.233:20228
+# 删除
+sudo iptables -t nat -D PREROUTING -p tcp -m tcp --dport 20228 -j DNAT --to-destination 10.0.0.233:20228
+```
+
 # 疑问
 
 
