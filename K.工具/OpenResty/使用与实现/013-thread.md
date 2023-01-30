@@ -1,17 +1,19 @@
 
-# 协程
+# OpenResty 协程/线程
 
-> 看是否和此函数强关联：ngx_http_lua_run_thread；
-> 如果此文章无法完成对 ngx_http_lua_run_thread 的理解，则另外文章。
+> 后续都称为协程。
 
 通过前面的探索可以看出，ngx_http_lua_run_thread 是相当重要的一个函数，对于协程的调度，都是通过此接口进行。
 
 目的：
 
-- 了解 openresty 协程
+- 了解 openresty 协程是什么？
+- 是否和此函数强关联：ngx_http_lua_run_thread？
 - openresty 的协程与 Luajit 的协程是什么关系？
 - openresty 协程是如何创建的？是何时创建的？（排除前面探究过的轻线程和 coroutine 接口）
 - openresty 协程会在何时执行？（排除前面探究过的轻线程和 coroutine 接口）
+- 主协程和其他协程是如何区分的？
+- Lua VM 和主协程是什么关系？
 
 ## 使用
 
@@ -156,13 +158,21 @@ typedef enum {
 
 ## 总结
 
+- openresty 协程是什么？
+
+答：与 POSIX 进程/线程类似，存在不同的状态。不过 openresty 协程是通过 Nginx 核心进行调度的。
+
+- 是否和此函数强关联：ngx_http_lua_run_thread？
+
+答：是，这个函数就是执行/调度 openresty 协程的函数，会参与协程的调度。（如继续执行 post thread、设置 ctx->cur_co_ctx 以调度下一个协程）
+
 - openresty 的协程与 Luajit 的协程是什么关系？
 
 答：基于 Luajit 的协程，配合 Nginx 事件模型进行工作。
 
 - openresty 协程是如何创建的？是何时创建的？（排除前面探究过的轻线程和 coroutine 接口）
 
-答：access、rewrite、content 等阶段抓狂 Lua 代码前。header filter、body filter 等阶段不会新建协程来执行 Lua 代码，而是直接调用 Luajit 接口进行执行。
+答：access、rewrite、content 等阶段执行 Lua 代码前。header filter、body filter 等阶段不会新建协程来执行 Lua 代码，而是直接调用 Luajit 接口进行执行。
 
 - openresty 协程会在何时执行？（排除前面探究过的轻线程和 coroutine 接口）
 
@@ -171,3 +181,11 @@ typedef enum {
 - 何时会调用错误处理程序 ngx_http_lua_atpanic？panic 后 ngx_quit 生效了么？最终是恢复执行还是退出了呢？
 
 答：Lua VM 崩溃时。注意语法错误、索引 nil 变量等错误时，不会调用。（或许内存不足时会调用，暂未构造出场景）
+
+- 主协程和其他协程是如何区分的？
+
+答：
+
+- Lua VM 和主协程是什么关系？
+
+答：

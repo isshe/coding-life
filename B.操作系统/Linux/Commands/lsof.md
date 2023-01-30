@@ -4,11 +4,13 @@ lsof
 ---
 
 lsof: list open file（打开文件列表）。
+
 作用：
-* 查看进程打开的文件；
-* 查看打开文件的进程；
-* 查看进程打开的端口；
-* 找回/恢复删除的文件；
+
+- 查看进程打开的文件；
+- 查看打开文件的进程；
+- 查看进程打开的端口；
+- 找回/恢复删除的文件；
 
 > *nix中一切皆文件
 
@@ -16,9 +18,9 @@ lsof: list open file（打开文件列表）。
 
 ## 1.1 用法
 ```bash
-lsof [ -?abChKlnNOPRtUvVX ] [ -A A ] [ -c c ] [ +c c ] [ +|-d d ] [ +|-D D ] 
-[ +|-e s ] [ +|-E ] [ +|-f [cfgGn] ] [ -F [f] ] [ -g [s] ] [ -i [i] ] [ -k k ] 
-[ +|-L [l] ] [ +|-m m ] [ +|-M ] [ -o [o] ] [ -p s ] [ +|-r [t[m<fmt>]] ] [ -s [p:s] ] 
+lsof [ -?abChKlnNOPRtUvVX ] [ -A A ] [ -c c ] [ +c c ] [ +|-d d ] [ +|-D D ]
+[ +|-e s ] [ +|-E ] [ +|-f [cfgGn] ] [ -F [f] ] [ -g [s] ] [ -i [i] ] [ -k k ]
+[ +|-L [l] ] [ +|-m m ] [ +|-M ] [ -o [o] ] [ -p s ] [ +|-r [t[m<fmt>]] ] [ -s [p:s] ]
 [ -S [t] ] [ -T [t] ] [ -u s ] [ +|-w ] [ -x [fl] ] [ -z [z] ] [ -Z [Z] ] [ -- ] [names]
 ```
 
