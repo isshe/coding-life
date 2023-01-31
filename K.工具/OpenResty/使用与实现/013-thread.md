@@ -7,11 +7,11 @@
 
 目的：
 
-- 了解 openresty 协程是什么？
+- 了解 OpenResty 协程是什么？
 - 是否和此函数强关联：ngx_http_lua_run_thread？
-- openresty 的协程与 Luajit 的协程是什么关系？
-- openresty 协程是如何创建的？是何时创建的？（排除前面探究过的轻线程和 coroutine 接口）
-- openresty 协程会在何时执行？（排除前面探究过的轻线程和 coroutine 接口）
+- OpenResty 的协程与 Luajit 的协程是什么关系？
+- OpenResty 协程是如何创建的？是何时创建的？（排除前面探究过的轻线程和 coroutine 接口）
+- OpenResty 协程会在何时执行？（排除前面探究过的轻线程和 coroutine 接口）
 - 主协程和其他协程是如何区分的？
 - Lua VM 和主协程是什么关系？
 
@@ -33,8 +33,8 @@ typedef enum {
 } ngx_http_lua_co_status_t;
 ```
 
-- NGX_HTTP_LUA_CO_RUNNING：协程正在执行
-- NGX_HTTP_LUA_CO_SUSPENDED：协程暂停、挂起了
+- NGX_HTTP_LUA_CO_RUNNING：当前协程正在执行
+- NGX_HTTP_LUA_CO_SUSPENDED：当前协程已挂起，等待恢复
 - NGX_HTTP_LUA_CO_NORMAL：正常
 - NGX_HTTP_LUA_CO_DEAD：协程死亡/终止了
 - NGX_HTTP_LUA_CO_ZOMBIE：是僵尸协程，等待父协程回收
@@ -158,23 +158,23 @@ typedef enum {
 
 ## 总结
 
-- openresty 协程是什么？
+- OpenResty 协程是什么？
 
-答：与 POSIX 进程/线程类似，存在不同的状态。不过 openresty 协程是通过 Nginx 核心进行调度的。
+答：OpenResty 中的协程是一种轻量级的线程，用于实现在 OpenResty 应用中的并发。协程可以在不阻塞其他请求的情况下执行多个任务，从而提高应用程序的效率和吞吐量。协程是在 Lua 脚本中实现的，可以在 OpenResty 中同时处理多个请求，每个请求都有自己的协程。
 
 - 是否和此函数强关联：ngx_http_lua_run_thread？
 
-答：是，这个函数就是执行/调度 openresty 协程的函数，会参与协程的调度。（如继续执行 post thread、设置 ctx->cur_co_ctx 以调度下一个协程）
+答：是，这个函数就是执行/调度 OpenResty 协程的函数，会参与协程的调度。（如继续执行 post thread、设置 ctx->cur_co_ctx 以调度下一个协程）
 
-- openresty 的协程与 Luajit 的协程是什么关系？
+- OpenResty 的协程与 Luajit 的协程是什么关系？
 
 答：基于 Luajit 的协程，配合 Nginx 事件模型进行工作。
 
-- openresty 协程是如何创建的？是何时创建的？（排除前面探究过的轻线程和 coroutine 接口）
+- OpenResty 协程是如何创建的？是何时创建的？（排除前面探究过的轻线程和 coroutine 接口）
 
 答：access、rewrite、content 等阶段执行 Lua 代码前。header filter、body filter 等阶段不会新建协程来执行 Lua 代码，而是直接调用 Luajit 接口进行执行。
 
-- openresty 协程会在何时执行？（排除前面探究过的轻线程和 coroutine 接口）
+- OpenResty 协程会在何时执行？（排除前面探究过的轻线程和 coroutine 接口）
 
 答：access、rewrite、content 阶段执行 Lua 代码时、ngx.sleep、timer、tcp.socket 时。
 
@@ -184,8 +184,14 @@ typedef enum {
 
 - 主协程和其他协程是如何区分的？
 
-答：
+答：OpenResty 中的主协程和其他协程是通过创建协程的方式区分的。
+1. 主协程：每个请求的初始协程就是主协程，它负责处理请求的主流程，并处理请求和响应。
+2. 其他协程：主协程可以通过调用 ngx.thread.spawn() 等方式创建其他协程，这些协程可以在独立环境中运行，不会影响主协程的正常工作。
+主协程和其他协程之间通过数据共享、信号量等方式进行通信，以实现多线程的并行处理能力。
 
 - Lua VM 和主协程是什么关系？
 
-答：
+答：OpenResty 中的 Lua VM 和主协程是密切相关的。
+1. Lua VM：是 OpenResty 运行 Lua 代码的运行环境，它负责编译和执行 Lua 代码，并管理内存分配和回收。
+2. 主协程：是 OpenResty 中处理请求的核心协程，它在 Lua VM 中运行，负责读取请求信息、执行 Lua 脚本、生成响应等。
+因此，可以说：主协程是在 Lua VM 环境中运行的，它依赖于 Lua VM 提供的运行环境和资源。**每次请求都会创建一个独立的主协程，独立运行，互不影响。**

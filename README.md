@@ -7,7 +7,6 @@
 
 正在进行
 
-- [存储空间占用情况分析.md](coding-life/B.操作系统/Linux/存储空间占用情况分析.md)
 - [013-thread.md](K.工具/OpenResty/使用与实现/013-thread.md)
 = [014-cosocket.md](K.工具/OpenResty/使用与实现/014-cosocket.md)
 
