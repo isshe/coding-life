@@ -198,3 +198,16 @@ sock:close()
                                     \- ngx_http_lua_inject_ngx_api
                                         \- ngx_http_lua_inject_socket_tcp_api
 ```
+
+- ngx_http_lua_inject_socket_tcp_api 的执行流程
+
+```lua
+- ngx_http_lua_inject_socket_tcp_api
+    \- lua_createtable: 创建 ngx.socket 表
+    \- lua_setfield(L, -3, "tcp")：注入 ngx.socket.tcp，以及 ngx.socket.stream, ngx.socket.connect 等 ngx.socket 系列接口
+    \- lua_pushlightuserdata(L, ngx_http_lua_lightudata_mask(req_socket_metatable_key))
+    \- lua_createtable(L, 0 /* narr */, 6 /* nrec */)：创建并注入通过 ngx.req.socket() 得到的对象的相关接口
+    \- lua_pushlightuserdata(L, ngx_http_lua_lightudata_mask(raw_req_socket_metatable_key))
+    \- lua_createtable(L, 0 /* narr */, 7 /* nrec */)：创建并注入通过 ngx.req.socket(raw) 得到的对象的相关接口
+    \- TODO
+```

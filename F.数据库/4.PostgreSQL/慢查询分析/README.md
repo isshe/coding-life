@@ -101,3 +101,9 @@ create index test_index on test_table (created);
 
 然后再次分析，如果时间没有明显减少，可以再去掉此索引。
 重复以上步骤，即可逐步减少系统中的慢查询。
+
+* 运行 ANALYZE 命令更新系统中表的统计信息
+
+```sql
+ANALYZE large_table;
+```

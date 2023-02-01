@@ -7,7 +7,6 @@
 
 正在进行
 
-- [013-thread.md](K.工具/OpenResty/使用与实现/013-thread.md)
 = [014-cosocket.md](K.工具/OpenResty/使用与实现/014-cosocket.md)
 
 下一步
