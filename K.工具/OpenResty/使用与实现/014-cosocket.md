@@ -5,7 +5,8 @@
 目的：
 
 - 学习如何使用 cosocket。
-- 了解 cosocket 的实现方式。
+- cosocket 是什么？
+- cosocket 的实现方式、原理是什么？
 
 ## 使用
 
@@ -206,8 +207,32 @@ sock:close()
     \- lua_createtable: 创建 ngx.socket 表
     \- lua_setfield(L, -3, "tcp")：注入 ngx.socket.tcp，以及 ngx.socket.stream, ngx.socket.connect 等 ngx.socket 系列接口
     \- lua_pushlightuserdata(L, ngx_http_lua_lightudata_mask(req_socket_metatable_key))
-    \- lua_createtable(L, 0 /* narr */, 6 /* nrec */)：创建并注入通过 ngx.req.socket() 得到的对象的相关接口
+    \- lua_createtable(L, 0 /* narr */, 6 /* nrec */)：创建元表并注入通过 ngx.req.socket() 得到的对象的相关接口
     \- lua_pushlightuserdata(L, ngx_http_lua_lightudata_mask(raw_req_socket_metatable_key))
-    \- lua_createtable(L, 0 /* narr */, 7 /* nrec */)：创建并注入通过 ngx.req.socket(raw) 得到的对象的相关接口
-    \- TODO
+    \- lua_createtable(L, 0 /* narr */, 7 /* nrec */)：创建元表并注入通过 ngx.req.socket(raw) 得到的对象的相关接口
+    \- lua_pushlightuserdata(L, ngx_http_lua_lightudata_mask(tcp_socket_metatable_key))
+    \- lua_createtable(L, 0 /* narr */, 14 /* nrec */)：创建元表并注入 tcp 对象（通过 ngx.socket.tcp 创建）的接口
+    \- upstream_udata_metatable_key：还有以下这些元表，不再赘述，如有必要，直接通过这些 key 在源码中搜索，即可知道如何使用。
+    \- downstream_udata_metatable_key：例如这个在 ngx.req.socket 调用时使用
+    \- pool_udata_metatable_key
+    \- pattern_udata_metatable_key
+    \- ssl_session_metatable_key
 ```
+
+以 tcp 为例，
+调用 ngx.socket.tcp() 函数创建 tcp 对象时，实际调用了 ngx_http_lua_socket_tcp 函数，
+此函数中，会新建一个表，然后设置 ngx_http_lua_inject_socket_tcp_api 中创建的表（以 tcp_socket_metatable_key 标识）为元表。
+
+接下来，我们也已 tcp 为例，跟踪了解 cosocket 的实现方式。
+
+### 创建对象
+
+> 比较简单，再看看是否需要记录
+
+### 创建连接
+
+### 发送请求
+
+### 接收响应
+
+### 处理响应
