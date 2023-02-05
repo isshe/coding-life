@@ -227,9 +227,26 @@ sock:close()
 
 ### 创建对象
 
-> 比较简单，再看看是否需要记录
+创建对象的函数是 ngx_http_lua_socket_tcp，比较简单，主要完成以下操作：
+
+- 获取请求
+- 获取模块 ctx
+- 检查 ctx 是否是可以 YIELD 的
+- 创建新表
+- 设置新表的元表为前面张杰中注入的元表， key：tcp_socket_metatable_key。
+- 返回新表
 
 ### 创建连接
+
+创建 TCP 连接的函数是 ngx_http_lua_socket_tcp_connect，我们来跟踪一下。
+
+```lua
+- ngx_http_lua_socket_tcp_connect
+    \-
+```
+
+从 Lua 接口 [connect](#tcpsock:connect) 可以看到，该接口有 3 个参数，分别是 host、port、options_table。
+
 
 ### 发送请求
 
