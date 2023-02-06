@@ -4,22 +4,26 @@ kubernetes
 ---
 
 # kubectl
-* kubectl get: 显示资源
-* kubectl describe: 显示资源的详细信息
-* kubectl logs: 打印一个pod的一个容器的log
-* kubectl exec: 在一个pod的一个容器中运行一个命令
+
+- kubectl get: 显示资源
+- kubectl describe: 显示资源的详细信息
+- kubectl logs: 打印一个pod的一个容器的log
+- kubectl exec: 在一个pod的一个容器中运行一个命令
 
 ## 显示版本
+
 ```
 kubectl version
 ```
 
 ## 显示集群信息
+
 ```
 kubectl cluster-info
 ```
 
 ## kubectl get
+
 ```
 # 获取集群中的节点
 kubectl get nodes
@@ -38,7 +42,9 @@ kubectl get <pods/services> -l <lable-name>
 ```
 
 ## kubectl describe
+
 ### 查看暴露出去的端口
+
 ```shell
 kubectl describe services/<NAME>
 例如：
@@ -52,6 +58,7 @@ kubectl describe deployment
 ```
 
 ## 部署APP
+
 ```
 kubectl create deployment <NAME> --image=<images url>
 例如:
@@ -59,12 +66,14 @@ kubectl create deployment kubernetes-bootcamp --image=gcr.io/google-samples/kube
 ```
 
 ## 获取POD名字
+
 ```shell
 export POD_NAME=$(kubectl get pods -o go-template --template '{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}')
 #echo Name of the Pod: $POD_NAME
 ```
 
 ## 暴露端口
+
 ```shell
 kubectl expose <NAME> --type=<TYPE> --port <PORT>
 例如：
@@ -73,6 +82,7 @@ kubectl expose deployemnt/kubernetes-bootcamp --type="NodePort" --port 8080
 
 
 ## 而是暴露出去的端口
+
 ```shell
 # 获取端口
 export NODE_PORT=$(kubectl get services/kubernetes-bootcamp -o go-template='{{(index .spec.ports 0).nodePort}}')
@@ -82,6 +92,7 @@ curl $(ip):$NODE_PORT
 ```
 
 ## 设置label
+
 ```shell
 kubectl label <OBJ-TYPE> <OBJ-NAME> <NEW-LABEL>
 # 例如
@@ -89,6 +100,7 @@ kubectl label pod $POD_NAME app=v1
 ```
 
 ## 删除一个service
+
 ```shell
 kubectl delete service -l <label-name>
 
@@ -100,5 +112,11 @@ curl $(ip):$NODE_PORT
 kubectl exec -it $POD_NAME curl localhost:8080
 ```
 
+## 扩容、缩容
 
+```bash
+kubectl scale deployment $SERVICE_NAME --replicas 3
 
+# 示例：
+kubectl scale deployment test-hello --replicas 3
+```
