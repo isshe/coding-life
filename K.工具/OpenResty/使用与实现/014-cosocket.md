@@ -246,6 +246,7 @@ sock:close()
 ```
 
 从 Lua 接口 [connect](#tcpsock:connect) 可以看到，该接口有 3 个参数，分别是 host、port、options_table。
+（其实是 4 个参数，第一个是 tcpsock 自身：connect(tcpsock, host, port, options_table)）
 
 
 ### 发送请求
