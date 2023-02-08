@@ -50,3 +50,15 @@ select datname, usename, application_name, state, count(state) from pg_stat_acti
 ```
 show max_connections;
 ```
+
+# 导出、导入 csv 数据
+
+```sql
+-- 导出
+COPY (
+    SELECT * FROM TABLE_NAME LIMIT 100 OFFSET 0
+) To '/tmp/data.csv' WITH CSV DELIMITER ',' HEADER;
+
+-- 导入
+COPY TABLE_NAME FROM '/tmp/data.csv' DELIMITER ',' CSV HEADER;
+```
