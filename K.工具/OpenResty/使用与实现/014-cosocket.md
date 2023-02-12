@@ -248,6 +248,12 @@ sock:close()
 从 Lua 接口 [connect](#tcpsock:connect) 可以看到，该接口有 3 个参数，分别是 host、port、options_table。
 （其实是 4 个参数，第一个是 tcpsock 自身：connect(tcpsock, host, port, options_table)）
 
+- 如果给了 IP 地址，就直接用；
+- 如果给的域名，就要进行域名解析；
+
+问题：
+1. nginx 是如何进行域名解析的？ ngx_resolve_start、ngx_resolve_name，是异步的吗，会等待解析结果吗？
+
 
 ### 发送请求
 
