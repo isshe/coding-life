@@ -242,7 +242,7 @@ sock:close()
 
 ```lua
 - ngx_http_lua_socket_tcp_connect
-    \-
+    \- ngx_http_lua_socket_resolve_retval_handler
 ```
 
 从 Lua 接口 [connect](#tcpsock:connect) 可以看到，该接口有 3 个参数，分别是 host、port、options_table。
@@ -251,8 +251,64 @@ sock:close()
 - 如果给了 IP 地址，就直接用；
 - 如果给的域名，就要进行域名解析；
 
+> 以下草稿
+
 问题：
 1. nginx 是如何进行域名解析的？ ngx_resolve_start、ngx_resolve_name，是异步的吗，会等待解析结果吗？
+2. 如何进行连接的？
+进行非阻塞，返回 rc == -1 && err == NGX_EINPROGRESS 时，表示连接正在进行中。openresty 设置读写事件。
+在 ngx_http_lua_socket_connected_handler 中检查连接实际是否成功。
+
+```
+    c->write->handler = ngx_http_lua_socket_tcp_handler;
+    c->read->handler = ngx_http_lua_socket_tcp_handler;
+
+    u->write_event_handler = ngx_http_lua_socket_connected_handler;
+    u->read_event_handler = ngx_http_lua_socket_connected_handler;
+```
+
+问：TCP 连接成功，yield 出去后，会在哪里恢复？
+- https://github.com/isshe/lua-nginx-module/blob/isshe/src/ngx_http_lua_socket_tcp.c#L840
+- 此时 Lua 正在调用 connect。
+- yield 以后，继续返回到 ngx_http_lua_run_thread：
+```c
+// yield 后也就是 lua_resume 返回了
+rv = lua_resume(orig_coctx->co, nrets);
+```
+
+连接成功后的调用栈，再跟踪
+```lua
+#0  ngx_http_lua_run_thread (L=0x55efffa60640 <cached_syslog_time+800>, r=0x55efff9d0280,
+    ctx=0x55efff7be452 <ngx_sprintf+192>, nrets=32766)
+    at ../ngx_lua-0.10.21/src/ngx_http_lua_util.c:1112
+#1  0x000055efff945315 in ngx_http_lua_socket_tcp_resume_helper (r=0x55f001716120,
+    socket_op=0) at ../ngx_lua-0.10.21/src/ngx_http_lua_socket_tcp.c:5991
+#2  0x000055efff945082 in ngx_http_lua_socket_tcp_conn_resume (r=0x55f001716120)
+    at ../ngx_lua-0.10.21/src/ngx_http_lua_socket_tcp.c:5897
+#3  0x000055efff92e8bf in ngx_http_lua_content_wev_handler (r=0x55f001716120)
+    at ../ngx_lua-0.10.21/src/ngx_http_lua_contentby.c:152
+#4  0x000055efff93f72a in ngx_http_lua_socket_handle_conn_success (r=0x55f001716120,
+    u=0x7f868af3adc8) at ../ngx_lua-0.10.21/src/ngx_http_lua_socket_tcp.c:3451
+#5  0x000055efff9401b6 in ngx_http_lua_socket_connected_handler (r=0x55f001716120,
+    u=0x7f868af3adc8) at ../ngx_lua-0.10.21/src/ngx_http_lua_socket_tcp.c:3719
+--Type <RET> for more, q to quit, c to continue without paging--
+#6  0x000055efff93efd0 in ngx_http_lua_socket_tcp_handler (ev=0x55f0017a73b0)
+    at ../ngx_lua-0.10.21/src/ngx_http_lua_socket_tcp.c:3239
+#7  0x000055efff8033d7 in ngx_epoll_process_events (cycle=0x55f0017182a0, timer=60000,
+    flags=1) at src/event/modules/ngx_epoll_module.c:930
+#8  0x000055efff7eeee2 in ngx_process_events_and_timers (cycle=0x55f0017182a0)
+    at src/event/ngx_event.c:257
+#9  0x000055efff800402 in ngx_worker_process_cycle (cycle=0x55f0017182a0, data=0x0)
+    at src/os/unix/ngx_process_cycle.c:793
+#10 0x000055efff7fc61a in ngx_spawn_process (cycle=0x55f0017182a0,
+    proc=0x55efff800311 <ngx_worker_process_cycle>, data=0x0,
+    name=0x55efff9d3f7c "worker process", respawn=-4) at src/os/unix/ngx_process.c:199
+#11 0x000055efff7ff06a in ngx_start_worker_processes (cycle=0x55f0017182a0, n=1, type=-4)
+    at src/os/unix/ngx_process_cycle.c:382
+#12 0x000055efff7fe9f4 in ngx_master_process_cycle (cycle=0x55f0017182a0)
+    at src/os/unix/ngx_process_cycle.c:241
+#13 0x000055efff7b43b9 in main (argc=3, argv=0x7ffed71adfb8) at src/core/nginx.c:386
+```
 
 
 ### 发送请求
