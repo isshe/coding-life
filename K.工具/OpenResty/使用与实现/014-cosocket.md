@@ -267,14 +267,18 @@ sock:close()
     u->read_event_handler = ngx_http_lua_socket_connected_handler;
 ```
 
+ngx_http_lua_socket_tcp_handler 中也是调用的 ngx_http_lua_socket_connected_handler。
+
+
 问：TCP 连接成功，yield 出去后，会在哪里恢复？
 - https://github.com/isshe/lua-nginx-module/blob/isshe/src/ngx_http_lua_socket_tcp.c#L840
 - 此时 Lua 正在调用 connect。
-- yield 以后，继续返回到 ngx_http_lua_run_thread：
+- yield 以后，继续返回到 ngx_http_lua_run_thread，最后回到事件循环中，等待事件发生。
 ```c
 // yield 后也就是 lua_resume 返回了
 rv = lua_resume(orig_coctx->co, nrets);
 ```
+- 事件发生（c->write 写事件）后，调用 ngx_http_lua_socket_tcp_handler。（为什么会有写事件呢？）
 
 连接成功后的调用栈，再跟踪
 ```lua
@@ -291,7 +295,6 @@ rv = lua_resume(orig_coctx->co, nrets);
     u=0x7f868af3adc8) at ../ngx_lua-0.10.21/src/ngx_http_lua_socket_tcp.c:3451
 #5  0x000055efff9401b6 in ngx_http_lua_socket_connected_handler (r=0x55f001716120,
     u=0x7f868af3adc8) at ../ngx_lua-0.10.21/src/ngx_http_lua_socket_tcp.c:3719
---Type <RET> for more, q to quit, c to continue without paging--
 #6  0x000055efff93efd0 in ngx_http_lua_socket_tcp_handler (ev=0x55f0017a73b0)
     at ../ngx_lua-0.10.21/src/ngx_http_lua_socket_tcp.c:3239
 #7  0x000055efff8033d7 in ngx_epoll_process_events (cycle=0x55f0017182a0, timer=60000,
