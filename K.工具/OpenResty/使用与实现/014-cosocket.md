@@ -78,7 +78,7 @@ ngx.socket.udp 和 ngx.socket.tcp 都是使用 cosocket 的方式实现的，由
 
 - 返回值：
     - bytes：发送了的字节数，失败返回 nil。
-    - err：失败时的错误信息
+    - err：失败时的错误信息。
 
 - 作用：在当前连接上发送数据。
 
@@ -240,47 +240,138 @@ sock:close()
 
 创建 TCP 连接的函数是 ngx_http_lua_socket_tcp_connect，我们来跟踪一下。
 
+注释版代码见 [src/ngx_http_lua_socket_tcp.c](https://github.com/isshe/lua-nginx-module/blob/isshe/src/ngx_http_lua_socket_tcp.c#L964)
+
 ```lua
 - ngx_http_lua_socket_tcp_connect
-    \- ngx_http_lua_socket_resolve_retval_handler
+    \- if (lua_type(L, n) == LUA_TTABLE)：检查最后一个参数是不是 table 类型，是的话就是有选项参数（sock:connect 的最后一个参数）。
+        \- lua_getfield(L, n, "pool_size")：从选项参数表中取出 pool_size，并检查合法性，需要 大于 0 或者等于 nil。
+        \- lua_getfield(L, n, "backlog")：从选项参数表中取出 backlog，并检查合法性，需大于等于 0。如果只设置了 backlog，没有设置 pool_size，则把默认 pool_size 值设置成 pool_size。
+        \- lua_getfield(L, n, "pool")：从选项参数表中取值 pool，如果值是数字，就转成字符串，并继续按字符串处理；如果是字符串，就设置到 tcp 对象的指定的 key 下面（SOCKET_KEY_INDEX）；如果是 nil，就从堆栈弹出 pool 相关参数；其他值报错返回。
+    \- if (n == 3 && lua_isnumber(L, 3))：检查 port，不合法就退出，报错退出。
+    \- lua_rawgeti(L, 1, SOCKET_CTX_INDEX)：取出 upstream_t， 如果没有就分配一个并设置到 tcp 对象的 SOCKET_CTX_INDEX；如果有了，就检查这个上游对象的有效性，有效就复用。
+    \- ngx_memzero(u, sizeof(ngx_http_lua_socket_tcp_upstream_t))：把拿到的上游对象初始化一下：清空，设置相关字段。
+    \- lua_rawgeti(L, 1, SOCKET_CONNECT_TIMEOUT_INDEX)：把超时参数从 TCP 对象中取出压入栈中，设置超时到上游对象的连接超时、发送超时、读取超时字段中。（TCP 对象中的超时参数是 settimeouts、settimeout 函数设置的）
+    \- lua_pushlightuserdata(L, ngx_http_lua_lightudata_mask(socket_pool_key))：根据 pool 参数或者 host:port 为 key 取出对应连接池，如果有就直接用；如果没有，就创建（ngx_http_lua_socket_tcp_create_socket_pool）这个连接池。
+    \- ngx_http_lua_socket_tcp_connect_helper：进入包裹函数，继续处理
+        \- if (spool != NULL)：检查是否指定了连接池；指定了，就从连接池中取出 keepalive 连接，取到了就直接返回。这里会限制连接池中总连接数不能超过 连接池大小 size + backlog。如果超过了 size，但小于 size + backlog，意味着是 backlog 连接，从 backlog 队列的从中取出或创建连接操作上下文（ngx_http_lua_socket_tcp_conn_op_ctx_t）放到队列中。
+    \- host.data = ngx_palloc(r->pool, host_len + 1)：分配内存存 host，用于通过 ngx_parse_url 创建 sockaddr。
+    \- u->resolved = ngx_pcalloc(r->pool, sizeof(ngx_http_upstream_resolved_t))：分配内存存放域名解析相关内容，如果需要解析，就放到 u->resolved->host 字段；不用就把前面创建的 sockaddr 放到 u->resolved->sockaddr 中。
+    \- if (u->resolved->sockaddr)：有地址了，直接进行连接，然后返回。
+        \- ngx_http_lua_socket_resolve_retval_handler
+    \- rctx = ngx_resolve_start(clcf->resolver, &temp)：进行域名解析。
+    \- if (ngx_resolve_name(rctx) != NGX_OK)：正式开始。
+    \- u->write_prepare_retvals = ngx_http_lua_socket_resolve_retval_handler：设置解析完成后的回调函数。
+
+- ngx_http_lua_socket_resolve_retval_handler：解析结果返回了，开始正式发起连接。
+    \- if (u->resolved->sockaddr)：如果有就是解析成功了，没有就是解析失败了，报错返回。
+    \- rc = ngx_event_connect_peer(pc)：发起连接
+    \- if (rc == NGX_ERROR)：连接出错了
+        \- ngx_http_lua_socket_conn_error_retval_handler：错误处理函数
+    \- if (rc == NGX_BUSY)：没有存活连接
+    \- if (rc == NGX_DECLINED)：socket 错误。
+        \- ngx_http_lua_socket_conn_error_retval_handler：错误处理函数
+    \- /* rc == NGX_OK || rc == NGX_AGAIN */；接下来就是连接中或者连接成功的情况了。
+        \- NGX_AGAIN：connect 返回 -1，错误码是 NGX_EINPROGRESS，意思是正在连接中。
+    \- c->write->handler = ngx_http_lua_socket_tcp_handler：添加读写事件的处理函数
+    \- if (rc == NGX_OK)：如果是连接成功了，就去掉读写事件，免得浪费 CPU 周期。
+    \- /* rc == NGX_AGAIN */：还没连接成功
+    \- ngx_add_timer(c->write, u->connect_timeout)：增加增加连接超时 timer。
 ```
 
 从 Lua 接口 [connect](#tcpsock:connect) 可以看到，该接口有 3 个参数，分别是 host、port、options_table。
 （其实是 4 个参数，第一个是 tcpsock 自身：connect(tcpsock, host, port, options_table)）
 
-- 如果给了 IP 地址，就直接用；
-- 如果给的域名，就要进行域名解析；
+连接步骤大致总结如下：
 
-> 以下草稿
+- 检查选项参数（options_table）
+- 如果没有连接池就创建连接池
+- 从连接池中获取连接，没取到就直接进行连接；（后续可通过 setkeepalive 放回到连接池中）
+- 通过 ngx_parse_url 解析 host，看是不是域名，不是域名会直接创建 sockaddr
+- 如果是域名，就进行域名解析
+- 解析完成调用 ngx_event_connect_peer 进行连接
+- 如果返回 NGX_OK，就是连接成功了
+- 如果返回 NGX_AGAIN，c 函数 connect 的错误码是 EINPROGRESS，表示正在连接中，设置读写事件，等待写事件即可。（连接成功后，套接字会变为可写状态，事件模块会调用写事件处理函数）
 
-问题：
+### 发送请求
+
+接口注入：
+
+```
+- ngx_http_lua_inject_socket_tcp_api
+    \- ngx_http_lua_socket_tcp_send
+```
+
+拿到注入的接口名称后，我们来跟踪一下：
+
+```lua
+- ngx_http_lua_socket_tcp_send
+    \- if (u == NULL || u->peer.connection == NULL || u->write_closed)：先检查连接还在不在，不在就报错返回。
+    \- if (u->body_downstream)：检查是不是想要写请求对应的 socket（ngx.req.socket），是的话，报错返回，不允许写。
+    \- type = lua_type(L, 2)：获取并检查第二个参数（也就是发送的数据）的类型；计算出最大发送长度。
+    \- ngx_http_lua_chain_get_free_buf：看下还有没有空间能放得下这么长的数据；没有会返回 NULL。
+    \- switch (type)：把要发送的数据写入获取到的 buffer 中。
+    \- if (clcf->tcp_nodelay && c->tcp_nodelay == NGX_TCP_NODELAY_UNSET)：看有没有选项需要设置。
+    \- ngx_http_lua_socket_send：进行发送。
+        \- b = u->request_bufs->buf：获取要发送的 buffer。
+        \- n = c->send(c, b->pos, b->last - b->pos)：进行发送，如果发送失败或者阻塞了，就立即退出死循环；否则就一直发送到发送完为止。
+        \- if (n == NGX_ERROR)：如果是出错，就进行错误处理，然后返回 NGX_ERROR
+        \- else：否则就是 n == NGX_AGAIN，还在发送中
+            \- u->write_event_handler = ngx_http_lua_socket_send_handler：设置写事件处理函数。
+            \- ngx_add_timer(c->write, u->send_timeout)：增加定时器。
+            \- ngx_handle_write_event(c->write, u->conf->send_lowat)：监听写事件。
+    \- if (rc == NGX_ERROR)：出错了就进行错误处理并返回
+        \- ngx_http_lua_socket_write_error_retval_handler
+    \- if (rc == NGX_OK)：成功了直接返回
+    \- /* rc == NGX_AGAIN */：还在发送中
+    \- u->write_prepare_retvals = ngx_http_lua_socket_tcp_send_retval_handler：设置好回调函数，yield 出去等待可写事件发生。
+```
+
+经过前面 connect 的整理，send 就简单了很多，都是一样的套路。
+
+步骤大致总结如下：
+
+- 计算发送的长度；
+- 复制数据到指定的 buffer 中；
+- 进行发送，如果一直发送成功，就一直发送；否则就退出循环。
+- 如果是出错了，就进行错误处理，然后退出。
+- 如果是阻塞了，就设置写处理函数并监听写事件，yield 出去等待下次可写。
+
+### 接收响应
+
+### 处理响应
+
+
+## 总结
+
 1. nginx 是如何进行域名解析的？ ngx_resolve_start、ngx_resolve_name，是异步的吗，会等待解析结果吗？
+
+答：详见
+
 2. 如何进行连接的？
-进行非阻塞，返回 rc == -1 && err == NGX_EINPROGRESS 时，表示连接正在进行中。openresty 设置读写事件。
-在 ngx_http_lua_socket_connected_handler 中检查连接实际是否成功。
 
-```
-    c->write->handler = ngx_http_lua_socket_tcp_handler;
-    c->read->handler = ngx_http_lua_socket_tcp_handler;
+答：进行非阻塞连接，返回 rc == -1 && err == NGX_EINPROGRESS 时，表示连接正在进行中。openresty 设置好读写事件，在 ngx_http_lua_socket_connected_handler 中检查连接实际是否成功。
 
-    u->write_event_handler = ngx_http_lua_socket_connected_handler;
-    u->read_event_handler = ngx_http_lua_socket_connected_handler;
-```
+更多参考 [Epoll 与非阻塞连接](../../../B.操作系统/Linux/Application/7.IO多路复用/3.epoll/Epoll与非阻塞连接.md)
 
-ngx_http_lua_socket_tcp_handler 中也是调用的 ngx_http_lua_socket_connected_handler。
+3. TCP 连接进行中（NGX_AGAIN）时，yield 出去后，会在哪里恢复？
 
+答：
 
-问：TCP 连接成功，yield 出去后，会在哪里恢复？
 - https://github.com/isshe/lua-nginx-module/blob/isshe/src/ngx_http_lua_socket_tcp.c#L840
 - 此时 Lua 正在调用 connect。
-- yield 以后，继续返回到 ngx_http_lua_run_thread，最后回到事件循环中，等待事件发生。
+- yield 以后，继续返回到 ngx_http_lua_run_thread，最后回到事件循环中，等待事件发生，重新 resume。
+
+
 ```c
 // yield 后也就是 lua_resume 返回了
 rv = lua_resume(orig_coctx->co, nrets);
 ```
-- 事件发生（c->write 写事件）后，调用 ngx_http_lua_socket_tcp_handler。（为什么会有写事件呢？）
 
-连接成功后的调用栈，再跟踪
+- 事件发生（c->write 写事件）后，调用 ngx_http_lua_socket_tcp_handler。
+
+连接成功后的调用栈：
+
 ```lua
 #0  ngx_http_lua_run_thread (L=0x55efffa60640 <cached_syslog_time+800>, r=0x55efff9d0280,
     ctx=0x55efff7be452 <ngx_sprintf+192>, nrets=32766)
@@ -297,25 +388,5 @@ rv = lua_resume(orig_coctx->co, nrets);
     u=0x7f868af3adc8) at ../ngx_lua-0.10.21/src/ngx_http_lua_socket_tcp.c:3719
 #6  0x000055efff93efd0 in ngx_http_lua_socket_tcp_handler (ev=0x55f0017a73b0)
     at ../ngx_lua-0.10.21/src/ngx_http_lua_socket_tcp.c:3239
-#7  0x000055efff8033d7 in ngx_epoll_process_events (cycle=0x55f0017182a0, timer=60000,
-    flags=1) at src/event/modules/ngx_epoll_module.c:930
-#8  0x000055efff7eeee2 in ngx_process_events_and_timers (cycle=0x55f0017182a0)
-    at src/event/ngx_event.c:257
-#9  0x000055efff800402 in ngx_worker_process_cycle (cycle=0x55f0017182a0, data=0x0)
-    at src/os/unix/ngx_process_cycle.c:793
-#10 0x000055efff7fc61a in ngx_spawn_process (cycle=0x55f0017182a0,
-    proc=0x55efff800311 <ngx_worker_process_cycle>, data=0x0,
-    name=0x55efff9d3f7c "worker process", respawn=-4) at src/os/unix/ngx_process.c:199
-#11 0x000055efff7ff06a in ngx_start_worker_processes (cycle=0x55f0017182a0, n=1, type=-4)
-    at src/os/unix/ngx_process_cycle.c:382
-#12 0x000055efff7fe9f4 in ngx_master_process_cycle (cycle=0x55f0017182a0)
-    at src/os/unix/ngx_process_cycle.c:241
-#13 0x000055efff7b43b9 in main (argc=3, argv=0x7ffed71adfb8) at src/core/nginx.c:386
+...
 ```
-
-
-### 发送请求
-
-### 接收响应
-
-### 处理响应
