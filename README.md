@@ -15,6 +15,7 @@
 - [Nginx 的阶段解析](K.工具/Nginx/Nginx源码分析/4-nginx-phase.md)
 - [动态链接是如何工作的？](B.操作系统/设计与实现/how-dynamic-linking-work.md)
 - [Nginx 是如何进行 DNS 解析的？](K.工具/Nginx/Nginx源码分析/7-nginx-dns-resolve.md)
+- [Luajit 中 yield 和 resume 的实现](K.工具/Luajit/设计与实现/2.yield-resume.md)
 
 ## 索引
 
