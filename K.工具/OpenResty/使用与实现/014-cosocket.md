@@ -339,6 +339,13 @@ sock:close()
 
 ### 接收响应
 
+接口注入：
+
+```
+- ngx_http_lua_inject_socket_tcp_api
+    \- ngx_http_lua_socket_tcp_receive
+```
+
 ### 处理响应
 
 
