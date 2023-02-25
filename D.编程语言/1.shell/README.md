@@ -147,3 +147,9 @@ arr=($(awk -v RS=' ' '!a[$1]++' <<< ${arr[@]}))
 ```
 ls dir | awk '{if ($0 <= "filename.t" ) print "dir/"$0}' | sort | xargs rm -f
 ```
+
+# 只移动文件名大于某文件名的文件
+
+```
+ls dir | awk '{if ($0 <= "filename.t" ) print "dir/"$0}' | sort | xargs -I {} mv {} new_dir/
+```
