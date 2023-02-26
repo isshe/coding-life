@@ -223,7 +223,7 @@ sock:close()
 调用 ngx.socket.tcp() 函数创建 tcp 对象时，实际调用了 ngx_http_lua_socket_tcp 函数，
 此函数中，会新建一个表，然后设置 ngx_http_lua_inject_socket_tcp_api 中创建的表（以 tcp_socket_metatable_key 标识）为元表。
 
-接下来，我们也已 tcp 为例，跟踪了解 cosocket 的实现方式。
+接下来，我们也以 tcp 为例，跟踪了解 cosocket 的实现方式。
 
 ### 创建对象
 
@@ -327,7 +327,7 @@ sock:close()
     \- u->write_prepare_retvals = ngx_http_lua_socket_tcp_send_retval_handler：设置好回调函数，yield 出去等待可写事件发生。
 ```
 
-经过前面 connect 的整理，send 就简单了很多，都是一样的套路。
+经过前面 connect 的整理，send 就简单了很多，都是一样的套路：返回 NGX_AGAIN 就 yield，继续加入到事件循环中，等待下次事件触发，继续处理，都完成以后，在 resume 回去 lua 代码。
 
 步骤大致总结如下：
 
@@ -346,22 +346,30 @@ sock:close()
     \- ngx_http_lua_socket_tcp_receive
 ```
 
-### 处理响应
+原理和前面发送类似，大致步骤如下：
 
+- 处理参数，判断是数字还是字符串；数字表示要接收的字节数量，是字符串表示模式，是 `*a` 还是 `*l`。根据不同的模式设置不同的 input_filter。如果没有指定第二个参数，就是默认的行模式。
+- 检查缓冲区有没有空间，没有就重新获取一个
+- 开始读取，出错或者成功，就直接返回。
+- 如果是 NGX_AGAIN，就设置好处理函数，yiele 了继续等待事件发生。
+
+### 关闭连接
+
+如果请求没有忙于读、写、连接，则调用 ngx_http_lua_socket_tcp_finalize 关闭连接。
 
 ## 总结
 
-1. nginx 是如何进行域名解析的？ ngx_resolve_start、ngx_resolve_name，是异步的吗，会等待解析结果吗？
+### 1.Nginx 是如何进行域名解析的？ ngx_resolve_start、ngx_resolve_name，是异步的吗，会等待解析结果吗？
 
-答：详见
+答：详见 [Nginx 是如何进行 DNS 解析的？](../../Nginx/Nginx源码分析/7-nginx-dns-resolve.md)。
 
-2. 如何进行连接的？
+### 2.如何进行连接的？
 
 答：进行非阻塞连接，返回 rc == -1 && err == NGX_EINPROGRESS 时，表示连接正在进行中。openresty 设置好读写事件，在 ngx_http_lua_socket_connected_handler 中检查连接实际是否成功。
 
-更多参考 [Epoll 与非阻塞连接](../../../B.操作系统/Linux/Application/7.IO多路复用/3.epoll/Epoll与非阻塞连接.md)
+更多参考 [I/O多路复用与非阻塞连接](../../../B.操作系统/Linux/Application/7.IO多路复用/IO多路复用与非阻塞连接/README.md)
 
-3. TCP 连接进行中（NGX_AGAIN）时，yield 出去后，会在哪里恢复？
+### 3.TCP 连接进行中（NGX_AGAIN）时，yield 出去后，会在哪里恢复？
 
 答：
 
@@ -397,3 +405,11 @@ rv = lua_resume(orig_coctx->co, nrets);
     at ../ngx_lua-0.10.21/src/ngx_http_lua_socket_tcp.c:3239
 ...
 ```
+
+### 4.什么是 cosocket 呢？ cosocket 是如何实现的呢？
+
+答：cosocket 是一种基于协程的高性能、低延迟的 I/O 模型。cosocket 基于事件驱动和异步 I/O，使用 Nginx 事件驱动框架监听套接字事件，通过异步 I/O 读写套接字数据，实现面向协议编程（解析/处理协议）的目的。
+
+- 协程：利用 yield、resume 对协程进行调度。
+- 事件驱动：发生事件是，调用事先设置好的处理程序。
+- 异步 IO：不进行阻塞调用，条件没就绪也立即返回。根据不同的返回值，进行处理。如果返回值是 NGX_AGAIN 意味满足，需要继续监听事件，并且 yield 当前的 Lua 调用，等待条件满足再返回。
