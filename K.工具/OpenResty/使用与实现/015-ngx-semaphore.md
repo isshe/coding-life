@@ -94,6 +94,24 @@ sub thread: waited successfully.
 
 ## 获取资源
 
+```lua
+- wait
+```
+
+
 ## 释放资源
 
+```lua
+- post
+    \- if type(self) ~= "table" or type(self.sem) ~= "cdata" then：检查 self 对象
+    \- if num < 1 then：检查参数是否是 >= 1
+    \- ngx_lua_ffi_sema_post
+        \- sem->resource_count += n：把资源加 n
+        \- ngx_post_event((&sem->sem_event), &ngx_posted_events)：如果信号量中的等待队列不为空，就把事件加到全局的 ngx_posted_events 队列中，在后续的事件循环中进行处理。
+```
 
+这个函数也是非常简单，主要进行以下工作：
+
+- 检查参数合法性
+- 把资源数量增加 n
+- 如果有等待队列，就把事件增加到 ngx_posted_events 中，后续处理。
