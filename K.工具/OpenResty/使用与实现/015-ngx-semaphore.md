@@ -96,8 +96,20 @@ sub thread: waited successfully.
 
 ```lua
 - wait
+    \- if milliseconds < 0 then：检查参数，第二个参数是等待超时时间，单位是秒，最小支持 0.001 秒，也就是 1 毫秒。
+    \- ngx_lua_ffi_sema_wait：
+        \- ngx_http_lua_ffi_check_context：检查上下文是否能 yield
+        \- ngx_queue_empty：如果等待队列是否为空并且还有资源直接返回成功
+        \- if (wait_ms == 0)：如果要求不等待，也直接返回
+        \- ngx_add_timer；接下来就是需要等待了，增加 timer，超时时间为调用接口时指定的时间。
+        \- ngx_queue_insert_tail：把当前协程插入到信号量等待队列末尾。
+    \- ok, err = co_yield()：不能在这里使用尾调用形式，因为可能需要当前函数调用的激活记录来保存对信号量对象的引用，以防止它过早地被 GC 处理。
 ```
 
+这个调用主要进行以下工作：
+
+- 检查参数合法性
+- 获取资源，能获取到就直接返回，获取不到就看要不要等待，不等就直接返回超时；等就加入到等待队列中，然后 yield 出去，等待 post 操作唤醒。
 
 ## 释放资源
 
@@ -107,7 +119,7 @@ sub thread: waited successfully.
     \- if num < 1 then：检查参数是否是 >= 1
     \- ngx_lua_ffi_sema_post
         \- sem->resource_count += n：把资源加 n
-        \- ngx_post_event((&sem->sem_event), &ngx_posted_events)：如果信号量中的等待队列不为空，就把事件加到全局的 ngx_posted_events 队列中，在后续的事件循环中进行处理。
+        \- ngx_post_event((&sem->sem_event), &ngx_posted_events)：如果信号量中的等待队列不为空，就把事件加到全局的 ngx_posted_events 队列中，在后续的事件循环中进行唤醒新的协程。
 ```
 
 这个函数也是非常简单，主要进行以下工作：
