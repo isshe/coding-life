@@ -1,5 +1,4 @@
-lua-nginx-module 模块的定义及初始化
----
+# lua-nginx-module 模块的定义及初始化
 
 lua_nginx_module 其实就是一个 Nginx 模块，定义及实现都需要按照 Nginx 模块的要求。
 
@@ -9,7 +8,7 @@ lua_nginx_module 其实就是一个 Nginx 模块，定义及实现都需要按�
 - 了解 lua-nginx-module 模块大致的初始化流程，对 lua-nginx-module 模块有一个总体的概念，然后我们在后续的文章中，去细化追究相关指令的细节。
     - 总分结构
 
-# 定义
+## 定义
 
 - 定义个全局的模块变量：
 
@@ -73,11 +72,11 @@ static ngx_command_t ngx_http_lua_cmds[] = {
 }
 ```
 
-# 初始化
+## 初始化
 
 接下来，我们粗略地了解一下 `模块初始化` 和 `进程初始化`。
 
-## 模块初始化
+### 模块初始化
 
 Nginx 模块的初始化流程见：[Nginx 模块初始化](../../Nginx/Nginx源码分析/2-nginx-module-init.md)
 
@@ -89,7 +88,7 @@ Nginx 模块的初始化流程见：[Nginx 模块初始化](../../Nginx/Nginx源
 
 我们来看下 ngx_http_lua_init 这个函数做了什么。
 
-### ngx_http_lua_init 执行流程
+#### ngx_http_lua_init 执行流程
 
 ```
 - ngx_http_lua_init
@@ -111,7 +110,7 @@ Nginx 模块的初始化流程见：[Nginx 模块初始化](../../Nginx/Nginx源
 可以看到，配置解析完后（postconfiguration）， 立即初始化 Lua VM ，然后调用了 ngx_http_lua_init_by_inline。
 注意：上面并没有类似于 `lmcf->requires_content` 相关的判断，那么是 content 阶段不需要相关标记么？
 
-## 进程初始化
+### 进程初始化
 
 从前面的模块定义可以看到 OpenResty 只指定了 ngx_http_lua_init_worker 和 ngx_http_lua_exit_worker 两个 worker 进程的处理函数。
 配置解析完成后，会 fork 出子进程，然后调用 ngx_http_lua_init_worker 函数，我们来具体看看。

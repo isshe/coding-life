@@ -37,8 +37,17 @@ ngx.sleep 也是通过 C 代码注入的方式，对应的处理函数是：ngx_
     \- ctx->cur_co_ctx = coctx：设置当前协程
     \- if (ctx->entered_content_phase)：如果不是 access、rewrite 阶段
         \- ngx_http_lua_sleep_resume：直接 resume
-    \- else：否则
+            \- vm = ngx_http_lua_get_lua_vm(r, ctx)：获取 Lua 虚拟机
+            \- rc = ngx_http_lua_run_thread(vm, r, ctx, 0)：继续跑协程
+    \- else：否则如果是 access、rewrite 阶段，就设置回调，直接进入核心处理流程
         \- ctx->resume_handler = ngx_http_lua_sleep_resume：设置 resume 回调
         \- ngx_http_core_run_phases(r)：然后继续回到核心处理逻辑
     \- ngx_http_run_posted_requests：执行后续的请求
 ```
+
+在这个函数中，会恢复被暂停的 Lua 协程。
+
+## 总结
+
+ngx.sleep 的实现比较简单，一句话总结：
+设置好处理函数和定时器，然后让出执行权，时间到了触发事件调用设置好的处理函数来恢复执行。
