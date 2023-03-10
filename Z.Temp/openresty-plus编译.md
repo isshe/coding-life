@@ -10,3 +10,7 @@ cd openresty-plus-1.19.9.1.16
 make
 make install
 ```
+
+
+export GITHUB_API_TOKEN=xx
+
