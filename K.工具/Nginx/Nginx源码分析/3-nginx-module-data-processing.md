@@ -58,7 +58,6 @@ Nginx 模块数据处理
 
 [listen](../Nginx指令/http-listen.md)
 
-
 ### 执行流程：端口监听
 
 ```
@@ -225,6 +224,7 @@ struct ngx_module_s {
 Nginx 通过设置不同的 handler，来处理不同类型的请求。
 
 总结：
+
 - Nginx（worker 进程）为每个服务器 socket 分配了一个连接结构（ngx_connection_t），读事件设置为 ngx_event_accept；
   - 可以看到这里是每个 worker 进程都添加了 accept 事件到事件系统中，也就是一个连接请求过来时，会导致所有进程都被唤醒，这也就是所谓的惊群现象。Nginx 的解决方法是添加一个 accept 锁 ngx_accept_mutex。
 - Nginx 为每个客户端 socket 分配了一个对应类型的连接结构（ngx_http_connection_t），读事件设置为对应类型的事件。
