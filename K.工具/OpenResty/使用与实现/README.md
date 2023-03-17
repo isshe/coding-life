@@ -32,3 +32,4 @@ OpenResty 使用与实现
 - https://catbro666.github.io/categories/%E7%BC%96%E7%A8%8B%E5%BC%80%E5%8F%91/Nginx-OpenResty/
 - Lua 中文手册：https://cloudwu.github.io/lua53doc/manual.html
 - Lua 英文手册：https://www.lua.org/manual/5.1/manual.html
+- https://www.kancloud.cn/digest/understandingnginx/202593
