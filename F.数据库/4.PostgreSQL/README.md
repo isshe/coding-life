@@ -62,3 +62,15 @@ COPY (
 -- 导入
 COPY TABLE_NAME FROM '/tmp/data.csv' DELIMITER ',' CSV HEADER;
 ```
+
+# 查看从库状态
+
+```
+select * from pg_stat_replication;
+```
+
+# 不重启数据库生效访问控制 pg_hba.conf
+
+```
+SELECT pg_reload_conf();
+```
