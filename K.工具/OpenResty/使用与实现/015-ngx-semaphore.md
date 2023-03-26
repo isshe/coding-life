@@ -8,7 +8,7 @@
 - 如何使用信号量？
 - 信号量是如何实现的？
 - 信号量是否会导致如进程休眠之类的问题？
-- 不同进程的协程是否能同步呢？
+- 不同进程的协程是否能使用信号量？
 
 # 使用
 
@@ -99,7 +99,7 @@ sub thread: waited successfully.
     \- if milliseconds < 0 then：检查参数，第二个参数是等待超时时间，单位是秒，最小支持 0.001 秒，也就是 1 毫秒。
     \- ngx_lua_ffi_sema_wait：
         \- ngx_http_lua_ffi_check_context：检查上下文是否能 yield
-        \- ngx_queue_empty：如果等待队列是否为空并且还有资源直接返回成功
+        \- ngx_queue_empty：如果等待队列为空并且还有资源直接返回成功
         \- if (wait_ms == 0)：如果要求不等待，也直接返回
         \- ngx_add_timer；接下来就是需要等待了，增加 timer，超时时间为调用接口时指定的时间。
         \- ngx_queue_insert_tail：把当前协程插入到信号量等待队列末尾。
@@ -127,3 +127,17 @@ sub thread: waited successfully.
 - 检查参数合法性
 - 把资源数量增加 n
 - 如果有等待队列，就把事件增加到 ngx_posted_events 中，后续处理。
+
+## 总结
+
+- 信号量是如何实现的？
+
+答：还是依赖 Lua 的协程和 nginx 定时器等。新建一个信号量对象，其中记录信号量的信息；然后使用 wait 和 post 来增减资源。
+
+- 信号量是否会导致如进程休眠之类的问题？
+
+答：不会。使用的 Lua 协程，在没有资源时，会 yiled 出去，给其他协程执行。
+
+- 不同进程的协程是否能使用信号量？
+
+答：不能。可以在不同上下文、请求中进行使用，但是要求是同一个 worker 进程。如需在不同进程间同步，可以使用：lua-resty-lock。
