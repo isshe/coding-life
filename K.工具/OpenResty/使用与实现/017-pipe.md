@@ -37,6 +37,102 @@
   - 成功：返回 pipe 对象
 
 
+### wait —— 等待当前子流程退出
+
+- 语法：` ok, reason, status = proc:wait()`
+
+- 作用：等待当前子流程退出，包括超时退出。
+
+- 返回值：
+  - 成功：ok 值为 true
+  - 失败：ok 值为 false，reason 为一个字符串，如 "exit" 或 "signal"。
+    - exit 时：status 将为 exit 的状态码。
+    - signal 时，status 将为信号码。
+
+### kill —— 向子流程发送一个信号。
+
+- 语法：`ok, err = proc:kill(signum)`
+
+- 作用： 向子流程发送一个信号。
+
+- 参数：
+  - signum：信号量数字。可以使用  lua-resty-signal 的 signum() 来获取信号量名称对应的信号量值。
+
+- 返回值：
+  - 成功：true
+  - 失败：nil 和 错误字符串。如果是已经退出的子流程，则错误字符串为 "exited"。
+
+### shutdown —— 关闭当前子流程的 stderr、stderr 或 stdin
+
+- 语法：`ok, err = proc:shutdown(direction)`
+
+- 作用：关闭子流程的 stderr、 stderr 或 stdin。
+
+- 参数：
+  - direction：stderr、stdout、stdin。
+
+- 返回值：
+  - 成功：true
+    - 如果关闭一个轻线程正在等待的方向(stderr/stdout/stdin)，则返回 true。
+  - 失败：nil 和错误字符串。
+    - 如果指定了 merge_stderr，并且对 stderr 调用 shutdown，则返回 nil 和 "merged to stdout"。
+    - 如果子流程已经退出，则返回 nil 和 "closed"。
+
+### write —— 向子流程的 stdin 写入数据
+
+- 语法：`nbytes, err = proc:write(data)`
+
+- 作用：向子流程的 stdin 写入数据。
+
+- 参数：
+  - data：需要写入的数据。
+
+- 返回值：
+  - 成功：nbytes 表示成功写入的数据长度。
+  - 失败：nil 和错误字符串。
+    - 如果多个协程同时向当前子流程进行写入，则只有第一个成功，后续的调用都会返回 "pipe busy writing" 错误。
+    - 如果写操作被 shutdown 了，将返回 nil 和 "aborted"。
+    - 如果写已经退出的子流程，将返回 nil 和 "closed"。
+
+### stdout_read_*、stderr_read_* —— 从 stderr 或 stdout 读取数据。
+
+- 语法：
+
+```
+data, err, partial = proc:stderr_read_all()
+data, err, partial = proc:stdout_read_all()
+data, err, partial = proc:stderr_read_line()
+data, err, partial = proc:stdout_read_line()
+data, err, partial = proc:stderr_read_bytes(len)
+data, err, partial = proc:stdout_read_bytes(len)
+data, err = proc:stderr_read_any(max)
+proc:stdout_read_any(max)
+```
+
+比较简单，不再详细说明，可参考此文档：https://github.com/openresty/lua-resty-core/blob/master/lib/ngx/pipe.md#stderr_read_all
 
 
+## 实现
 
+相关 API 并不是通过 lua-nginx-module 注入的方式来实现。详见：
+
+- [pipe.lua](https://github.com/openresty/lua-resty-core/blob/master/lib/ngx/pipe.lua)
+
+### 创建 pipe 对象
+
+```
+- pipe_spawn: 这部分是 Lua 代码，进行各种参数检查。
+    \- ngx_http_lua_ffi_pipe_spawn: 创建 pipe 对象
+        \- ngx_create_pool: 创建内存池
+        \- pipe: 创建 3 个 pipe：对应 stdin、stdout、stderr；stderr 根据参数按需创建。
+        \- fork: fork 进程
+            \- 如果是子进程(fork 返回值是 0)
+                \- CPU_SET: 重新设置进程的 CPU 亲缘性
+                \- sigaction: 重置已忽略信号的处理程序成 default(SIG_DFL)
+                \- sigprocmask(SIG_SETMASK, &set, NULL): 重置信号掩码
+                \- ngx_close_socket(ls[i].fd): 关闭监听的套接字
+                \- close(out[0]): 关闭不需要的管道套接字，如 stdin 的写（对子进程来说）；stdout 的读。
+                \- dup2(in[0], STDIN_FILENO): 重定向标准输入、标准输入。
+                \- close(in[0]): 关闭多余的套接字，如 stdin 的读。在 dup2 后，in[0] 会有 2 份，一份描述符是原来的 in[0]，另一份描述符是 STDIN_FILENO，因此关闭多余的 in[0]。
+
+```
