@@ -23,6 +23,10 @@ OpenResty 使用与实现
 - 基于 lua-nginx-module [v0.10.21](https://github.com/openresty/lua-nginx-module/commits/v0.10.21)
 - 建议先了解 Luajit 相关函数的功能，参考示例：[ngx_http_lua_inject_arg_api.md](../../Luajit/Examples/ngx_http_lua_inject_arg_api.md)
 
+# 核心技术点
+
+- [核心技术点汇总]()
+
 # 参考
 
 - 源码：https://github.com/openresty/lua-nginx-module

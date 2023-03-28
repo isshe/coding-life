@@ -134,5 +134,26 @@ proc:stdout_read_any(max)
                 \- close(out[0]): 关闭不需要的管道套接字，如 stdin 的写（对子进程来说）；stdout 的读。
                 \- dup2(in[0], STDIN_FILENO): 重定向标准输入、标准输入。
                 \- close(in[0]): 关闭多余的套接字，如 stdin 的读。在 dup2 后，in[0] 会有 2 份，一份描述符是原来的 in[0]，另一份描述符是 STDIN_FILENO，因此关闭多余的 in[0]。
+                \- execvpe/ngx_http_lua_execvpe/execvp：执行想要执行的命令(程序)
 
+            \- 如果是父进程（fork 返回值是子进程的 ID）
+                \- close: 关闭不需要的文件描述符，如标准输入的读，标准输出的写
+                \- ngx_nonblocking: 把没关闭的文件描述符设置为非阻塞
+                \- ngx_rbtree_insert: 设置好 pipe 对象，然后加入到红黑树中。
+```
+
+这个函数主要做了以下事情：
+
+- 创建 2 或 3 个管道(pipe)，如果使用了 merge_stderr 则 2 个，否则 3 个。
+- 然后 fork 进程
+- 在子进程中关闭不要的 fd，并把标准输入和标准输出重定向到对应管道中
+- 准备工作完成后，子进程执行执行命令
+- 父进程也关闭不要的 fd，设置没关闭的 fd 成非阻塞，然后加入到红黑树中，进行管理。
+
+
+### 向子流程的 stdin 写入数据
+
+```
+- proc_write: Lua 接口
+    \-
 ```

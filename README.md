@@ -9,6 +9,7 @@
 正在进行
 
 - [OpenResty 的管道](K.工具/OpenResty/使用与实现/017-pipe.md)
+- [OpenResty 核心技术点汇总](K.工具/OpenResty/使用与实现/000-core-tech.md)
 
 下一步
 
