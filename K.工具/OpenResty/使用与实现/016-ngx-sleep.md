@@ -7,6 +7,7 @@
 
 - 了解 ngx.sleep 的使用。
 - 了解 ngx.sleep 的实现。
+- ngx.sleep()及其他 cosocket 相关的函数不能用在 init_by_lua/init_worker_by_lua/set_by_lua/header_filter_by_lua/body_filter_by_lua/log_by_lua 的原因是什么?
 
 ## 使用
 
@@ -17,6 +18,8 @@ ngx.sleep(0.001)
 ```
 
 睡眠时间的精度是毫秒（0.001 秒）。
+
+上下文：rewrite_by_lua*, access_by_lua*, content_by_lua*, ngx.timer.*, ssl_certificate_by_lua*, ssl_session_fetch_by_lua*, ssl_client_hello_by_lua*
 
 ## 实现
 
@@ -51,3 +54,8 @@ ngx.sleep 也是通过 C 代码注入的方式，对应的处理函数是：ngx_
 
 ngx.sleep 的实现比较简单，一句话总结：
 设置好处理函数和定时器，然后让出执行权，时间到了触发事件调用设置好的处理函数来恢复执行。
+
+
+- ngx.sleep()及其他 cosocket 相关的函数不能用在 init_by_lua/init_worker_by_lua/set_by_lua/header_filter_by_lua/body_filter_by_lua/log_by_lua 的原因是什么?
+
+答：需要是可以 yield 的阶段（NGX_HTTP_LUA_CONTEXT_YIELDABLE）。

@@ -59,9 +59,9 @@ options:
 -- body: 子请求 body 数据，必须是 lua 字符串
 -- ctx: 子请求使用的 ngx.ctx 临时数据
 -- vars: 子请求可能用到的变量，存储在表里
--- copy_all_vars: 
--- share_all_vars: 
--- always_forward_body: 
+-- copy_all_vars:
+-- share_all_vars:
+-- always_forward_body:
 ```
 
 
@@ -83,14 +83,11 @@ cosocket：corountine based socket。支持 TCP、UDP、UNIX Domain Socket。
 * 上游集群指令：upstream、server、ip_hash、last_conn 等
 * 代理转发指令：proxy_pass、fastcgi_pass、grpc_pass 等
 * 镜像转发指令：mirror，仅能在 http 子系统里使用
-* 
+*
 
 
 
 # HTTPS/SSL/TLS
-
-
-
 
 
 # 疑问
