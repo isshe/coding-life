@@ -4,6 +4,7 @@ Readme
 ---
 
 # 配置指令
+
 |指令|参数|默认值|建议值|功能描述|上下文|备注|
 |---|---|---|---|---|---|---|
 |lua_use_default_type|on/off|on|on|响应时，是否在 Content-type 中使用默认的类型|||
@@ -64,57 +65,30 @@ options:
 -- always_forward_body:
 ```
 
-
-
-
-
-## cosocket
-
-cosocket：corountine based socket。支持 TCP、UDP、UNIX Domain Socket。
-
-运行阶段：rewrite、access、content、ssl_certificate ，以及定时器 ngx.timter。
-
-
-
-# 反向代理
-
-指令：
-
-* 上游集群指令：upstream、server、ip_hash、last_conn 等
-* 代理转发指令：proxy_pass、fastcgi_pass、grpc_pass 等
-* 镜像转发指令：mirror，仅能在 http 子系统里使用
-*
-
-
-
-# HTTPS/SSL/TLS
-
-
 # 疑问
 
 * ngx.sleep()及其他 cosocket 相关的函数不能用在 init_by_lua/init_worker_by_lua/set_by_lua/header_filter_by_lua/body_filter_by_lua/log_by_lua 的原因是什么?
 
+详见 [ngx.sleep](使用与实现/016-ngx-sleep.md)。
 
 * 为何不建议频繁使用`ngx.var `?
 因为每次调用都会有一点额外的开销：内部分配少量内存。因此不建议过度使用，应尽量使用等价的功能接口。
 如必须使用，则使用 local 化暂存，避免多次调用。
 部分功能可以使用 `ngx.req`代替。
 
-
-
-* 为何不建议频繁使用`ngx.ctx`?
+* 为何不建议频繁使用 `ngx.ctx`?
 ngx.ctx 的成本较高，应当尽量少用，只存放少量必要的数据，避免滥用。
 
-* 如果在 access、rewrite 阶段ngx.req.set_method，那么 content 阶段的 proxy_pass 的 method 会改变吗？
+* 如果在 access、rewrite 阶段 ngx.req.set_method，那么 content 阶段的 proxy_pass 的 method 会改变吗？
     * set_rui 等其他 set 函数呢？是否会改变 proxy_pass 到上游的内容？
 
-* 什么时候需要手动ngx.send_headers？
+* 什么时候需要手动 ngx.send_headers？
 
+通常不需要手动执行。
+
+ngx.send_headers 的执行阶段是 “rewrite_by_lua*, access_by_lua*, content_by_lua*”。
 
 * 为什么要限制挂起计时器及运行计时器的数量？
 为了避免在服务器中累积并耗尽系统资源，导致Nginx服务器崩溃等极端后果，Nginx工作进程中的“挂起计时器”数量和“运行计时器”数量都有内置的限制。
 
 **为何成本高？**
-
-
-
