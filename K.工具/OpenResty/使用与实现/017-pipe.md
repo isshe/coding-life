@@ -155,5 +155,7 @@ proc:stdout_read_any(max)
 
 ```
 - proc_write: Lua 接口
-    \-
+    \- local rc = C.ngx_http_lua_ffi_pipe_proc_write: 进行写操作
+    \- co_yield(): 如果前面调用的返回值是 FFI_AGAIN，则 yield 让出执行权
+    \- rc = C.ngx_http_lua_ffi_pipe_get_write_result: 获取写结果
 ```
