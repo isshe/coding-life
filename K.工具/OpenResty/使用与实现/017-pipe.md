@@ -10,6 +10,8 @@
 - 如何使用？在 OR 里面是如何使用的？
 - 由操作系统 shell 执行的字符串形式的命令行，会阻塞吗？
 - 如何实现的？
+- 在 proc_write 中 yield 出去后，是如何 resume 的？
+
 
 ## 使用
 
@@ -156,6 +158,15 @@ proc:stdout_read_any(max)
 ```
 - proc_write: Lua 接口
     \- local rc = C.ngx_http_lua_ffi_pipe_proc_write: 进行写操作
+      \- ngx_http_lua_pipe_init_ctx: 初始化 ctx。设置读写函数、初始化读写事件的处理函数。
+      \- ngx_http_lua_chain_get_free_buf: 获取空间存放要写入的数据
+      \- ngx_http_lua_pipe_write: 进行写操作
+        \- NGX_AGAIN: 返回值是 NGX_AGAIN 表示阻塞了
+        \- pipe_ctx->c->data = ctx->cur_co_ctx: 设置好 cur_co_ctx
+        \- ngx_handle_write_event: 添加写事件，事件处理函数是 ngx_http_lua_pipe_resume_write_handler。
+        \- ngx_add_timer(wev, timeout): 如果设置了超时时间，就添加到定时器中
     \- co_yield(): 如果前面调用的返回值是 FFI_AGAIN，则 yield 让出执行权
     \- rc = C.ngx_http_lua_ffi_pipe_get_write_result: 获取写结果
 ```
+
+
