@@ -1,9 +1,6 @@
 管道
 ---
 
-> ngx_http_lua_pipe_init
-> 目前了解到主要是用于实现 lua-resty-shell 之类的库，后续探究一番。
-
 目的：
 
 - 有哪些使用场景？
@@ -11,7 +8,6 @@
 - 由操作系统 shell 执行的字符串形式的命令行，会阻塞吗？
 - 如何实现的？
 - 在 proc_write 中 yield 出去后，是如何 resume 的？
-
 
 ## 使用
 
@@ -100,7 +96,7 @@
 
 - 语法：
 
-```
+```lua
 data, err, partial = proc:stderr_read_all()
 data, err, partial = proc:stdout_read_all()
 data, err, partial = proc:stderr_read_line()
@@ -122,7 +118,7 @@ proc:stdout_read_any(max)
 
 ### 创建 pipe 对象
 
-```
+```lua
 - pipe_spawn: 这部分是 Lua 代码，进行各种参数检查。
     \- ngx_http_lua_ffi_pipe_spawn: 创建 pipe 对象
         \- ngx_create_pool: 创建内存池
@@ -155,18 +151,59 @@ proc:stdout_read_any(max)
 
 ### 向子流程的 stdin 写入数据
 
-```
+```lua
 - proc_write: Lua 接口
     \- local rc = C.ngx_http_lua_ffi_pipe_proc_write: 进行写操作
       \- ngx_http_lua_pipe_init_ctx: 初始化 ctx。设置读写函数、初始化读写事件的处理函数。
       \- ngx_http_lua_chain_get_free_buf: 获取空间存放要写入的数据
       \- ngx_http_lua_pipe_write: 进行写操作
-        \- NGX_AGAIN: 返回值是 NGX_AGAIN 表示阻塞了
-        \- pipe_ctx->c->data = ctx->cur_co_ctx: 设置好 cur_co_ctx
-        \- ngx_handle_write_event: 添加写事件，事件处理函数是 ngx_http_lua_pipe_resume_write_handler。
-        \- ngx_add_timer(wev, timeout): 如果设置了超时时间，就添加到定时器中
+        \- c->send: 实际的写入函数是 ngx_http_lua_pipe_fd_write
+      \- NGX_AGAIN: 返回值是 NGX_AGAIN 表示阻塞了
+      \- pipe_ctx->c->data = ctx->cur_co_ctx: 设置好 cur_co_ctx
+      \- ngx_handle_write_event: 添加写事件，事件处理函数是 ngx_http_lua_pipe_resume_write_handler。
+        \- ngx_http_lua_pipe_resume_write_handler
+          \- ngx_http_lua_pipe_resume_helper
+            \- ngx_http_lua_pipe_clear_event: 把事件清理掉
+            \- ctx->cur_co_ctx = wait_co_ctx: 设置好 ctx
+            \- ngx_http_lua_pipe_resume: 已经进入 content 阶段，调用这个来环境
+            \- ngx_http_core_run_phases: 否则，调用这个来唤醒
+            \- ngx_http_run_posted_requests: 调用后续请求的处理
+      \- ngx_add_timer(wev, timeout): 如果设置了超时时间，就添加到定时器中
     \- co_yield(): 如果前面调用的返回值是 FFI_AGAIN，则 yield 让出执行权
     \- rc = C.ngx_http_lua_ffi_pipe_get_write_result: 获取写结果
 ```
 
+这个函数的主要实现思路是：
 
+- 进行一次写入
+- 如果没完成，就放到事件循环中
+- 然后 yield 让出执行权
+- 后续事件发生（可写或超时）在 resume 恢复后续执行
+
+这个函数主要做了以下事情：
+
+- 参数检查
+- 把要写入的数据复制到 buffer 中
+- 进行一次写入，根据写入结果进行后续操作
+- 如果没写完，就监听写事件和设置定时器
+- 然后让出执行权
+- 后续 resume 回来后，调用 ngx_http_lua_ffi_pipe_get_write_result 来获取结果
+- 如果还是没完成，就继续 yield 出去
+
+### 从子流程的 stdout 读取数据
+
+和写入数据是一样是思路，只是多了不同是读取模式，不再赘述。
+
+## 总结
+
+- 有哪些使用场景？
+
+答：用于执行系统命令。
+
+- 由操作系统 shell 执行的字符串形式的命令行，会阻塞吗？
+
+答：不会，当参数不是数组形式，会默认使用 `/bin/sh` 来执行命令。
+
+- 在 proc_write 中 yield 出去后，是如何 resume 的？（如何实现的？）
+
+答：进行读写操作时，如果一次完成不了，就设置好事件，然后 yiled 让出执行权；后续通过事件模块来进行 resume。

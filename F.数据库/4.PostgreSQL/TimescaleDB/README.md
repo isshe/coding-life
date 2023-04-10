@@ -41,6 +41,9 @@ select remove_drop_chunks_policy('TABLE_NAME', if_exists => True);
 -- 增加新的清理策略
 select add_drop_chunks_policy('TABLE_NAME', INTERVAL '1 week', cascade_to_materializations => FALSE);
 
+-- 修改 chunk 大小
+SELECT set_chunk_time_interval('TABLE_NAME', INTERVAL '1 week');
+
 -- 删除不再需要的 chunk （可选）
 select drop_chunks(table_name =>'TABLE_NAME', older_than => INTERVAL '1 week', cascade_to_materializations => FALSE);
 ```
