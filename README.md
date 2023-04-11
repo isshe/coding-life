@@ -9,6 +9,7 @@
 正在进行
 
 - [OpenResty 核心技术点汇总](K.工具/OpenResty/使用与实现/000-core-tech.md)
+- [OpenResty Lua 代码缓存](K.工具/OpenResty/使用与实现/018-ngx_lua_cache.md)
 
 下一步
 
@@ -37,4 +38,4 @@
 
 ### 网络编程
 
-- [I/O多路复用与非阻塞连接](B.操作系统/Linux/Application/7.IO多路复用/IO多路复用与非阻塞连接/README.md)
+- [I/O 多路复用与非阻塞连接](B.操作系统/Linux/Application/7.IO多路复用/IO多路复用与非阻塞连接/README.md)

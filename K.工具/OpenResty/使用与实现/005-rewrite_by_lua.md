@@ -133,7 +133,7 @@
 
 ### ngx_http_lua_rewrite_handler 执行流程
 
-```
+```lua
 - ngx_http_lua_rewrite_handler
     \- if (r->uri_changed)：URI 已经改变了，直接进行下一个模块 [1]
     \- ngx_http_get_module_main_conf：获取模块配置
@@ -161,7 +161,7 @@
             \- ngx_http_lua_run_thread：执行 Lua 代码
 ```
 
-- ngx_http_lua_cache_loadbuffer 相关函数见：[020-ngx_lua_cache.md](020-ngx_lua_cache.md)
+- ngx_http_lua_cache_loadbuffer 相关函数见：[018-load_cache_lua_code.md](018-load_cache_lua_code.md)
 - 执行代码前，把 Lua 代码闭包的 env 表设置成了新协程的 global 表了，因此相当于在 “沙箱”中执行 Lua 代码。
 
 （到此，我们前面提到的“目的”，就都知道答案了。）
