@@ -162,7 +162,7 @@
 ```
 
 - ngx_http_lua_cache_loadbuffer 相关函数见：[018-load_cache_lua_code.md](018-load_cache_lua_code.md)
-- 执行代码前，把 Lua 代码闭包的 env 表设置成了新协程的 global 表了，因此相当于在 “沙箱”中执行 Lua 代码。
+- 执行代码前，把 Lua 代码闭包的 env 表设置成了新协程的 global 表了，因此相当于在“沙箱”中执行 Lua 代码。
 
 （到此，我们前面提到的“目的”，就都知道答案了。）
 
