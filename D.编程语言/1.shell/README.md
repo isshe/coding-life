@@ -142,14 +142,42 @@ echo $@
 arr=($(awk -v RS=' ' '!a[$1]++' <<< ${arr[@]}))
 ```
 
-# 只删除文件名大于某文件名的文件
+# 只删除文件名小于某文件名的文件
 
 ```
 ls dir | awk '{if ($0 <= "filename.t" ) print "dir/"$0}' | sort | xargs rm -f
 ```
 
-# 只移动文件名大于某文件名的文件
+# 只移动文件名小于某文件名的文件
 
 ```
 ls dir | awk '{if ($0 <= "filename.t" ) print "dir/"$0}' | sort | xargs -I {} mv {} new_dir/
 ```
+
+- 完整脚本
+
+```
+#!/bin/bash
+
+file="$1"
+new_dir="$2"
+
+if [ ! -d "$new_dir" ]; then
+    mkdir -p "$new_dir"
+fi
+
+old_dir=$(dirname $file)
+filename=$(basename $file)
+
+ls $old_dir | awk '{if ( $0 <= "'"$filename"'" ) print "'"$old_dir/"'"$0}' | sort | xargs -I {} mv {} $new_dir
+```
+
+命令中，把 awk 的参数分成了 5 段，使用 `'（单引号）`进行拼接。
+
+# 移除文件后缀名
+
+```
+mv $file ${file%.*}
+```
+
+`${variable%pattern}` 是一种 bash shell 的字符串操作符，表示将变量 `${variable} `的值从右到左与指定的模式pattern进行匹配，并删除最短匹配的内容，返回剩余部分。
