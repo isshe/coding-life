@@ -1,4 +1,4 @@
-# cosocket
+# OpenResty cosocket
 
 使用 openresty 过程中，常常听说 cosocket，那么，cosocket 是什么呢？
 
@@ -412,4 +412,4 @@ rv = lua_resume(orig_coctx->co, nrets);
 
 - 协程：利用 yield、resume 对协程进行调度。
 - 事件驱动：发生事件是，调用事先设置好的处理程序。
-- 异步 IO：不进行阻塞调用，条件没就绪也立即返回。根据不同的返回值，进行处理。如果返回值是 NGX_AGAIN 意味满足，需要继续监听事件，并且 yield 当前的 Lua 调用，等待条件满足再返回。
+- 异步 IO：不进行阻塞调用，条件没就绪也立即返回。根据不同的返回值，进行处理。如果返回值是 NGX_AGAIN 意味着条件不满足，需要继续监听事件，并且 yield 当前的 Lua 调用，等待条件满足再返回。

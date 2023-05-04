@@ -9,7 +9,8 @@
 正在进行
 
 - [OpenResty 核心技术点汇总](K.工具/OpenResty/使用与实现/000-core-tech.md)
-- [OpenResty 共享内存](K.工具/OpenResty/使用与实现/019-ngx_shared_dict.md)
+- [Luajit 核心技术点汇总](K.工具/Luajit/设计与实现/000-core-tech.md))
+- [Luajit 垃圾回收机制](K.工具/Luajit/设计与实现/004-garbage-collection.md)
 
 下一步
 
@@ -39,6 +40,7 @@
 - [cosocket](K.工具/OpenResty/使用与实现/014-cosocket.md)
 - [OpenResty 的管道](K.工具/OpenResty/使用与实现/017-pipe.md)
 - [OpenResty Lua 代码缓存](K.工具/OpenResty/使用与实现/018-ngx_lua_cache.md)
+- [OpenResty 共享内存](K.工具/OpenResty/使用与实现/019-ngx_shared_dict.md)
 
 ### 网络编程
 
