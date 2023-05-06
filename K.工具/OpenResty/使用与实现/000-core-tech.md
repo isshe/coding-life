@@ -14,6 +14,7 @@ TODO: 补充以下相关的
 - 在[初始化 Lua 虚拟机](010-lua-vm-init.md)时，进行 Lua 接口注入。
 - 采用表（table）的形式进行组织 —— lua_createtable。
 - 创建一个表，然后设置键值对，把 key（如 "get"） 和 C 函数（lua_pushcfunction）或值(lua_pushinteger 等)进行绑定。
+- 各个协程可以设置各自独立的全局表。
 
 ## cosocket
 
