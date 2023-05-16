@@ -14,133 +14,133 @@
         {
             "title": "OpenResty 核心技术点",
             "src-dir": "使用与实现",
-            "dst-dir": "usage-implementation",
+            "dst-dir": "core-tech",
             "filename": "000-core-tech.md"
         },
         {
             "title": "OpenResty 代码结构",
             "src-dir": "使用与实现",
-            "dst-dir": "usage-implementation",
+            "dst-dir": "source-code-structure",
             "filename": "000-source-code-structure.md"
         },
         {
             "title": "OpenResty 模块初始化",
             "src-dir": "使用与实现",
-            "dst-dir": "usage-implementation",
+            "dst-dir": "module-init",
             "filename": "001-1-module-init.md"
         },
         {
             "title": "OpenResty *_by_lua* 及阶段",
             "src-dir": "使用与实现",
-            "dst-dir": "usage-implementation",
+            "dst-dir": "x-by-luax-and-phase",
             "filename": "001-2-x_by_luax-and-phase.md"
         },
         {
             "title": "OpenResty init_by_lua*",
             "src-dir": "使用与实现",
-            "dst-dir": "usage-implementation",
+            "dst-dir": "init-by-lua",
             "filename": "002-init_by_lua.md"
         },
         {
             "title": "OpenResty init_worker_by_lua*",
             "src-dir": "使用与实现",
-            "dst-dir": "usage-implementation",
+            "dst-dir": "init-worker-by-lua",
             "filename": "003-init_worker_by_lua.md"
         },
         {
             "title": "OpenResty Lua 代码执行实例跟踪",
             "src-dir": "使用与实现",
-            "dst-dir": "usage-implementation",
+            "dst-dir": "lua-code-exec-trace",
             "filename": "004-lua-code-execution-trace.md"
         },
         {
             "title": "OpenResty rewrite_by_lua*",
             "src-dir": "使用与实现",
-            "dst-dir": "usage-implementation",
+            "dst-dir": "rewrite-by-lua",
             "filename": "005-rewrite_by_lua.md"
         },
         {
             "title": "OpenResty access_by_lua*",
             "src-dir": "使用与实现",
-            "dst-dir": "usage-implementation",
+            "dst-dir": "access-by-lua",
             "filename": "006-access_by_lua.md"
         },
         {
             "title": "OpenResty content_by_lua*",
             "src-dir": "使用与实现",
-            "dst-dir": "usage-implementation",
+            "dst-dir": "content-by-lua",
             "filename": "007-content_by_lua.md"
         },
         {
             "title": "OpenResty log_by_lua*",
             "src-dir": "使用与实现",
-            "dst-dir": "usage-implementation",
+            "dst-dir": "log-by-lua",
             "filename": "008-log_by_lua.md"
         },
         {
             "title": "OpenResty ngx.log",
             "src-dir": "使用与实现",
-            "dst-dir": "usage-implementation",
+            "dst-dir": "ngx-log",
             "filename": "009-ngx-log.md"
         },
         {
             "title": "OpenResty Lua VM 初始化",
             "src-dir": "使用与实现",
-            "dst-dir": "usage-implementation",
+            "dst-dir": "lua-vm-init",
             "filename": "010-lua-vm-init.md"
         },
         {
             "title": "OpenResty 协程",
             "src-dir": "使用与实现",
-            "dst-dir": "usage-implementation",
+            "dst-dir": "coroutine",
             "filename": "011-corountine.md"
         },
         {
             "title": "OpenResty 轻量级现成",
             "src-dir": "使用与实现",
-            "dst-dir": "usage-implementation",
+            "dst-dir": "lightthread",
             "filename": "012-ngx-lightthread.md"
         },
         {
             "title": "OpenResty 线程",
             "src-dir": "使用与实现",
-            "dst-dir": "usage-implementation",
+            "dst-dir": "thread",
             "filename": "013-thread.md"
         },
         {
             "title": "OpenResty cosocket",
             "src-dir": "使用与实现",
-            "dst-dir": "usage-implementation",
+            "dst-dir": "cosocket",
             "filename": "014-cosocket.md"
         },
         {
             "title": "OpenResty 信号量",
             "src-dir": "使用与实现",
-            "dst-dir": "usage-implementation",
+            "dst-dir": "semaphore",
             "filename": "015-ngx-semaphore.md"
         },
         {
             "title": "OpenResty ngx.sleep",
             "src-dir": "使用与实现",
-            "dst-dir": "usage-implementation",
+            "dst-dir": "ngx-sleep",
             "filename": "016-ngx-sleep.md"
         },
         {
             "title": "OpenResty 管道（pipe）",
             "src-dir": "使用与实现",
-            "dst-dir": "usage-implementation",
+            "dst-dir": "pipe",
             "filename": "017-pipe.md"
         },
         {
             "title": "OpenResty Lua 代码加载",
             "src-dir": "使用与实现",
-            "dst-dir": "usage-implementation",
+            "dst-dir": "load-cache-lua-code",
             "filename": "018-load_cache_lua_code.md"
         },
         {
             "title": "OpenResty 共享字典（内存）",
             "src-dir": "使用与实现",
-            "dst-dir": "usage-implementation",
+            "dst-dir": "lua-shard-dict",
             "filename": "019-ngx_shared_dict.md"
         }
     ]
