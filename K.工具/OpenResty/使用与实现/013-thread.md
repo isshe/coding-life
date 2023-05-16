@@ -14,6 +14,7 @@
 - OpenResty 协程会在何时执行？（排除前面探究过的轻线程和 coroutine 接口）
 - 主协程和其他协程是如何区分的？
 - Lua VM 和主协程是什么关系？
+- 这里描述的协程与前面章节中描述的 coroutine 什么关系？
 
 ## 使用
 
@@ -195,3 +196,7 @@ typedef enum {
 1. Lua VM：是 OpenResty 运行 Lua 代码的运行环境，它负责编译和执行 Lua 代码，并管理内存分配和回收。
 2. 主协程：是 OpenResty 中处理请求的核心协程，它在 Lua VM 中运行，负责读取请求信息、执行 Lua 脚本、生成响应等。
 因此，可以说：主协程是在 Lua VM 环境中运行的，它依赖于 Lua VM 提供的运行环境和资源。**每次请求都会创建一个独立的主协程，独立运行，互不影响。**
+
+- 这里描述的协程与前面章节中描述的 coroutine 什么关系？
+
+答：前面章节的 coroutine 也是基于本章节描述的协程（ngx_http_lua_run_thread）和 Lua 协程（lua_newthread）。
