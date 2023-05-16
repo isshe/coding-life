@@ -60,7 +60,7 @@ SELECT *, (interval_length / 24 / 60 / 60 / 1000000) as interval  FROM "_timesca
 ```
 
 
-- 查询时序表 chunk 创建间隔
+- 更新时序表 chunk 创建间隔
 
 ```sql
 SELECT set_chunk_time_interval('TABLE_NAME', interval '24 hours');
