@@ -9,12 +9,18 @@ TimescaleDB
 ```sql
 select table_name, table_size, total_size
     from timescaledb_information.hypertable where table_schema='public';
+
+select table_name, table_schema, pg_size_bytes(total_size) / 1024 / 1024 as total_size
+from timescaledb_information.hypertable
+where total_size is not null order by total_size desc;
 ```
 
 - 查询时序库总大小：
 
 ```sql
 select sum(pg_size_bytes(total_size)) from timescaledb_information.hypertable where total_size is not null;
+
+select sum(pg_size_bytes(total_size)) / 1024 / 1024  from timescaledb_information.hypertable where total_size is not null;
 ```
 
 - 增加清理策略：
