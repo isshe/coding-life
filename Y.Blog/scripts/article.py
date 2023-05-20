@@ -170,25 +170,32 @@ class Article(object):
         if self.dst_index_date and info['date'] == self.dst_index_date:
             print("[!] {} already up to date".format(info['title']))
             return
-        elif os.path.exists(dst_path):
-            shutil.rmtree(dst_path)
+        # elif os.path.exists(dst_path):
+        #     shutil.rmtree(dst_path)
 
         print("[+] Converting articles: ", info['title'])
         if not self.is_single_file:
             # src is directory
-            shutil.copytree(src_path, dst_path)
+            shutil.copytree(src_path, dst_path, dirs_exist_ok=True)
             os.remove(dst_path + '/' + info['filename'])
         else:
             # src is single file, just prepare dst dir
-            os.makedirs(dst_path)
+            if not os.path.exists(dst_path):
+                os.makedirs(dst_path)
 
         if not info.get('image', None):
-            image = pick_image(self.image_path)
-            _, file_extension = os.path.splitext(image)
-            new_image_name = "image" + file_extension
-            shutil.copyfile(self.image_path + '/' + image,
-                            self.dst_path + '/' + new_image_name)
-            info['image'] = new_image_name
+            if os.path.exists(self.dst_path + '/image.png'):
+                info['image'] = "image.png"
+
+            elif os.path.exists(self.dst_path + '/image.jpg'):
+                info['image'] = "image.jpg"
+            else:
+                image = pick_image(self.image_path)
+                _, file_extension = os.path.splitext(image)
+                new_image_name = "image" + file_extension
+                shutil.copyfile(self.image_path + '/' + image,
+                                self.dst_path + '/' + new_image_name)
+                info['image'] = new_image_name
 
         # output
         index_file = dst_path + "/index.md"

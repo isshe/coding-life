@@ -15,7 +15,8 @@
             "filename": "gdb.md",
             "categories": [],
             "tags": [
-                "gdb"
+                "gdb",
+                "静态追踪"
             ]
         },
         {
