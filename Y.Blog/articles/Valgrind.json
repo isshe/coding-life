@@ -1,0 +1,20 @@
+{
+    "categories": [
+        "Valgrind",
+        "静态追踪"
+    ],
+    "tags": [
+        "Valgrind",
+        "Memcheck",
+        "静态追踪"
+    ],
+    "src-path": "N.静态追踪/Valgrind/QuickStartGuide",
+    "dst-path": "coding-life/valgrind",
+    "articles": [
+        {
+            "title": "Valgrind 快速上手",
+            "dst-dir": "quickstart",
+            "filename": "README.md"
+        }
+    ]
+}
