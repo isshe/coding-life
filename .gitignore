@@ -72,3 +72,5 @@ package-lock.json
 *.iml
 ops.script.log
 
+# valgrind
+callgrind.out.*

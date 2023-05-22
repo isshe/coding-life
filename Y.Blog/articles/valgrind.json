@@ -8,7 +8,7 @@
         "Memcheck",
         "静态追踪"
     ],
-    "src-path": "N.静态追踪/Valgrind/QuickStartGuide",
+    "src-path": "N.静态追踪/Valgrind/quick-start-guide",
     "dst-path": "coding-life/valgrind",
     "articles": [
         {
