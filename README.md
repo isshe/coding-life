@@ -8,6 +8,7 @@ my life.
 
 正在进行
 
+- [Valgrind 用户手册](N.静态追踪/Valgrind/user-manual)
 - [OpenResty 核心技术点汇总](K.工具/OpenResty/使用与实现/000-core-tech.md)
 - [Luajit 核心技术点汇总](K.工具/Luajit/设计与实现/000-core-tech.md)
 - [Nginx 的阶段解析](K.工具/Nginx/Nginx源码分析/4-nginx-phase.md)
@@ -45,3 +46,9 @@ my life.
 ### 网络编程
 
 - [I/O 多路复用与非阻塞连接](B.操作系统/Linux/Application/7.IO多路复用/IO多路复用与非阻塞连接/README.md)
+
+### 源码阅读
+
+- [lua-nginx-module](https://github.com/isshe/lua-nginx-module)
+- [lua-resty-core](https://github.com/isshe/lua-resty-core)
+- [valgrind](https://github.com/isshe/valgrind)

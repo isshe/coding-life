@@ -29,6 +29,8 @@ OpenResty 使用与实现
 
 # 参考
 
+- lua-nginx-module 源码（个人注释版）：https://github.com/isshe/lua-nginx-module
+- lua-resty-core 源码（个人注释版）：https://github.com/isshe/lua-resty-core
 - 源码：https://github.com/openresty/lua-nginx-module
 - https://github.com/LomoX-Offical/openresty-source-code-analysis/blob/master/lua-nginx-module
 - https://github.com/tokers/lua-nginx-module-digest

@@ -4,3 +4,8 @@
 
 - 为何能检测出错误？
 - 为何会产生误报？
+
+
+# 参考
+
+- Valgrind 源码（个人注释版）：https://github.com/isshe/valgrind
