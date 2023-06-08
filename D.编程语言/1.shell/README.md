@@ -181,3 +181,10 @@ mv $file ${file%.*}
 ```
 
 `${variable%pattern}` 是一种 bash shell 的字符串操作符，表示将变量 `${variable} `的值从右到左与指定的模式pattern进行匹配，并删除最短匹配的内容，返回剩余部分。
+
+# 批量删除文件名带空格的文件
+
+```
+find ./ -name 'xxx' | xargs -d "\n" -I {} rm \"{}\"
+find ./ -name 'xxx' | xargs -d "\n" -I {} rm {}
+```
