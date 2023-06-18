@@ -64,3 +64,18 @@ ssh -p 22 -NR 0.0.0.0:10443:0.0.0.0:443 root@1.1.1.1
 **注意：此时链接会一直保持，终端不会返回。**
 
 至此，端口映射完成，可以从任意可访问外网的机器上，访问 1.1.1.1:10443 即可访问到 内网机器的 443 端口。
+
+# SSH 问题
+
+## SSH 连接慢
+
+```bash
+# 可以尝试指定算法
+ssh -o KexAlgorithms=ecdh-sha2-nistp521 root@192.168.1.102 -v
+
+# 也可以尝试修改 mtu
+
+sudo ip li set mtu 1200 dev wlan0
+# OR
+sudo ifconfig wlan0 mtu 1200
+```
