@@ -3,8 +3,7 @@
 keep reading,
 keep writing,
 keep coding,
-keep breathing,
-my life.
+keep breathing...
 
 正在进行
 
@@ -52,3 +51,7 @@ my life.
 - [lua-nginx-module](https://github.com/isshe/lua-nginx-module)
 - [lua-resty-core](https://github.com/isshe/lua-resty-core)
 - [valgrind](https://github.com/isshe/valgrind)
+
+### 测试
+
+- [性能测试要点及常见问题](T.Test/性能测试.md)
