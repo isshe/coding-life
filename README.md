@@ -7,6 +7,7 @@ keep breathing...
 
 正在进行
 
+- [C 语言 CPU 高占用分析](R.经典案例/CPU/C语言CPU高占用分析.md)
 - [Valgrind 用户手册](N.静态追踪/Valgrind/user-manual)
 - [OpenResty 核心技术点汇总](K.工具/OpenResty/使用与实现/000-core-tech.md)
 - [Luajit 核心技术点汇总](K.工具/Luajit/设计与实现/000-core-tech.md)
@@ -14,6 +15,7 @@ keep breathing...
 
 下一步
 
+- [如何生成火焰图？](J.动态追踪/如何生成火焰图.md)
 - [Luajit 垃圾回收机制](K.工具/Luajit/设计与实现/004-garbage-collection.md)
 - [Nginx timer 是如何实现的？](K.工具/Nginx/Nginx源码分析/8-nginx-timer.md)
 - [Nginx 热更新](K.工具/Nginx/Nginx源码分析/10-binary-upgrade.md)
@@ -29,6 +31,7 @@ keep breathing...
 
 - [如何排查、优化 PostgreSQL 的慢查询？](F.数据库/4.PostgreSQL/慢查询分析/README.md)
 - [如何管理 TimescaleDB 的清理策略？](F.数据库/4.PostgreSQL/TimescaleDB/README.md)
+- [unexpected chunk number X (expected X) for toast value XXX in pg_toast_XXX 错误处理](F.数据库/4.PostgreSQL/unexpected-chunk-number.md)
 
 ### Linux 系统
 
@@ -55,3 +58,13 @@ keep breathing...
 ### 测试
 
 - [性能测试要点及常见问题](T.Test/性能测试.md)
+
+### 问题排查
+
+CPU 问题
+
+
+内存问题
+
+
+网络问题
