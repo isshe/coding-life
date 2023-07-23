@@ -1,0 +1,7 @@
+t/servroot
+t/test/client_body_temp
+t/test/fastcgi_temp
+t/test/proxy_temp
+t/test/scgi_temp
+t/test/uwsgi_temp
+t/test/logs
