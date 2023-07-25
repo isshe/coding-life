@@ -27,16 +27,15 @@ conf:
 compile:
 	cd $(OPENRESTY_SRC); make -j4
 	cd $(OPENRESTY_SRC); make install
-	# $(OPENRESTY_BIN)/bin/openresty -p $(OPENRESTY_BIN)/nginx -s stop
 
 stop:
-	$(OPENRESTY_BIN)/bin/openresty -p $(OPENRESTY_BIN)/nginx -s stop
+	$(OPENRESTY_BIN)/bin/openresty -p $$PWD/t/test -s stop
 
 start:
-	$(OPENRESTY_BIN)/bin/openresty -p $(OPENRESTY_BIN)/nginx
+	$(OPENRESTY_BIN)/bin/openresty -p $$PWD/t/test
 
 reload:
-	$(OPENRESTY_BIN)/bin/openresty -p $(OPENRESTY_BIN)/nginx -s reload
+	$(OPENRESTY_BIN)/bin/openresty -p $$PWD/t/test -s reload
 
 run:
 	cd $(OPENRESTY_SRC); make -j4; make install

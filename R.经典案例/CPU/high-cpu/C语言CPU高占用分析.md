@@ -16,12 +16,12 @@ cd openresty
 
 ```bash
 cd lua-resty-highcpu
-make config
+make conf
 
 # 测试跑起来
 make wrk
 
-# 进行分析
-
 # 生成火焰图
+
+# 进行分析
 ```
