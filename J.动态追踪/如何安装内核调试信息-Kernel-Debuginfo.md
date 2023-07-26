@@ -44,7 +44,7 @@ apt list 'linux-image-5.4.0-*-generic-dbgsym'
 - 安装
 
 ```
-udo apt install linux-image-5.4.0-128-generic linux-headers-5.4.0-128-generic
+sudo apt install linux-image-5.4.0-128-generic linux-headers-5.4.0-128-generic
 ```
 
 **如果版本已经是最新？选择稍低的一个版本进行安装。**然后修改引导：
