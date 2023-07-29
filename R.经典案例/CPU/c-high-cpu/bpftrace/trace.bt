@@ -1,0 +1,19 @@
+#!/usr/bin/env bpftrace
+
+BEGIN
+{
+    printf("start tracing ...\n");
+
+    // @my_array["item"] = 1;
+}
+
+profile:hz:99 /comm == "nginx"/ {
+    printf("saving ...\n");
+    @res[ustack] = count();
+    // printf("Array size: %d\n", @num(@my_array));
+
+//    if (@count(@res) > 2) {
+//        printf("exiting ...\n");
+//        exit();
+//    }
+}

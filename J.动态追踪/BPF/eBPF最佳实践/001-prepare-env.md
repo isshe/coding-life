@@ -1,28 +1,51 @@
 # 环境搭建
 
+> Rockylinux 9
+
 # rpm
 
+- 安装 bcc
+
+> 初级：使用 bcc 工具
+> https://github.com/iovisor/bcc/blob/master/INSTALL.md
+
+```bash
+sudo yum install -y epel-release
+sudo yum update -y
+sudo yum groupinstall -y "Development tools"
+sudo yum install bcc bcc-tools
 ```
-sudo yum install clang llvm elfutils-libelf-devel zlib-devel
+
+安装完以后，工具应该在 `/usr/share/bcc/tools` 目录下。
+
+- 开发 bpftrace
+
+> 中级：开发 bpftrace 程序
+> https://github.com/iovisor/bpftrace/blob/master/INSTALL.md
+
+```bash
+sudo yum install -y bpftrace
 ```
+
+示例：https://github.com/iovisor/bpftrace/blob/master/docs/tutorial_one_liners.md
 
 # deb
 
-**以下为 Ubuntu 20.04 的步骤，仅供参考。**
+- 安装 bcc
+
+> 初级
 
 ```bash
-apt update
-apt install -y build-essential git make libelf-dev clang llvm strace tar bpfcc-tools gcc-multilib flex bison libssl-dev
-
-apt install -y linux-source-`uname -r`
-cd /usr/src/linux-source-`uname -r`;
-tar xf linux-source-`uname -r`.tar.bz2
-
-cd /usr/src/linux-source-`uname -r`/linux-source`uname -r`
-cp -v /boot/config-`uname -r` .config
-make headers_install
-make M=samples/bpf
+sudo apt update
+sudo apt-get install bpfcc-tools linux-headers-$(uname -r)
 ```
 
-更多参考：https://www.ebpf.top/post/ubuntu_2104_bpf_env/
+- 开发 bpftrace
 
+```bash
+sudo apt-get install -y bpftrace
+```
+
+## 参考
+
+- https://www.brendangregg.com/blog/2019-01-01/learn-ebpf-tracing.html
