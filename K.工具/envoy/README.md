@@ -1,6 +1,6 @@
 
 ```
-pc bazel build --sandbox_writable_path=/root/.ccache --compilation_mode=dbg -c opt envoy --verbose_failures --sandbox_writable_path="/run/user/$UID/ccache-tmp/" --sandbox_debug
+pc bazel build --sandbox_writable_path=/root/.ccache --compilation_mode=dbg -c opt envoy --verbose_failures --sandbox_writable_path="/run/user/$UID/ccache-tmp/" --sandbox_debug --copt=-fno-limit-debug-info --copt="-Wno-error"
 
 bazel clean --expunge
 
