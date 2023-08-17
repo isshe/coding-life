@@ -7,7 +7,7 @@ keep breathing...
 
 正在进行
 
-- [C 语言 CPU 高占用分析](R.经典案例/CPU/C语言CPU高占用分析.md)
+- [C 语言 CPU 高占用分析](R.经典案例/CPU/c-high-cpu/C语言CPU高占用分析.md)
 - [Valgrind 用户手册](N.静态追踪/Valgrind/user-manual)
 - [OpenResty 核心技术点汇总](K.工具/OpenResty/使用与实现/000-core-tech.md)
 - [Luajit 核心技术点汇总](K.工具/Luajit/设计与实现/000-core-tech.md)
