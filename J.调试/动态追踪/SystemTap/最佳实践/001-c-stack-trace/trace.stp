@@ -1,0 +1,5 @@
+probe process("/opt/openresty-saas/nginx/sbin/nginx").function("*") {
+    if (pid() == target()) {
+        print_ubacktrace()
+    }
+}
