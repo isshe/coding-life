@@ -1,5 +1,32 @@
-probe process("/opt/openresty-saas/nginx/sbin/nginx").function("*") {
-    if (pid() == target()) {
-        print_ubacktrace()
+// probe process("/usr/bin/perl").function("*") {
+//     warn("Process tracing...");
+//     if (pid() == target()) {
+//         print_ubacktrace();
+//     }
+// }
+
+probe perf.type(1).config(0).sample(10) {
+    if (kernel_has_feature("uprobes")) {
+        print_ubacktrace();
     }
+}
+
+probe process("/usr/bin/perl").begin {
+    warn("process begin...");
+}
+
+probe process("/usr/bin/perl").end {
+    warn("process end...");
+}
+
+probe timer.s(1) {
+    warn("timer...");
+}
+
+probe begin {
+    warn("start tracing...");
+}
+
+probe end {
+    warn("stop tracing...");
 }
