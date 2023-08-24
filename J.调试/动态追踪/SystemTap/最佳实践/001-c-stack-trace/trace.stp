@@ -1,13 +1,12 @@
-// probe process("/usr/bin/perl").function("*") {
-//     warn("Process tracing...");
-//     if (pid() == target()) {
-//         print_ubacktrace();
-//     }
-// }
+// global hash_var1_bts;
 
 probe perf.type(1).config(0).sample(10) {
-    if (kernel_has_feature("uprobes")) {
-        print_ubacktrace();
+    try {
+        printf("User backtrace:\n%s\n", sprint_ubacktrace());
+        // bt = sprint_ubacktrace();
+        // hash_var1_bts[bt] = 1;
+    } catch (err) {
+        warn(sprintf("catch error: %s", err));
     }
 }
 
@@ -21,6 +20,8 @@ probe process("/usr/bin/perl").end {
 
 probe timer.s(1) {
     warn("timer...");
+    // exit();
+    abort();
 }
 
 probe begin {
