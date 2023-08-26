@@ -1,6 +1,3 @@
-
-
-
 # Failed to create /init.scope control group: Read-only file system
 
 - 报错原因

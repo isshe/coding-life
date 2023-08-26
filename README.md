@@ -24,6 +24,8 @@ keep breathing...
 - [动态链接是如何工作的？](B.操作系统/设计与实现/how-dynamic-linking-work.md)
 - [Nginx 是如何进行 DNS 解析的？](K.工具/Nginx/Nginx源码分析/7-nginx-dns-resolve.md)
 - [Luajit 中 yield 和 resume 的实现](K.工具/Luajit/设计与实现/2.yield-resume.md)
+- [Core Dump 分析](Q.问题解决/core-dump/README.md)
+- [内存泄漏分析](Q.问题解决/memory-leak/README.md)
 
 ## 索引
 
@@ -59,15 +61,17 @@ keep breathing...
 
 - [性能测试要点及常见问题](T.测试/性能测试.md)
 
-### 问题排查
+### 问题排查/解决
 
-CPU 问题
+**CPU 问题**
 
+**内存问题**
 
-内存问题
+**网络问题**
 
+**其他问题**
 
-网络问题
+- [Failed to create /init.scope control group: Read-only file system](Q.问题解决/OS/RockyLinux9/failed-to-create-init-scope-control-group.md)
 
 ## 更多说明
 
