@@ -5,9 +5,14 @@ keep writing,
 keep coding,
 keep breathing...
 
-正在进行
+正在进行（On-CPU）
+
+- OpenResty Xray 相关
+
+持续中（Off-CPU）
 
 - [C 语言 CPU 高占用分析](R.经典案例/CPU/c-high-cpu/C语言CPU高占用分析.md)
+  - [SystemTap 最佳实践 - 获取调用栈](J.调试/动态追踪/SystemTap/最佳实践/003-c-stack-trace/README.md)
 - [Valgrind 用户手册](J.调试/静态追踪/Valgrind/user-manual)
 - [OpenResty 核心技术点汇总](K.工具/OpenResty/使用与实现/000-core-tech.md)
 - [Luajit 核心技术点汇总](K.工具/Luajit/设计与实现/000-core-tech.md)
@@ -15,6 +20,8 @@ keep breathing...
 
 下一步
 
+- [SystemTap 最佳实践 - 介绍](J.调试/动态追踪/SystemTap/最佳实践/001-introduction/README.md)
+- [SystemTap 最佳实践 - 安装](J.调试/动态追踪/SystemTap/最佳实践/002-installation/README.md)
 - [如何生成火焰图？](J.调试/动态追踪/如何生成火焰图.md)
 - [Luajit 垃圾回收机制](K.工具/Luajit/设计与实现/004-garbage-collection.md)
 - [Nginx timer 是如何实现的？](K.工具/Nginx/Nginx源码分析/8-nginx-timer.md)
@@ -72,6 +79,13 @@ keep breathing...
 **其他问题**
 
 - [Failed to create /init.scope control group: Read-only file system](Q.问题解决/OS/RockyLinux9/failed-to-create-init-scope-control-group.md)
+
+### 最佳实践
+
+> 尚不完善，因此放后面
+> [关于最佳实践](M.方法论/关于最佳实践.md)
+
+- [SystemTap 最佳实践](J.调试/动态追踪/SystemTap/最佳实践)
 
 ## 更多说明
 
