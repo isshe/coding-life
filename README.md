@@ -20,6 +20,7 @@ keep breathing...
 
 下一步
 
+- [OpenResty 时间更新机制](K.工具/OpenResty/使用与实现/021-time-sync.md)
 - [SystemTap 最佳实践 - 介绍](J.调试/动态追踪/SystemTap/最佳实践/001-introduction/README.md)
 - [SystemTap 最佳实践 - 安装](J.调试/动态追踪/SystemTap/最佳实践/002-installation/README.md)
 - [如何生成火焰图？](J.调试/动态追踪/如何生成火焰图.md)
