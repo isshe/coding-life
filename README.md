@@ -77,6 +77,8 @@ keep breathing...
 
 **网络问题**
 
+[TCP 连接被中断](Q.问题解决/network/TCP连接被中断.md)
+
 **其他问题**
 
 - [Failed to create /init.scope control group: Read-only file system](Q.问题解决/OS/RockyLinux9/failed-to-create-init-scope-control-group.md)
