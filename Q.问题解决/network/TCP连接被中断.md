@@ -18,7 +18,7 @@
 
 4. 通过 FIN 知道 socket 被 close，接着排查是哪个代码导致的 close。
    1. 先看 socket 怎么被 close 的，把探针打在 close 上，用 `_sym_ubt(_ubt())`(OpenResty ylang) 打印堆栈，没发现异常
-   2. 看看 request 或 upstream 被关闭时的状态，打印各个标志位 —— 把探针打在 ngx_http_finalize_request 等关键/可疑函数上，然后打印请求的标记位。**发现 r->connection->read->eof 标记被设置了，也就是读下游数据结束。**（如果我们不使用 OpenResty Xray 之类的动态追踪工具，可以使用传统打 Log 的方法 —— 源码中加入打 Log 代码，重新执行程序，不过就只能在测试环境使用了。）
+   2. 看看 request 或 upstream 被关闭时的状态，打印各个标志位 —— 把探针打在 ngx_http_finalize_request 等关键/可疑函数上的**出口和入口**，然后打印请求的标记位，通过入口出口标记位值不一致判断标记位变更。**发现 r->connection->read->eof 标记被设置了，也就是读下游数据结束。**（如果我们不使用 OpenResty Xray 之类的动态追踪工具，可以使用传统打 Log 的方法 —— 源码中加入打 Log 代码，重新执行程序，不过就只能在测试环境使用了。）
 
         ```log
         -------ngx_http_finalize_request-------
