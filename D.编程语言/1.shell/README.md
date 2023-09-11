@@ -188,3 +188,14 @@ mv $file ${file%.*}
 find ./ -name 'xxx' | xargs -d "\n" -I {} rm \"{}\"
 find ./ -name 'xxx' | xargs -d "\n" -I {} rm {}
 ```
+
+# 替换 csv 文件指定列的值
+
+``` bash
+# 替换第二列的值成 your_value
+new_value="your_value"
+awk -F',' -v new_value="$new_value" 'BEGIN {OFS=","} {$2=new_value} 1' file.csv > output.csv
+
+# 或
+awk -F',' 'BEGIN {OFS=","} {$2="new_value"} 1' file.csv > output.csv
+```
