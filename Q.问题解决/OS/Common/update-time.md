@@ -32,7 +32,7 @@ hwclock --hctosys
 
 ```bash
 # 不同系统可以用不同的软件进行
-# yum install utp ntpdate
+# yum install ntp ntpdate
 sudo ntpdate time.nist.gov
 # rockylinux 9（未验证）
 chronyc -a makestep
