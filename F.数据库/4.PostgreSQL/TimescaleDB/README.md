@@ -8,7 +8,7 @@ TimescaleDB
 
 ```sql
 select table_name, table_size, total_size
-    from timescaledb_information.hypertable where table_schema='public';
+    from timescaledb_information.hypertable where table_schema='public' and total_size is not null;
 
 select table_name, table_schema, pg_size_bytes(total_size) / 1024 / 1024 as total_size
 from timescaledb_information.hypertable

@@ -74,3 +74,32 @@ select * from pg_stat_replication;
 ```
 SELECT pg_reload_conf();
 ```
+
+# 打印数据库中所有表中 ID 列的最大值大于 10 的表
+
+```sql
+DO
+$$
+DECLARE
+    _tbl text;
+    _max_id bigint;
+    _threshold bigint = 10;
+BEGIN
+    FOR _tbl IN
+        SELECT quote_ident(t.table_schema) || '.' || quote_ident(t.table_name)
+        FROM information_schema.tables as t
+        LEFT JOIN information_schema.columns as c
+        ON t.table_schema = c.table_schema and t.table_name = c.table_name
+        WHERE t.table_schema = 'public'
+        AND t.table_type = 'BASE TABLE'
+        AND c.column_name = 'id'
+        AND c.data_type = 'integer'
+    LOOP
+        EXECUTE format('SELECT max(id) FROM %s', _tbl) INTO _max_id;
+        IF _max_id > _threshold THEN
+            RAISE NOTICE 'Maximum ID in table %: %', _tbl, _max_id;
+        END IF;
+    END LOOP;
+END
+$$;
+```
