@@ -103,3 +103,26 @@ BEGIN
 END
 $$;
 ```
+
+方法二：
+
+```sql
+DO $$
+DECLARE
+    tableName text;
+    columnExists boolean;
+    maxId int;
+BEGIN
+    FOR tableName IN (SELECT table_name FROM information_schema.tables WHERE table_schema = 'public')
+    LOOP
+        EXECUTE format('SELECT EXISTS(SELECT 1 FROM information_schema.columns WHERE table_name = ''%s'' AND column_name = ''id'')', tableName) INTO columnExists;
+        IF columnExists THEN
+            EXECUTE format('SELECT max(id) FROM %s', tableName) INTO maxId;
+            IF maxId > 100 THEN
+                RAISE NOTICE 'Table %, max(id) = %', tableName, maxId;
+            END IF;
+        END IF;
+    END LOOP;
+END;
+$$;
+```
