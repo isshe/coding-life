@@ -7,12 +7,11 @@ keep breathing...
 
 正在进行（On-CPU）
 
-- OpenResty Xray 相关
+- [C 语言 CPU 高占用分析](R.经典案例/CPU/c-high-cpu/C语言CPU高占用分析.md)
+  - [SystemTap 最佳实践 - 获取调用栈](J.调试/动态追踪/SystemTap/最佳实践/003-c-stack-trace/README.md)
 
 持续中（Off-CPU）
 
-- [C 语言 CPU 高占用分析](R.经典案例/CPU/c-high-cpu/C语言CPU高占用分析.md)
-  - [SystemTap 最佳实践 - 获取调用栈](J.调试/动态追踪/SystemTap/最佳实践/003-c-stack-trace/README.md)
 - [Valgrind 用户手册](J.调试/静态追踪/Valgrind/user-manual)
 - [OpenResty 核心技术点汇总](K.工具/OpenResty/使用与实现/000-core-tech.md)
 - [Luajit 核心技术点汇总](K.工具/Luajit/设计与实现/000-core-tech.md)
@@ -34,6 +33,7 @@ keep breathing...
 - [Luajit 中 yield 和 resume 的实现](K.工具/Luajit/设计与实现/2.yield-resume.md)
 - [Core Dump 分析](Q.问题解决/core-dump/README.md)
 - [内存泄漏分析](Q.问题解决/memory-leak/README.md)
+- 继续 OpenResty Xray 相关 —— 20231005 已经完成第一部分。
 
 ## 索引
 
