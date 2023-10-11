@@ -1,14 +1,15 @@
 [TOC]
 
 # TODO
-* brctl
-* ethtool
-* fuser
-* iperf3
-* pmap
-* iptables
-* ldd
-* ldconfig
+
+- brctl
+- ethtool
+- fuser
+- iperf3
+- pmap
+- iptables
+- ldd
+- ldconfig
 
 # 新文档模板
 ```c
@@ -70,7 +71,7 @@ sed 's/^[ \t]*//g' <filename>
 ## 递归修改某目录下某类型文件的权限
 ```
 给当前目录下所有 .sh 文件添加可执行权限
- find ./ -name "*.sh" | xargs chmod +x 
+ find ./ -name "*.sh" | xargs chmod +x
 ```
 
 ## 删除目录下所有指定后缀文件
