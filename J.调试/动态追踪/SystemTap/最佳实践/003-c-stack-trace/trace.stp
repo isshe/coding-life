@@ -1,10 +1,23 @@
-// global hash_var1_bts;
+global hash_bts;
+global trace_time = 0;
+global max_trace_time = 5;
+global samples = 0;
+global max_samples = 1000;
+
+@define shrink_int(v, nbits)  %( ((@v) & ((1 << (@nbits)) - 1)) %)
+
+@define inflate_int(v, diff_bits)
+    %( ((@v) << (@diff_bits) >> (@diff_bits)) %)
 
 probe perf.type(1).config(0).sample(10) {
+    if ((samples >= max_samples)) {
+        abort();
+    }
+
     try {
-        printf("User backtrace:\n%s\n", sprint_ubacktrace());
-        // bt = sprint_ubacktrace();
-        // hash_var1_bts[bt] = 1;
+        // printf("User backtrace:\n%s\n", sprint_ubacktrace());
+        bt = sprint_ubacktrace();
+        hash_bts[bt] = 1;
     } catch (err) {
         warn(sprintf("catch error: %s", err));
     }
@@ -19,9 +32,13 @@ probe process("/usr/bin/perl").end {
 }
 
 probe timer.s(1) {
-    warn("timer...");
-    // exit();
-    abort();
+    printf("timer...%d", trace_time);
+    if (trace_time >= max_trace_time) {
+        // exit();
+        abort();
+    }
+
+    trace_time = trace_time + 1;
 }
 
 probe begin {
@@ -30,4 +47,12 @@ probe begin {
 
 probe end {
     warn("stop tracing...");
+    if (samples > 0) {
+        printf("\n~~~ %d\n", @inflate_int(@shrink_int(samples, 32), 32));
+        foreach ([bt] in hash_bts- limit 1000) {
+            cnt = hash_bts[bt];
+            printf("%s\n\t%d\n", bt, cnt);
+        }
+        printf("~~~\n");
+    }
 }
