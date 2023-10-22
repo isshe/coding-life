@@ -1,4 +1,4 @@
 SystemTap 工具
 ---
 
-- trace.stap: 获取
+- ngx-rps.stap: 获取 nginx 的 rps。

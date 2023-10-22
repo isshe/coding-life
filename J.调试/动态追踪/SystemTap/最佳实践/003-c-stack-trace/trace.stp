@@ -9,7 +9,7 @@ global max_samples = 1000;
 @define inflate_int(v, diff_bits)
     %( ((@v) << (@diff_bits) >> (@diff_bits)) %)
 
-probe perf.type(1).config(0).sample(10) {
+probe perf.type(1).config(0).sample(1000000) {
     if ((samples >= max_samples)) {
         abort();
     }
@@ -17,7 +17,16 @@ probe perf.type(1).config(0).sample(10) {
     try {
         // printf("User backtrace:\n%s\n", sprint_ubacktrace());
         bt = sprint_ubacktrace();
-        hash_bts[bt] = 1;
+        if ((bt != "")) {
+            if ([bt] in hash_bts) {
+                hash_bts[bt] += 1;
+
+            } else {
+                hash_bts[bt] = 1;
+            }
+
+            samples = samples + 1;
+        }
     } catch (err) {
         warn(sprintf("catch error: %s", err));
     }
@@ -32,7 +41,7 @@ probe process("/usr/bin/perl").end {
 }
 
 probe timer.s(1) {
-    printf("timer...%d", trace_time);
+    // printf("timer...%d", trace_time);
     if (trace_time >= max_trace_time) {
         // exit();
         abort();
