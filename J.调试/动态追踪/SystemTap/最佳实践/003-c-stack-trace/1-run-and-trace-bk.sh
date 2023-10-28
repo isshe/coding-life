@@ -29,13 +29,13 @@ stap -v \
     --no-global-var-display \
     --save-uprobes \
     --nonfatal-maxaction \
-    -d /usr/bin/perl:$path/ld/perl.1.melf \
-    -d /usr/lib64/ld-linux-x86-64.so.2:$path/ld/ld-linux-x86-64.so.2.2.melf \
-    -d /usr/lib64/libc.so.6:$path/ld/libc.so.6.3.melf \
-    -d /usr/lib64/libcrypt.so.2.0.0:$path/ld/libcrypt.so.2.0.0.4.melf \
-    -d /usr/lib64/libm.so.6:$path/ld/libm.so.6.5.melf \
-    -d /usr/lib64/libperl.so.5.32.1:$path/ld/libperl.so.5.32.1.6.melf \
-    -d /usr/lib64/perl5/vendor_perl/auto/Time/HiRes/HiRes.so:$path/ld/HiRes.so.7.melf \
+    -d /usr/bin/perl:/usr/lib/debug/usr/bin/perl-5.32.1-480.el9.x86_64.debug:/usr/lib/debug/.dwz/perl-5.32.1-480.el9.x86_64 \
+    -d /usr/lib64/ld-linux-x86-64.so.2:/usr/lib/debug/lib64/ld-linux-x86-64.so.2-2.34-60.el9.x86_64.debug:/usr/lib/debug/.dwz/glibc-2.34-60.el9.x86_64 \
+    -d /usr/lib64/libc.so.6:/usr/lib/debug/lib64/libc.so.6-2.34-60.el9.x86_64.debug:/usr/lib/debug/.dwz/glibc-2.34-60.el9.x86_64 \
+    -d /usr/lib64/libcrypt.so.2.0.0:/usr/lib/debug/usr/lib64/libcrypt.so.2.0.0-4.4.18-3.el9.x86_64.debug:/usr/lib/debug/.dwz/libxcrypt-4.4.18-3.el9.x86_64 \
+    -d /usr/lib64/libm.so.6:/usr/lib/debug/lib64/libm.so.6-2.34-60.el9.x86_64.debug:/usr/lib/debug/.dwz/glibc-2.34-60.el9.x86_64 \
+    -d /usr/lib64/libperl.so.5.32.1:/usr/lib/debug/usr/lib64/libperl.so.5.32.1-5.32.1-480.el9.x86_64.debug:/usr/lib/debug/.dwz/perl-5.32.1-480.el9.x86_64 \
+    -d /usr/lib64/perl5/vendor_perl/auto/Time/HiRes/HiRes.so:/usr/lib/debug/usr/lib64/perl5/vendor_perl/auto/Time/HiRes/HiRes.so-1.9764-462.el9.x86_64.debug \
     --print-modidx \
     -B CC=/usr/bin/gcc \
     -p4 -m trace \

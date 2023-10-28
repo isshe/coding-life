@@ -50,7 +50,7 @@ sudo stap -x 1234 trace.stp
 
 ```bash
 # 生成 trace.ko
-/usr/bin/stap trace.stp -m trace -p 4 -v
+/usr/bin/stap trace.stp -m trace -p 4 -v -k
 /usr/bin/staprun "trace.ko"
 ```
 
