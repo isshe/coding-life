@@ -50,12 +50,18 @@ sudo stap -x 1234 trace.stp
 
 ```bash
 # 生成 trace.ko
-/usr/bin/stap trace.stp -m trace -p 4 -v -k
+/usr/bin/stap trace.stp \
+    -d OBJECT:MELF:DEBUG:DWZ \
+    -d OBJECT:MELF:DEBUG \
+    -d OBJECT:MELF \
+    -m trace -p 4 -v -k
+
+# 执行
 /usr/bin/staprun "trace.ko"
 ```
 
-- 指定 debuginfo（未验证）
+`-d` 选项指定可执行文件、melf 文件、debug 文件、dwz 文件。
+melf 信息通常在可执行文件中。
+debug 文件 和 dwz 文件可以从 dbgsym 的 deb 包或 rpm 的 debuginfo 包中获取（详见 [0-find-and-install-debug-info.sh](0-find-and-install-debug-info.sh)）。
 
-```
-export SYSTEMTAP_DEBUGINFO_PATH=/path/to/debuginfo
-```
+具体执行步骤见：[1-run-and-trace.sh](1-run-and-trace.sh)
