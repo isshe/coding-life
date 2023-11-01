@@ -12,6 +12,7 @@ keep breathing...
 
 持续中（Off-CPU）
 
+- [编程、设计经验教训汇总](M.方法论/经验教训汇总.md)
 - [Valgrind 用户手册](J.调试/静态追踪/Valgrind/user-manual)
 - [OpenResty 核心技术点汇总](K.工具/OpenResty/使用与实现/000-core-tech.md)
 - [Luajit 核心技术点汇总](K.工具/Luajit/设计与实现/000-core-tech.md)
