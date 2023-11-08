@@ -3,7 +3,7 @@
 PostgreSQL
 ---
 
-# select null时使用默认值
+# select null 时使用默认值
 ```
 COALESCE(y.released_id, 0)
 ```
@@ -83,7 +83,7 @@ $$
 DECLARE
     _tbl text;
     _max_id bigint;
-    _threshold bigint = 10;
+    _threshold bigint = 10000;
 BEGIN
     FOR _tbl IN
         SELECT quote_ident(t.table_schema) || '.' || quote_ident(t.table_name)
