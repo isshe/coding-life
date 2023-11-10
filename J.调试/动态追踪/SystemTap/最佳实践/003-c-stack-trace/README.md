@@ -60,8 +60,24 @@ sudo stap -x 1234 trace.stp
 /usr/bin/staprun "trace.ko"
 ```
 
-`-d` 选项指定可执行文件、melf 文件、debug 文件、dwz 文件。
-melf 信息通常在可执行文件中。
+`-d` 选项指定可执行文件、melf 文件、debug 文件、dwz 文件。melf 信息通常在可执行文件中。
 debug 文件 和 dwz 文件可以从 dbgsym 的 deb 包或 rpm 的 debuginfo 包中获取（详见 [0-find-and-install-debug-info.sh](0-find-and-install-debug-info.sh)）。
 
+**如果系统上安装了 debuginfo 文件，可以直接使用 `--ldd` 选项代替 `-d` 选项指定调试信息，systemtap 会自动搜索调试信息。**
+
 具体执行步骤见：[1-run-and-trace.sh](1-run-and-trace.sh)
+
+## 生成火焰图
+
+- 下载 FlameGraph 仓库
+
+```bash
+git clone git@github.com:brendangregg/FlameGraph.git
+```
+
+- 生成火焰图
+
+```bash
+cd FlameGraph
+./stackcollapse-stap.pl stap.out | ./flamegraph.pl > out.svg
+```
