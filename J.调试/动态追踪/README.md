@@ -25,11 +25,13 @@
 - 事件类型有哪些？
 - 如何生成火焰图？了解火焰图数据格式。
 
-## 开发环境搭建
+## 命令速查
+
+1. debug 文件路径
 
 ```bash
-apt-cache search linux-source
-apt install linux-source-5.4.0
+ls /usr/lib/debug/lib64/
+ls /usr/lib/debug/.build-id/
 ```
 
 ## 参考文档

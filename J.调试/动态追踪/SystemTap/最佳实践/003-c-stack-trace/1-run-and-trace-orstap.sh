@@ -38,7 +38,7 @@ stap -v \
     -B CC=/usr/bin/gcc \
     -p4 -m trace \
     -k \
-    trace.stp
+    trace-orstap.stp
 
 staprun "trace.ko" \
     -a "max_samples=1000" \

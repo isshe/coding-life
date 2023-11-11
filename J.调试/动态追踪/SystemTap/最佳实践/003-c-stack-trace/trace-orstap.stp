@@ -16,9 +16,7 @@ probe perf.type(1).config(0).sample(1000000) {
 
     try {
         // printf("User backtrace:\n%s\n", sprint_ubacktrace());
-        // bt = sprint_ubacktrace();
-        // bt = user_mode() ? sprint_ubacktrace() : sprint_backtrace();
-        bt = user_mode() ? sprint_ubacktrace() : "";
+        bt = sprint_ubacktrace();
         if ((bt != "")) {
             if ([bt] in hash_bts) {
                 hash_bts[bt] += 1;
