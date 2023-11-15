@@ -81,3 +81,5 @@ git clone git@github.com:brendangregg/FlameGraph.git
 cd FlameGraph
 ./stackcollapse-stap.pl stap.out | ./flamegraph.pl > out.svg
 ```
+
+TODO: 完善 2-gen-flame-graph.sh 脚本

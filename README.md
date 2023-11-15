@@ -9,6 +9,8 @@ keep breathing...
 
 - [C 语言 CPU 高占用分析](R.经典案例/CPU/c-high-cpu/C语言CPU高占用分析.md)
   - [SystemTap 最佳实践 - 获取调用栈](J.调试/动态追踪/SystemTap/最佳实践/003-c-stack-trace/README.md)
+  - 学习 SystemTap 官方文档的同时总结输出《SystemTap 最佳实践》
+
 
 持续中（Off-CPU）
 
@@ -105,7 +107,7 @@ keep breathing...
 - 编译原理：编译原理的学习和实践。
 - 调试：静态追踪、动态追踪、调试技巧等。
 - 测试：包括单元测试、集成测试、性能测试等。
-- 工具：涵盖常见的开发工具和框架，如 Git、Docker、libevent等。
+- 工具：涵盖常见的开发工具和框架，如 Git、Docker、libevent 等。
 - 软件工程（暂无对应目录）：包括软件开发生命周期、版本控制、团队协作、项目管理等。
 - 云计算（暂无对应目录）：涵盖云服务提供商（如 AWS、Azure、Google Cloud）的基本知识、服务、部署和扩展等。
 - 人工智能和机器学习（暂无对应目录）：包括机器学习算法、深度学习框架、数据预处理、模型评估等。
