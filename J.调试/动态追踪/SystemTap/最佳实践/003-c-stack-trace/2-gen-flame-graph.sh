@@ -2,9 +2,25 @@
 
 basepath=$(cd `dirname $0`; pwd)
 
-# cat stap.out | awk -F" " '{for(i=2;i<=NF;i++) printf $i" ";printf "\n"}' > /tmp/stap.out.processed
-cp stap.out /tmp/stap.out.processed
+if [ ! -f $basepath/stap.out ]; then
+    echo "[!] missing stap.out"
+    exit 1
+fi
 
-/root/orinc/FlameGraph/flamegraph.pl /tmp/stap.out.processed > $basepath/flamegraph.svg
+cp $basepath/stap.out /tmp/stap.out
 
-rm /tmp/stap.out.processed
+if [ ! -d /tmp/FlameGraph ]; then
+    echo "[+] git clone FlameGraph"
+    git clone git@github.com:brendangregg/FlameGraph.git /tmp/FlameGraph
+fi
+
+echo "[+] generating cbt..."
+/tmp/FlameGraph/stackcollapse-stap.pl /tmp/stap.out > /tmp/stap.out.cbt
+
+echo "[+] generating flamegraph..."
+/tmp/FlameGraph/flamegraph.pl /tmp/stap.out.cbt > $basepath/out.svg
+
+echo "[!] flame graph generated: $basepath/out.svg"
+
+rm /tmp/stap.out
+rm /tmp/stap.out.cbt

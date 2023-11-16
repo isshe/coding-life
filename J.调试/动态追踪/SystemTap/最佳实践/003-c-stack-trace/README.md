@@ -82,4 +82,25 @@ cd FlameGraph
 ./stackcollapse-stap.pl stap.out | ./flamegraph.pl > out.svg
 ```
 
-TODO: 完善 2-gen-flame-graph.sh 脚本
+实例详见 [2-gen-flame-graph.sh](2-gen-flame-graph.sh)
+
+## 实例
+
+```bash
+bash 1-run-and-trace-stap.sh
+bash 2-gen-flame-graph.sh
+```
+
+## 总结
+
+1. 如何获取当前进程的调用栈？
+
+    使用 `sprint_ubacktrace()` 或 `sprint_backtrace()` 等函数来获取。详见示例 [trace.stp](trace.stp)。
+
+2. 如何把地址转换成函数名称？
+
+    当 stap 能找到 debuginfo 时，输出的堆栈会自动转换成名称，而不是地址。可使用 `-d` 选项指定需要 debuginfo 的可执行文件。
+
+3. 如何生成火焰图？
+
+    详见 [生成火焰图](#生成火焰图) 中的步骤。
