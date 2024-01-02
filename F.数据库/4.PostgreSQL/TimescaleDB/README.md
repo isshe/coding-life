@@ -50,7 +50,7 @@ select add_drop_chunks_policy('TABLE_NAME', INTERVAL '1 week', cascade_to_materi
 -- 修改 chunk 大小
 SELECT set_chunk_time_interval('TABLE_NAME', INTERVAL '1 week');
 
--- 删除不再需要的 chunk （可选）
+-- 删除不再需要的 chunk（可选）
 select drop_chunks(table_name =>'TABLE_NAME', older_than => INTERVAL '1 week', cascade_to_materializations => FALSE);
 ```
 
@@ -70,4 +70,10 @@ SELECT *, (interval_length / 24 / 60 / 60 / 1000000) as interval  FROM "_timesca
 
 ```sql
 SELECT set_chunk_time_interval('TABLE_NAME', interval '24 hours');
+```
+
+- 直接把指定 chunk 截成 0（清理里面的所有数据）：
+
+```sql
+TRUNCATE TABLE _timescaledb_internal._hyper_1_6_chunk;
 ```
