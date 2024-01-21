@@ -20,9 +20,9 @@
 * always/never/often/sometimes/usually + 一般现在时
 
 单词变形：
-* I/we/you/they/多人: 单词原型
+* I/we/you/they/多人：单词原型
     * Her parents
-* he/she/it: 加s/es、改 ies
+* he/she/it: 加 s/es、改 ies
     * -s/-sh/-ch: +es
     * -y: -ies
     * do/go: +es
