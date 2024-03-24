@@ -12,7 +12,7 @@
 /usr/local/kafka/bin/kafka-server-start.sh /usr/local/kafka/config/server.properties
 ```
 
-# 创建Topic
+# 创建 Topic
 ```shell
 /usr/local/kafka/bin/kafka-topics.sh --create \
 --zookeeper localhost:2181 --replication-factor 1 \--partitions 1 --topic test

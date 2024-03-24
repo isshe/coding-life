@@ -1,18 +1,18 @@
 # CSS
-* [CSS示例](http://www.runoob.com/css/css-examples.html)
+* [CSS 示例](http://www.runoob.com/css/css-examples.html)
 
-## 1. 什么是CSS
+## 1. 什么是 CSS
 * CSS: 叠层样式表（Cascading style Sheets）
-* 样式定义`如何显示`HTML元素；
+* 样式定义`如何显示`HTML 元素；
 * 样式通常存储在`样式表`中；
-* 把样式添加到HTML4.0中，是为了`解决内容与表现分离的问题`；
+* 把样式添加到 HTML4.0 中，是为了`解决内容与表现分离的问题`；
 * 外部样式表可以极大提高工作效率；
-* 外部样式表通常存储在CSS文件中；
+* 外部样式表通常存储在 CSS 文件中；
 * 多个样式定义可叠层为一个
 
-## 2. CSS语法
-![CSS规则](./css_rule.jpg)
-* CSS规则由两个主要的部分构成：选择器、一条或多条声明。
+## 2. CSS 语法
+![CSS 规则](./css_rule.jpg)
+* CSS 规则由两个主要的部分构成：选择器、一条或多条声明。
 
 ## 3. CSS 注释
 ```css
@@ -26,21 +26,21 @@ font-family:arial;
 }
 ```
 
-## 4. CSS id和class选择器
-* id选择器可以给一个特定的HTML元素使用；（以`#`定义）【见：[1_ex](./Examples/1_ex_id_selector.html)】
-* class选择器可以再多个元素中使用；（以`.`定义）【见：[2_ex](./Examples/2_ex_class_selector_multi_use.html)】
-    * 也可以指定特定的HTML元素使用class。【见：[3_ex](./Examples/3_ex_class_selector_single_use.html)】
+## 4. CSS id 和 class 选择器
+* id 选择器可以给一个特定的 HTML 元素使用；（以`#`定义）【见：[1_ex](./Examples/1_ex_id_selector.html)】
+* class 选择器可以再多个元素中使用；（以`.`定义）【见：[2_ex](./Examples/2_ex_class_selector_multi_use.html)】
+    * 也可以指定特定的 HTML 元素使用 class。【见：[3_ex](./Examples/3_ex_class_selector_single_use.html)】
 * id/class属性不要以数字开头，数字开头的ID在某些浏览器中不起作用。（如：Firefox）
 
 ## 5. 创建/插入样式表
-插入样式表的方法有三种:
-* 外部样式表(External style sheet)
+插入样式表的方法有三种：
+* 外部样式表 (External style sheet)
 ```html
 <head>
 <link rel="stylesheet" type="text/css" href="mystyle.css">
 </head>
 ```
-* 内部样式表(Internal style sheet)
+* 内部样式表 (Internal style sheet)
 ```html
 <head>
 <style>
@@ -50,13 +50,13 @@ body {background-image:url("images/back40.gif");}
 </style>
 </head>
 ```
-* 内联样式(Inline style)
+* 内联样式 (Inline style)
 多重样式优先级
 * 内联样式）Inline style > （内部样式）Internal style sheet >（外部样式）External style sheet > 浏览器默认样式
 
 ## 6. 背景
 ### 6.1 背景颜色、图片、位置
-|属性|描述|
+|属性 | 描述|
 |----|----|
 |background|简写属性，作用是将背景属性设置在一个声明中。|
 |background-attachment|背景图像是否固定或者随着页面的其余部分滚动。|
@@ -84,7 +84,7 @@ body {background:#b0c4de url('paper.gif') no-repeat right top;}
 ```
 
 ## 7，文本
-|属性|描述|
+|属性 | 描述|
 |----|----|
 |color|设置文本颜色|
 |direction|设置文本方向|
@@ -134,12 +134,12 @@ p {text-indent:50px;}
 ```
 
 ## 8. 字体
-|属性|描述|
+|属性 | 描述|
 |----|----|
 |font|在一个声明中设置所有的字体属性|
 |font-family|指定文本的字体系列|
 |font-size|指定文本的字体大小|
-|font-style指定文本的字体样式|
+|font-style 指定文本的字体样式|
 |font-variant|以小型大写字体或者正常字体显示文本|
 |font-weight|指定字体的粗细|
 
@@ -157,7 +157,7 @@ a:active {color:#0000FF;}  /* 鼠标点击时 */
 ```
 
 ## 10. 列表
-|属性|描述|
+|属性 | 描述|
 |---|---|
 |list-style|简写属性。用于把所有用于列表的属性设置于一个声明中|
 |list-style-image|将图象设置为列表项标志|
@@ -166,7 +166,7 @@ a:active {color:#0000FF;}  /* 鼠标点击时 */
 
 ## 11. 表格
 ### 11.1 边框/折叠边框
-* border：设置CSS表格边框
+* border：设置 CSS 表格边框
 * border-collapse：折叠边框
 ```css
 table, th, td
@@ -174,7 +174,7 @@ table, th, td
     border: 1px solid black;
 }
 
-// 注意，在上面的代码中的表格有双边框。这是因为表和th/td元素有独立的边界；使用下面的代码折叠边框。
+// 注意，在上面的代码中的表格有双边框。这是因为表和 th/td 元素有独立的边界；使用下面的代码折叠边框。
 
 table
 {
@@ -183,7 +183,7 @@ table
 ```
 
 ### 11.2 宽度/高度
-* width和height属性定义表格的宽度和高度。
+* width 和 height 属性定义表格的宽度和高度。
 ```css
 table 
 {
@@ -193,7 +193,7 @@ th
 {
     height:50px;
 }
-// 设置100％的宽度，50像素的th元素的高度的表格：
+// 设置 100％的宽度，50 像素的 th 元素的高度的表格：
 ```
 
 ### 11.3 文字对齐
@@ -218,14 +218,14 @@ table, td, th
 }
 th
 {
-    background-color:green;     // th元素的背景颜色
-    color:white;                // th元素的文本颜色
+    background-color:green;     // th 元素的背景颜色
+    color:white;                // th 元素的文本颜色
 }
 ```
 
 ## 12. 盒子模型
-**所有HTML元素可以看作盒子**
-CSS盒模型本质上是一个盒子，封装周围的HTML元素，它包括：边距，边框，填充，和实际内容。
+**所有 HTML 元素可以看作盒子**
+CSS 盒模型本质上是一个盒子，封装周围的 HTML 元素，它包括：边距，边框，填充，和实际内容。
 盒子模型允许我们在其它元素和周围元素边框之间的空间放置元素。
 ![盒子模型](./box-model.gif)
 * Margin(外边距) - 清除边框外的区域，外边距是透明的。
@@ -234,7 +234,7 @@ CSS盒模型本质上是一个盒子，封装周围的HTML元素，它包括：�
 * Content(内容) - 盒子的内容，显示文本和图像。
 
 ### 12.1 元素的宽度和高度
-**重要: 当您指定一个CSS元素的宽度和高度属性时，你只是设置内容区域的宽度和高度。要知道，完全大小的元素，你还必须添加填充，边框和边距。**
+**重要：当您指定一个 CSS 元素的宽度和高度属性时，你只是设置内容区域的宽度和高度。要知道，完全大小的元素，你还必须添加填充，边框和边距。**
 ```css
 div {
     width: 300px;
@@ -245,7 +245,7 @@ div {
 ```
 
 ## 13. CSS 边框
-|属性|描述|
+|属性 | 描述|
 |---|---|
 |border|简写属性，用于把针对四个边的属性设置在一个声明。|
 |border-style|用于设置元素所有边框的样式，或者单独地为各边设置边框样式。|
@@ -272,12 +272,12 @@ div {
 轮廓（outline）是绘制于元素周围的一条线，位于边框边缘的外围，可起到突出元素的作用。
 ![轮廓](./box_outline.gif)
 * 所有轮廓属性，见[菜鸟教程](http://www.runoob.com/css/css-outline.html)
-* 用户笔记:
-    * 1.outline是不占空间的，既不会增加额外的width或者height（这样不会导致浏览器渲染时出现reflow或是repaint）
-    * 2.outline有可能是非矩形的（火狐浏览器下）
+* 用户笔记：
+    * 1.outline 是不占空间的，既不会增加额外的 width 或者 height（这样不会导致浏览器渲染时出现 reflow 或是 repaint）
+    * 2.outline 有可能是非矩形的（火狐浏览器下）
 
-## 15. CSS 外边距(margin)
-|属性|描述|
+## 15. CSS 外边距 (margin)
+|属性 | 描述|
 |---|---|
 |margin|简写属性。在一个声明中设置所有外边距属性。|
 |margin-bottom|设置元素的下外边距。|
@@ -285,14 +285,14 @@ div {
 |margin-right|设置元素的右外边距。|
 |margin-top|设置元素的上外边距。|
 
-## 16. CSS 填充(padding)
-|属性|说明|
+## 16. CSS 填充 (padding)
+|属性 | 说明|
 |---|---|
 |padding|使用简写属性设置在一个声明中的所有填充属性|
 |padding-bottom|设置元素的底部填充|
 |padding-left|设置元素的左部填充|
 |padding-right|设置元素的右部填充|
-|padding-to|p设置元素的顶部填充|
+|padding-to|p 设置元素的顶部填充|
 
 ## 17. CSS 分组和嵌套选择器
 ### 17.1 分组选择器
@@ -312,7 +312,7 @@ h1,h2,p
 * 示例见：[5_ex](./Examples/5_ex_nested_selector.html)
 
 ## 18. CSS 尺寸 (Dimension)
-|属性|描述|
+|属性 | 描述|
 |---|---|
 |height|设置元素的高度。|
 |line-height|设置行高。|
@@ -322,21 +322,21 @@ h1,h2,p
 |min-width|设置元素的最小宽度。|
 |width|设置元素的宽度。|
 
-## 19. CSS 定位(Position)
-* static定位：HTMK元素的默认值；静态定位的元素不受top、bottom、left、right的影响；
-* fixed定位：元素的位置相对于浏览器窗口固定，即使窗口是滚动的，它也不会移动；
-* relative定位：相对定位元素的定位是相对其正常位置。【正常位置？！】
-* absolute定位：绝对定位的元素的位置相对于最近的已定位父元素，如果元素没有已定位的父元素，那么它的位置相对于<html>；
-* sticky定位：粘性定位的元素是依赖于用户的滚动；
+## 19. CSS 定位 (Position)
+* static 定位：HTMK 元素的默认值；静态定位的元素不受 top、bottom、left、right 的影响；
+* fixed 定位：元素的位置相对于浏览器窗口固定，即使窗口是滚动的，它也不会移动；
+* relative 定位：相对定位元素的定位是相对其正常位置。【正常位置？！】
+* absolute 定位：绝对定位的元素的位置相对于最近的已定位父元素，如果元素没有已定位的父元素，那么它的位置相对于<html>；
+* sticky 定位：粘性定位的元素是依赖于用户的滚动；
     * 跨越特定阈值前为相对定位，之后为固定定位。
         * 特定阈值指的是 top, right, bottom 或 left 之一
     * 它的行为就像 position:relative; 而当页面滚动超出目标区域时，它的表现就像 position:fixed;，它会固定在目标位置。
-见：[所有的CSS定位属性](http://www.runoob.com/css/css-positioning.html)
+见：[所有的 CSS 定位属性](http://www.runoob.com/css/css-positioning.html)
 
 ## 20. CSS Overflow
 * overflow 属性用于控制内容溢出元素框时显示的方式，默认：visible。
 
-|值|描述|
+|值 | 描述|
 |---|---|
 |visible|默认值。内容不会被修剪，会呈现在元素框之外。|
 |hidden|内容会被修剪，并且其余内容是不可见的。|
@@ -346,38 +346,38 @@ h1,h2,p
 
 ## 21. CSS 组合选择符
 组合选择符说明了两个选择器直接的关系。
-在 CSS3 中包含了四种组合方式:
-* 后代选择器(以空格分隔): 选取某元素的后代元素。
-* 子元素选择器(以大于号分隔）: 选择作为某元素子元素的元素。
+在 CSS3 中包含了四种组合方式：
+* 后代选择器 (以空格分隔): 选取某元素的后代元素。
+* 子元素选择器 (以大于号分隔）: 选择作为某元素子元素的元素。
 * 相邻兄弟选择器（以加号分隔）: 选择紧接在另一元素后的元素，且二者有相同父元素
 * 普通兄弟选择器（以破折号分隔）: 选取所有指定元素之后的相邻兄弟元素。
 
-## 22. CSS 伪类(Pseudo-classes)
-|选择器|示例|示例说明|
+## 22. CSS 伪类 (Pseudo-classes)
+|选择器 | 示例 | 示例说明|
 |---|---|---|
 |:checked|input:checked|选择所有选中的表单元素|
 |:disabled|input:disabled|选择所有禁用的表单元素|
-|:empty|p:empty|选择所有没有子元素的p元素|
+|:empty|p:empty|选择所有没有子元素的 p 元素|
 |:enabled|input:enabled|选择所有启用的表单元素|
 |:first-of-type	p:first-of-type|选择的每个 p 元素是其父元素的第一个 p 元素|
 |:in-range|input:in-range|选择元素指定范围内的值|
 |:invalid|input:invalid|选择所有无效的元素|
-|:last-child|p:last-child|选择所有p元素的最后一个子元素|
-|:last-of-type|p:last-of-type|选择每个p元素是其母元素的最后一个p元素|
-|:not(selector)|:not(p)|选择所有p以外的元素|
+|:last-child|p:last-child|选择所有 p 元素的最后一个子元素|
+|:last-of-type|p:last-of-type|选择每个 p 元素是其母元素的最后一个 p 元素|
+|:not(selector)|:not(p)|选择所有 p 以外的元素|
 |:nth-child(n)|p:nth-child(2)|选择所有 p 元素的父元素的第二个子元素|
-|:nth-last-child(n)|p:nth-last-child(2)|选择所有p元素倒数的第二个子元素|
-|:nth-last-of-type(n)|p:nth-last-of-type(2)|选择所有p元素倒数的第二个为p的子元素|
-|:nth-of-type(n)|p:nth-of-type(2)|选择所有p元素第二个为p的子元素|
-|:only-of-type|p:only-of-type|选择所有仅有一个子元素为p的元素|
-|:only-child|p:only-child|选择所有仅有一个子元素的p元素|
+|:nth-last-child(n)|p:nth-last-child(2)|选择所有 p 元素倒数的第二个子元素|
+|:nth-last-of-type(n)|p:nth-last-of-type(2)|选择所有 p 元素倒数的第二个为 p 的子元素|
+|:nth-of-type(n)|p:nth-of-type(2)|选择所有 p 元素第二个为 p 的子元素|
+|:only-of-type|p:only-of-type|选择所有仅有一个子元素为 p 的元素|
+|:only-child|p:only-child|选择所有仅有一个子元素的 p 元素|
 |:optional|input:optional|选择没有"required"的元素属性|
 |:out-of-range|input:out-of-range|选择指定范围以外的值的元素属性|
 |:read-only|input:read-only|选择只读属性的元素属性|
 |:read-write|input:read-write|选择没有只读属性的元素属性|
 |:required|input:required|选择有"required"属性指定的元素属性|
 |:root|root|选择文档的根元素|
-|:target|#news:target|选择当前活动#news元素(点击URL包含锚的名字)|
+|:target|#news:target|选择当前活动#news 元素 (点击 URL 包含锚的名字)|
 |:valid|input:valid|选择所有有效值的属性|
 |:link|a:link|选择所有未访问链接|
 |:visited|a:visited|选择所有访问过的链接|
@@ -389,6 +389,6 @@ h1,h2,p
 |:first-child|p:first-child|选择器匹配属于任意元素的第一个子元素的 <p> 元素|
 |:before|p:before|在每个<p>元素之前插入内容|
 |:after|p:after|在每个<p>元素之后插入内容|
-|:lang(language)|p:lang(it)|为<p>元素的lang属性选择一个开始值|
+|:lang(language)|p:lang(it)|为<p>元素的 lang 属性选择一个开始值|
 
-## 23. CSS 提示工具(Tooltip)
+## 23. CSS 提示工具 (Tooltip)

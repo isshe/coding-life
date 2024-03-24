@@ -1,17 +1,17 @@
 [TOC]
 
-# 策略模式-Java代码示例
+# 策略模式-Java 代码示例
 
 ## 1. 文件列表
-* Duck.java: 对应类图中Context（抽象类）
-* MallardDuck.java: 一个具体的Duck，具体的Context
-* FlyBehavior.java: 对应类图中Strategy（抽象类、接口）
-* FlyNoWay.java:  对应类图中ConcreteStrategy, FlyBehavior的一个子类
-* FlyWithWings.java:  对应类图中ConcreteStrategy, FlyBehavior的一个子类
-* QuackBehavior.java: 对应图中的Strategy（抽象类，接口）
-* Quack.java: 对应类图中ConcreteStrategy, QuackBehavior的一个子类
-* Squack.java: 对应类图中ConcreteStrategy, QuackBehavior的一个子类
-* MuteQuack.java: 对应类图中ConcreteStrategy, QuackBehavior的一个子类
+* Duck.java: 对应类图中 Context（抽象类）
+* MallardDuck.java: 一个具体的 Duck，具体的 Context
+* FlyBehavior.java: 对应类图中 Strategy（抽象类、接口）
+* FlyNoWay.java:  对应类图中 ConcreteStrategy, FlyBehavior 的一个子类
+* FlyWithWings.java:  对应类图中 ConcreteStrategy, FlyBehavior 的一个子类
+* QuackBehavior.java: 对应图中的 Strategy（抽象类，接口）
+* Quack.java: 对应类图中 ConcreteStrategy, QuackBehavior 的一个子类
+* Squack.java: 对应类图中 ConcreteStrategy, QuackBehavior 的一个子类
+* MuteQuack.java: 对应类图中 ConcreteStrategy, QuackBehavior 的一个子类
 
 ## 2. 各个文件关键代码
 ### 2.1 Context

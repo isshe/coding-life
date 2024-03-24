@@ -50,7 +50,7 @@ struct ngx_module_s {
 };
 ```
 
-> 此结构的详细解释可见 Nginx 源码分析系列文章的 《Nginx 模块》
+> 此结构的详细解释可见 Nginx 源码分析系列文章的《Nginx 模块》
 
 # 模块上下文定义
 

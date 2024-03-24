@@ -1,6 +1,6 @@
 [TOC]
 
-iterm2快捷键
+iterm2 快捷键
 ---
 `Preferences->Profiles->Keys`
 

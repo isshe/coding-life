@@ -16,12 +16,12 @@ OBJECT := { link | address | addrlabel | route | rule | neigh | ntable | tunnel 
 OPTIONS := { -V[ersion] | -h[uman-readable] | -s[tatistics] | -r[esolve] | -f[amily] { inet | inet6 | ipx | dnet | link } | -o[neline] | -n[etns] name | -a[ll] | -c[olor] }
 ```
 OBJECT:
-* address   - 一个设备的IPv4/IPv6地址。（缩写：a 或 addr）
+* address   - 一个设备的 IPv4/IPv6 地址。（缩写：a 或 addr）
 * addrlabel - 协议地址选择的标签配置。  （缩写：addrl）
-* l2tp      - IP隧道以太网(L2TPv3).
-* link      - 网络设备。如eth0。       （ 缩写：l）
+* l2tp      - IP 隧道以太网 (L2TPv3).
+* link      - 网络设备。如 eth0。       （缩写：l）
 * maddress  - 多播地址。              （缩写：m 或 maddr）
-* monitor   - 监测netlink消息
+* monitor   - 监测 netlink 消息
 * mroute    - 组播路由缓存条目。       （缩写：mr）
 * mrule     - 组播路由策略数据库中的规则。
 * neighbour - 管理 ARP 或 NDISC 缓存条目。（缩写：n or neigh）
@@ -30,7 +30,7 @@ OBJECT:
 * route     - 路由表中的路由规则。       （缩写：r）
 * rule      - 路由策略数据库中的规则。   （缩写：ru
 * tcp_metrics/tcpmetrics - 管理 TCP Metrics。
-* tunnel    - IP隧道。                 （缩写：t）
+* tunnel    - IP 隧道。                 （缩写：t）
 * tuntap    - 管理 TUN/TAP 设备。
 * xfrm      - 管理 IPSec 策略。         （缩写：x）
 
@@ -108,7 +108,7 @@ OBJECT:
 ## 为接口添加地址
 > ip addr add <IP 地址/前缀长度> [broadcast <广播地址>] dev <接口名>
 > ip addr add 192.168.2.102/24 dev ens33
-> IPv6地址加`-6`即可。
+> IPv6 地址加`-6`即可。
 
 ## 删除接口地址
 > sudo ip addr del 192.168.2.102/24 dev ens33
@@ -119,14 +119,14 @@ OBJECT:
 ## 禁用接口
 > ip link set ens33 down
 
-## 设置接口MAC地址
+## 设置接口 MAC 地址
 设置前需要先禁用接口
 > ip link set ens33 address 00:0c:29:a5:ce:35
 
-## 设置接口MTU
+## 设置接口 MTU
 > ip link set ens33 mtu 1500
 
-## 添加802.1Q VLAN接口
+## 添加 802.1Q VLAN 接口
 > ip link add link <接口名> name <子接口名> type vlan id <VLAN ID>
 > sudo ip link add link ens33 name ens33.1 type vlan id 10
 
@@ -149,21 +149,21 @@ OBJECT:
 ## 删除路由表项
 > sudo ip route del 192.168.3.0/24 dev ens33
 
-## 查看ARP表
+## 查看 ARP 表
 > ip neigh show dev ens33
 
-## 添加永久ARP条目
+## 添加永久 ARP 条目
 > ip neigh add <IP 地址> lladdr <以冒号分割的 MAC 地址> dev <接口名> nud permanent
 > ip neigh add 192.168.2.149 lladdr e0:d5:5e:a1:d0:d1 dev ens33 nud permanent
 
-## 把动态ARP条目转换为永久ARP条目
+## 把动态 ARP 条目转换为永久 ARP 条目
 > ip neigh change <IP 地址> dev <接口名> nud permanent
 
-## 删除ARP条目
+## 删除 ARP 条目
 > ip neigh del <IP 地址> dev <接口名>
 > ip neigh del 192.168.2.149 dev ens33
 
-## 清空ARP表（不影响永久条目）
+## 清空 ARP 表（不影响永久条目）
 > ip neigh flush all
 
 # 参考

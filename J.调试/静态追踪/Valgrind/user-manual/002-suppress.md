@@ -27,7 +27,7 @@ suppression 示例：
 ```
 
 - 第一行：name_of_suppression——名称。
-- 第二行：tool_name——工具名，多个则通过逗号隔开。然后跟 “:” 再跟 suppression 类别。
+- 第二行：tool_name——工具名，多个则通过逗号隔开。然后跟“:”再跟 suppression 类别。
 - 接下来一行：可选的额外信息（optional extra info for some suppression types），例如 Memcheck 工具的 Param。
 - 剩余行：导致错误的函数调用链，最多 24 行，可以通过选项 `TODO` 来修改。
 

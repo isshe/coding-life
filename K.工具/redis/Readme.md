@@ -3,25 +3,25 @@
 
 Redis
 ---
-Redis：REmote DIctionary Server（Redis），是一个key-value存储器，也是一个数据结构服务器(data structures server)。
-Redis分为服务器(redis-server)和客户端(redis-cli)。
-特性:
+Redis：REmote DIctionary Server（Redis），是一个 key-value 存储器，也是一个数据结构服务器 (data structures server)。
+Redis 分为服务器 (redis-server) 和客户端 (redis-cli)。
+特性：
 * 基于内存运行，性能高效
 * 支持分布式，理论上可以无限扩展
-* key-value存储系统
-* 开源的使用ANSI C语言编写、遵守BSD协议、支持网络、可基于内存亦可持久化的日志型、Key-Value数据库，并提供多种语言的API
+* key-value 存储系统
+* 开源的使用 ANSI C 语言编写、遵守 BSD 协议、支持网络、可基于内存亦可持久化的日志型、Key-Value 数据库，并提供多种语言的 API
 
-参考文档:
+参考文档：
 http://redisdoc.com/
 http://www.redis.cn/commands.html
 
 # NoSQL
-非关系型数据库.
-分类:
+非关系型数据库。
+分类：
 * Key-Value: Redis
-* 文档型: MongoDB, ElasticSearch
-* 面向列: Hbase, Cassandra
-* 图形化: Neo4j
+* 文档型：MongoDB, ElasticSearch
+* 面向列：Hbase, Cassandra
+* 图形化：Neo4j
 
 
 # 安装
@@ -69,10 +69,10 @@ info                    # 查询信息
 
 
 # Redis strings
-Redis字符串是二进制安全的，这意味着Redis字符串能包含任意类型的数据。
-但过大的文件不宜存入redis，一方面系统内存有限，另一个方面字符串类型最懂储存512字节的内容。
+Redis 字符串是二进制安全的，这意味着 Redis 字符串能包含任意类型的数据。
+但过大的文件不宜存入 redis，一方面系统内存有限，另一个方面字符串类型最懂储存 512 字节的内容。
 
-## Redis strings操作示例
+## Redis strings 操作示例
 ```shell
 # 设置及获取
 set key value
@@ -109,7 +109,7 @@ strlen key
 # Redis List
 Redis List：字符串列表，最多能容纳`2^32-1`个元素。
 
-## Redis List操作示例
+## Redis List 操作示例
 ```shell
 # 插入数据到列表
 lpush key value [value ...]
@@ -152,7 +152,7 @@ rpoplpush list1 list2
 # Redis Hash
 Redis Hash：字符串字段与字符串值之间的映射。是展现对象的完美数据类型。
 
-## Redis Hash操作示例
+## Redis Hash 操作示例
 ```shell
 # 获取/设置
 hset key field value
@@ -184,12 +184,12 @@ hkeys key
 hvalues key
 ```
 
-# Redis 无序集合(set)
+# Redis 无序集合 (set)
 * 一个无序的字符串集合；
-* 添加/删除/测试存在时间复杂度为O(1);
+* 添加/删除/测试存在时间复杂度为 O(1);
 * 不允许重复元素；
 
-## Redis无序集合操作示例
+## Redis 无序集合操作示例
 ```shell
 # 加入数据到集合
 sadd key value [value ...]
@@ -216,11 +216,11 @@ sdiff set1 set2 ...
 srem key value [value ...]
 ```
 
-# Redis 有序集合(set)
+# Redis 有序集合 (set)
 * 有序；
-* 添加/删除/更新时间复杂度O(N)；
+* 添加/删除/更新时间复杂度 O(N)；
 * 不允许重复元素；
-* 可根据权值(score)/次序(position)获取范围内的元素。
+* 可根据权值 (score)/次序 (position) 获取范围内的元素。
 
 ## Redis 有序集合操作示例
 ```shell
@@ -337,9 +337,9 @@ SUBSCRIBE channel [channel ...]
 ```
 
 # 问题
-## redis-cli中文乱码？
+## redis-cli 中文乱码？
 * 执行`redis-cli --raw`
 
 ## 什么是二进制安全？
 
-## redis 的优缺点?
+## redis 的优缺点？

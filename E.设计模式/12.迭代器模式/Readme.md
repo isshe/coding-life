@@ -20,7 +20,7 @@
         * `定义`创建相应迭代器对象的接口。
     * ConcreteAggregate：具体聚合
         * `实现`创建相应迭代器的接口
-        * 返回ConcreteIterator的一个适当实例。
+        * 返回 ConcreteIterator 的一个适当实例。
 * 协作/工作流程
     * 通过 ConcreteAggregate 创建 ConcreteIterator；
     * 通过 ConcreteIterator 访问/遍历 ConcreteAggregate。
@@ -57,11 +57,11 @@
         * **一个健壮的迭代器保证插入和删除操作不会干扰遍历，且不需要拷贝该聚合**。
     * 附加的迭代器操作。
         * 最小接口：First、Next、IsDone、CurrentItem
-        * 附加操作：SkipTo、Previous等
-    * 在C++中使用多态的迭代器。
+        * 附加操作：SkipTo、Previous 等
+    * 在 C++ 中使用多态的迭代器。
         * 代价：要求用一个`工厂方法`动态地分配迭代器对象。
         * **仅当必须多态时，才使用！**
-        * 另一个缺点：客户必须负责删除它们。（这里常常出现bug）
+        * 另一个缺点：客户必须负责删除它们。（这里常常出现 bug）
     * 迭代器的特权访问。
         * 迭代器可被看为聚合的一个扩展，迭代器和聚合紧密耦合。
     * 用于复合对象的迭代器。【？？？】
@@ -83,5 +83,5 @@
 
 ## z. 参考
 * 《设计模式：可复用面向对象软件的基础》
-* 《Head First设计模式》
+* 《Head First 设计模式》
 

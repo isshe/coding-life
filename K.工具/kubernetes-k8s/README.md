@@ -7,8 +7,8 @@ kubernetes
 
 - kubectl get: 显示资源
 - kubectl describe: 显示资源的详细信息
-- kubectl logs: 打印一个pod的一个容器的log
-- kubectl exec: 在一个pod的一个容器中运行一个命令
+- kubectl logs: 打印一个 pod 的一个容器的 log
+- kubectl exec: 在一个 pod 的一个容器中运行一个命令
 
 ## 显示版本
 
@@ -57,7 +57,7 @@ kubectl describe services/kubernetes-bootcamp
 kubectl describe deployment
 ```
 
-## 部署APP
+## 部署 APP
 
 ```
 kubectl create deployment <NAME> --image=<images url>
@@ -65,7 +65,7 @@ kubectl create deployment <NAME> --image=<images url>
 kubectl create deployment kubernetes-bootcamp --image=gcr.io/google-samples/kubernetes-bootcamp:v1
 ```
 
-## 获取POD名字
+## 获取 POD 名字
 
 ```shell
 export POD_NAME=$(kubectl get pods -o go-template --template '{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}')
@@ -91,7 +91,7 @@ echo NODE_PORT=$NODE_PORT
 curl $(ip):$NODE_PORT
 ```
 
-## 设置label
+## 设置 label
 
 ```shell
 kubectl label <OBJ-TYPE> <OBJ-NAME> <NEW-LABEL>
@@ -99,7 +99,7 @@ kubectl label <OBJ-TYPE> <OBJ-NAME> <NEW-LABEL>
 kubectl label pod $POD_NAME app=v1
 ```
 
-## 删除一个service
+## 删除一个 service
 
 ```shell
 kubectl delete service -l <label-name>

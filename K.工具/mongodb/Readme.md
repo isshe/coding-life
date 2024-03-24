@@ -8,14 +8,14 @@ MongoDB
 * 非关系型数据库；
 * 面向集合的存储；
 * 角色包含：
-  * 数据库: 可以在创建文档时自动创建
+  * 数据库：可以在创建文档时自动创建
   * 集合：可以在创建文档时自动创建
     * 一组文档的组合
   * 文档
     * 文档的逻辑联系
       * 嵌入式关系
       * 引用式关系
-* 使用bson格式存储数据
+* 使用 bson 格式存储数据
 
 # 公共命令
 * shell
@@ -78,24 +78,24 @@ db.<collection_name>.find({"name":{$type:string}})
 db['collection'].find()
 ```
 * type：
-  * 1：双精度(Double)
-  * 2：字符串(String)
-  * 3：对象(Object)
-  * 4：数组(Array)
-  * 5：二进制数据(Binary data)
-  * 7：对象ID(Object id)
-  * 8：布尔类型(Boolean)
-  * 9：日期(Data)
-  * 10：空(Null)
-  * 11：正则表达式(Regular Expression)
-  * 13：JS代码(JavaScript)
-  * 14：符号(Symbol)
-  * 15：有作用域的JS代码(JavaScript with scope)
-  * 16：32位整数(32-bit integer)
-  * 17：时间戳(Timestamp)
-  * 18：64位整数(64-bit integer)
-  * -1：最小值(Min key)
-  * 127：最大值(Max key)
+  * 1：双精度 (Double)
+  * 2：字符串 (String)
+  * 3：对象 (Object)
+  * 4：数组 (Array)
+  * 5：二进制数据 (Binary data)
+  * 7：对象 ID(Object id)
+  * 8：布尔类型 (Boolean)
+  * 9：日期 (Data)
+  * 10：空 (Null)
+  * 11：正则表达式 (Regular Expression)
+  * 13：JS 代码 (JavaScript)
+  * 14：符号 (Symbol)
+  * 15：有作用域的 JS 代码 (JavaScript with scope)
+  * 16:32 位整数 (32-bit integer)
+  * 17：时间戳 (Timestamp)
+  * 18:64 位整数 (64-bit integer)
+  * -1：最小值 (Min key)
+  * 127：最大值 (Max key)
 
 
 ### 指定数量查询
@@ -128,7 +128,7 @@ use <dbname>
 db.createCollection(<collection_name>, [options])
 ```
 * options: 一个座位初始化的文档，可选。
-  * capped：Boolean类型，`true`则创建固定大小的集合，大小达到最大时，就覆盖之前的条目。
+  * capped：Boolean 类型，`true`则创建固定大小的集合，大小达到最大时，就覆盖之前的条目。
   * size: `capped`为`true`时，则需要指定，单位为`byte`。
   * max: 最大文档条目数。
 
@@ -187,7 +187,7 @@ db.<collection_name>.ensureIndex({"field":1|-1}, [options])
 db.users.ensureIndex({"name":1}, {background:1})
 ```
 * options:
-|参数|类型|默认值|概述|
+|参数 | 类型 | 默认值 | 概述|
 |---|---|---|---|
 |background|Boolean|false|不阻塞其他数据库操作|
 |unique|Boolean|false|建立的索引是否唯一|
@@ -197,7 +197,7 @@ db.users.ensureIndex({"name":1}, {background:1})
 |expireAfterSecond|integer||设置集合的生存时间，单位`秒`|
 |v|index version||索引的版本号|
 |weight|document||索引权重值|
-|default-language|string|英语|默认语言|
+|default-language|string|英语 | 默认语言|
 |language-override|string|language||
 
 

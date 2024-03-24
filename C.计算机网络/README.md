@@ -49,7 +49,7 @@ swconfig dev switch0 show
 
 ## arp
 
-* 查看arp信息
+* 查看 arp 信息
 
 ```
 arp

@@ -1,6 +1,6 @@
 [TOC]
 
-# 迭代器模式-Java代码示例
+# 迭代器模式-Java 代码示例
 
 ## 1. 文件列表
 * Iterator.java: Iterator，迭代器抽象类，定义迭代器的接口。

@@ -13,7 +13,7 @@ dig
 ## 分级查询
 > dig +trace www.isshe.xyz
 
-## 单独查看每一级域名的NS记录
+## 单独查看每一级域名的 NS 记录
 > dig ns xyz
 > dig ns isshe.xyz
 

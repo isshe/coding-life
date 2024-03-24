@@ -1,14 +1,14 @@
 [TOC]
 
-# 策略模式-C++代码示例
-此示例按照类图实现，以说明main(客户)和ConcreteStrategy是不解耦的。
+# 策略模式-C++ 代码示例
+此示例按照类图实现，以说明 main(客户) 和 ConcreteStrategy 是不解耦的。
 
 
 ## 1. 文件列表
-* Context.h/cpp: 对应类图中Context
-* Strategy.h: 对应类图中Strategy
-* ConcreteStrategyA.h/cpp: 对应类图中ConcreteStrategy
-* ConcreteStrategyB.h/cpp: 对应类图中ConcreteStrategy
+* Context.h/cpp: 对应类图中 Context
+* Strategy.h: 对应类图中 Strategy
+* ConcreteStrategyA.h/cpp: 对应类图中 ConcreteStrategy
+* ConcreteStrategyB.h/cpp: 对应类图中 ConcreteStrategy
 
 ## 2. 各个文件关键代码
 ### 2.1 Context

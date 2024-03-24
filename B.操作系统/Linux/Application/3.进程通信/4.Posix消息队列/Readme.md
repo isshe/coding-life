@@ -24,6 +24,6 @@ int mq_notify(mqd_t mqdes, const struct sigevent *notification);
 ```
 
 
-## A. Posix消息队列和SystemV消息队列的区别
-* Posix消息队列的`读`总是返回最高优先级的最早消息；System V消息队列的`读`可以返回任意指定优先级的消息。
-* 往`空队列`放置一个消息时，Posix消息队列允许产生一个信号或者启动一个线程。System V没有类似的机制。
+## A. Posix 消息队列和 SystemV 消息队列的区别
+* Posix 消息队列的`读`总是返回最高优先级的最早消息；System V 消息队列的`读`可以返回任意指定优先级的消息。
+* 往`空队列`放置一个消息时，Posix 消息队列允许产生一个信号或者启动一个线程。System V 没有类似的机制。

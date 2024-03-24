@@ -1,10 +1,10 @@
 [TOC]
 
-# 代理模式-Java示例
+# 代理模式-Java 示例
 
 ## 1. 文件列表
 * ImageComponent.java: 组件、主题类；被代理类。
-* ImageProxy.java：代理类，代理ImageComponent。
+* ImageProxy.java：代理类，代理 ImageComponent。
 * Test.java：测试类
 
 ## 2. 各个文件关键代码
@@ -158,5 +158,5 @@ public class Test {
 ## y. 拓展/总结
 
 ## z. 参考
-* 《Head First设计模式》
+* 《Head First 设计模式》
 

@@ -14,7 +14,7 @@ Nginx 都是以模块的形式进行组织的，无论是 Nginx 核心还是第�
 
 # Nginx 模块结构
 
-以下是涉及的模块相关的数据结构：（不完全，仅后续 “Nginx 模块初始化调用过程” 中涉及的）
+以下是涉及的模块相关的数据结构：（不完全，仅后续“Nginx 模块初始化调用过程”中涉及的）
 
 - [ngx_module_t](../Nginx的数据结构/ngx_module_t.md)
 - [ngx_command_t](../Nginx的数据结构/ngx_command_t.md)
@@ -128,10 +128,10 @@ main: core/nginx.c
   - 以 HTTP 模块示例：
     - 解析到 http 指令时，执行 ngx_http_block 函数，函数内部继续调用 ngx_conf_parse 对 `http { ... }` 块内的配置进行解析；
     - 解析到 server 指令时，执行 ngx_http_core_server 函数，函数内部继续调用 ngx_conf_parse 对 ` server { ... }` 块内的配置进行解析；
-    - 解析到 listen 指令时，执行 ngx_http_core_listen 函数进行端口监听(ngx_http_add_listen)等动作。
+    - 解析到 listen 指令时，执行 ngx_http_core_listen 函数进行端口监听 (ngx_http_add_listen) 等动作。
 - cmd->set：处理**指令**并将解析后的值存储到相应的配置中。
-    - 在 NGX_CORE_MODULE 类型的模块 “http” 的 cmd->set (也就是 ngx_http_block) 中，逐个处理 NGX_HTTP_MODULE 类型的模块的上下文；NGX_HTTP_MODULE 的 cmd 还是和其他模块的一起处理了。
-    - 因为有顺序，因此是 “http” 模块的指令（cmd）处理完以后，再处理其他 NGX_HTTP_MODULE 类型模块的指令。
+    - 在 NGX_CORE_MODULE 类型的模块“http”的 cmd->set (也就是 ngx_http_block) 中，逐个处理 NGX_HTTP_MODULE 类型的模块的上下文；NGX_HTTP_MODULE 的 cmd 还是和其他模块的一起处理了。
+    - 因为有顺序，因此是“http”模块的指令（cmd）处理完以后，再处理其他 NGX_HTTP_MODULE 类型模块的指令。
 - 配置解析完以后，进行模块初始化 ngx_init_modules。
 
 接下来对其中的关键调用过程进行解析。

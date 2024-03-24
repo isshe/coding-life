@@ -1,11 +1,11 @@
 [TOC]
 
-# 代理模式-C++示例
+# 代理模式-C++ 示例
 
 ## 1. 文件列表
 * Subject.h: 主题，抽象类，定义主题的接口。
-* RealSubject.h/cpp: 具体的主题，继承自Subject。
-* Proxy.h/cpp: 代理，代理RealSubject，继承自Subject。
+* RealSubject.h/cpp: 具体的主题，继承自 Subject。
+* Proxy.h/cpp: 代理，代理 RealSubject，继承自 Subject。
 * main.cpp: 测试代码
 
 ## 2. 各个文件关键代码

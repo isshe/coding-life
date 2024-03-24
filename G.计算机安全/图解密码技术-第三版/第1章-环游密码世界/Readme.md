@@ -13,8 +13,8 @@
 `对称密码`：加密、解密使用同一秘钥。
 `非对称密码`：加密、解密使用不同秘钥。（也称为`公钥密码`）
 `混合密码系统`：结合`对称密码`和`公钥密码`的加密方式。
-`单向散列函数(one-way hash function)`：用于保证数据的完整性(integrity)。防篡改。
-`消息认证码(message authentication code)`：用于确认消息是否来自期望的对象。防篡改、防伪装(认证)。
+`单向散列函数(one-way hash function)`：用于保证数据的完整性 (integrity)。防篡改。
+`消息认证码(message authentication code)`：用于确认消息是否来自期望的对象。防篡改、防伪装 (认证)。
 `数字签名(digital signature)`: 防篡改、防伪装、防止否认。
 `伪随机数生成器(Pseudo Random Number Generator, PRNG)`: 一种模拟产生随机数的算法。
 

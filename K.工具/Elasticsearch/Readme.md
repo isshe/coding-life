@@ -33,7 +33,7 @@ Elasticsearch 是一个分布式、可扩展、实时的搜索与数据分析引
 * binary：暂时支持 Base64 编码字符串
 ## 范围类型
 * integer_range: 整型范围
-* float_range: 浮点范围:
+* float_range: 浮点范围：
 * long_range: 长整型范围
 * double_range: 浮点范围
 * date_range: 时间范围

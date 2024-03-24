@@ -4,16 +4,16 @@
 
 ## 用法
 
-- 上下文: location, location if
+- 上下文：location, location if
   - **注意，不能定义在 http、server 块内了。**
-- 阶段: content
+- 阶段：content
 - 语法：
     - 与 `init_by_lua*` 类似，不再赘述。
 - **注意：这个指令不要和其他 content handler 指令（如 proxy_pass）在同一个 location 同时使用。**
 
 ## 实现
 
-在《[模块初始化](001-module-init.md)》 的 “ngx_http_lua_init 执行流程” 中，
+在《[模块初始化](001-module-init.md)》的“ngx_http_lua_init 执行流程”中，
 我们了解到 content handler 并没有像 rewrite handler 一样在函数 ngx_http_lua_init 中被放到 `cmcf->phases` 数组中，所以接下来我们来探究一下为什么。
 因此，我们此行的目的：
 

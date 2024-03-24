@@ -1,12 +1,12 @@
 [TOC]
 
-# 命令模式-C++代码示例
+# 命令模式-C++ 代码示例
 
 ## 1. 文件列表
 * CPP/:
     * main.cpp: 测试程序。
     * Command.h: 定义命令的接口，抽象类。
-    * ConcreteCommand.h/cpp: 具体的命令，继承自Command
+    * ConcreteCommand.h/cpp: 具体的命令，继承自 Command
     * Invoker.h/cpp: 触发者类。
     * Receiver.h/cpp: 工作类，实际执行动作的类。
 

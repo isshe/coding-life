@@ -2,9 +2,9 @@
 [TOC]
 
 # 进度
-15.4章
+15.4 章
 
-# matplotlib使用
+# matplotlib 使用
 ```python
 import matplotlib.pyplot as plt
 ```
@@ -16,7 +16,7 @@ squares = [1, 4, 9, 16, 25]
 plt.plot(squares)
 plt.plot(squares, linewidth=5)
 
-input_value = [1, 2, 3, 4, 5]   # x轴
+input_value = [1, 2, 3, 4, 5]   # x 轴
 plt.plot(input_value, squares, linewidth=5)
 ```
 
@@ -92,12 +92,12 @@ plt.figure(dpi=128, figsize=(10, 6))
 
 ## 着色
 * fill_between()
-> 见16章示例<1.highs_lows.py>
+> 见 16 章示例<1.highs_lows.py>
 
 ```python
 plt.fill_between(dates, highs, lows, facecolor='blue', alpha=0.1)
 ```
 
 # Pygal
-> 图表类型画廊: http://www.pygal.org/
+> 图表类型画廊：http://www.pygal.org/
 

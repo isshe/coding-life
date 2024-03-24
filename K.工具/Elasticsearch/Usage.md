@@ -53,7 +53,7 @@ DELETE /persion
 
 # 2. 文档
 _index、_type、_id 三个内容确定一个文档。
-> 7.0版本以后, _type 默认为 _doc。
+> 7.0 版本以后，_type 默认为 _doc。
 
 ## 2.1 创建文档
 ### 自动生成 ID
@@ -115,7 +115,7 @@ DELETE /book/_doc/3jDSqHMB_dj2Cr9HsgbG
 
 ## 2.5 查询文档
 
-### term查询
+### term 查询
 完全匹配的查询，搜索之前不会对搜索的关键字进行分词。
 ```json
 # 弃用
@@ -162,7 +162,7 @@ match 查询属于高层查询。会根据查询的字段类型不用，采用�
 match 查询实际低层就是多个 term 查询。
 
 
-### match_all查询所有
+### match_all 查询所有
 ```json
 GET /book/_search
 {
@@ -278,7 +278,7 @@ POST /book/_search
 * prefix_length: 不允许出错的字符长度
 
 ### wildcard 查询
-通配查询: 通配符`*`，占位符`?`。
+通配查询：通配符`*`，占位符`?`。
 ```json
 POST /book/_search
 {
@@ -310,7 +310,7 @@ POST /book/_search
 
 ### regexp 查询
 正则查询：通过正则表达式进行匹配。
-**PS: prefix, fuzzy, whidcard, regexp查询效率比较低。**
+**PS: prefix, fuzzy, whidcard, regexp 查询效率比较低。**
 ```json
 POST /book/_search
 {
@@ -416,7 +416,7 @@ POST /book/_search
 ```
 
 ## 2.8 boosting 查询
-boosting查询可以影响查询后的 score。
+boosting 查询可以影响查询后的 score。
 * positive：只有匹配上 positive 的内容，才会被放到结果集中。
 * negative：如果匹配上和 positive 并且匹配上 negative，就可以降低这样的文档的分数。
 * negative_boost：指定系数，必须小于 1.0. 
@@ -446,8 +446,8 @@ POST /book/_search
 ```
 
 ## 2.9 filter 查询
-query查询：根据查询条件去计算文档的匹配度得到一个分数，并根据分数进行排序。
-filter查询：根据查询条件去查询文档，但**不计算分数**，并且会对经常被过滤的数据进行缓存。
+query 查询：根据查询条件去计算文档的匹配度得到一个分数，并根据分数进行排序。
+filter 查询：根据查询条件去查询文档，但**不计算分数**，并且会对经常被过滤的数据进行缓存。
 ```json
 POST /book/_search
 {
@@ -587,7 +587,7 @@ POST /book/_search
 
 ## 2.12 经纬度查询
 * geo_distance: 直线距离检索方式
-* geo_bounding_box: 以两个点(左上右下)确定一个矩形范围，获取其中所有数据。
+* geo_bounding_box: 以两个点 (左上右下) 确定一个矩形范围，获取其中所有数据。
 * geo_polygon: 以多个点确定一个多边形，获取其中所有数据。
 ```json
 # geo_distance

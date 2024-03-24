@@ -1,3 +1,3 @@
-��Ŀ��ַ��https://leetcode.com/problems/subsets/  
-��Ŀ������ ��һ�����飬��������Ӽ���
-˼·��������һ��(77)��˼·��������ϵĻ����ϣ��ı�k����Ϊ�Ӽ����󷨡�
+题目地址：https://leetcode.com/problems/subsets/  
+题目描述：给一个数组，输出它的子集。
+思路：借用上一题 (77) 的思路，在求组合的基础上，改变 k，即为子集的求法。

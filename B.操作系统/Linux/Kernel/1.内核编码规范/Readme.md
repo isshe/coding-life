@@ -12,10 +12,10 @@
 不管怎样，走起：
 
 ## 1) 缩进
-`Tab`是`8`个字符，因此缩进也是8个字符。有些异端运动试图将缩进变为 4 (甚至2！) 字符深，这几乎相当于尝试将圆周率的值定义为 3。
-理由：缩进的背后思想是清楚地定义控制块的开始和结束位置。如果需要超过`3`个级别的缩进，那么就应该修改/修复程序。简言之，8字符使代码更容易阅读。
+`Tab`是`8`个字符，因此缩进也是 8 个字符。有些异端运动试图将缩进变为 4 (甚至 2！) 字符深，这几乎相当于尝试将圆周率的值定义为 3。
+理由：缩进的背后思想是清楚地定义控制块的开始和结束位置。如果需要超过`3`个级别的缩进，那么就应该修改/修复程序。简言之，8 字符使代码更容易阅读。
 当函数嵌套太深时，一个额外的好处是给你警告【注意这个警告】。
-为缓解switch语句多个缩进级别的首选方法是switch和case对齐，而不是二次缩进case，例如：
+为缓解 switch 语句多个缩进级别的首选方法是 switch 和 case 对齐，而不是二次缩进 case，例如：
 ```c
 switch (suffix) {
 case 'G':
@@ -47,7 +47,7 @@ if (condition) do_this;
 * 行长限制是`80`字符。
     * 除非超过`80`字符的行显著提高可读性并且不隐藏信息，否则都应该分解为合理的块。
     * 后代总是比父母短得多，并且基本放在右边。
-* 永远不要破坏用户可见的字符串，例如printk消息，因为这会破坏`grep`的能力。
+* 永远不要破坏用户可见的字符串，例如 printk 消息，因为这会破坏`grep`的能力。
 
 ## 3. 大括号和空格
 大括号在右边：(适用于`if, switch, for, while, do`)
@@ -109,7 +109,7 @@ while (condition) {
 ```
 
 ## 3.1 空格
-内核中空格的使用依赖(大多时候)函数与关键字的使用。
+内核中空格的使用依赖 (大多时候) 函数与关键字的使用。
 * 大多时候会在关键字`后`使用空格，如`if, switch, case, for, do, while`
     * 值得注意的例外是：看着像函数的`sizeof/typeof/alignof/__attribute__`。
 使用空格：
@@ -118,7 +118,7 @@ if () {
 	do_something();
 }
 ```
-使用():
+使用 ():
 ```c
 s = sizeof(struct file);
 ```
@@ -132,7 +132,7 @@ char *linux_banner;
 unsigned long long memparse(char *ptr, char **retptr);
 char *match_strdup(substring_t *s);
 ```
-在大多数二元三元运算符周围(两侧)使用一个空格，如以下的运算符：
+在大多数二元三元运算符周围 (两侧) 使用一个空格，如以下的运算符：
 ```c
 =  +  -  <  >  *  /  %  |  &  ^  <=  >=  ==  !=  ?  :
 ```
@@ -150,12 +150,12 @@ char *match_strdup(substring_t *s);
 
 ## 4) 命名
 全局变量（仅在真正需要时才使用）/全局函数需要具有描述性的名称。
-* 例如，定义一个统计活跃用户数的函数，应该用count_active_users()，而不应该cntusr()。
+* 例如，定义一个统计活跃用户数的函数，应该用 count_active_users()，而不应该 cntusr()。
 局部变量应该简要。
 
 ## 5) Typedefs
 不要使用类似`vps_t`这样的类型。
-将typedef用于struct和指针是一个错误，
+将 typedef 用于 struct 和指针是一个错误，
 ```c
 vps_t a;
 ```
@@ -163,24 +163,24 @@ vps_t a;
 ```c
 struct virtual_container *a;
 ```
-你就可以说明a是什么。
-很多人觉得typedef有助于可读性。这是个误解，typdef仅适用于：
-* 完全不透明对象：typedef主动用于**隐藏**对象的内容。
+你就可以说明 a 是什么。
+很多人觉得 typedef 有助于可读性。这是个误解，typdef 仅适用于：
+* 完全不透明对象：typedef 主动用于**隐藏**对象的内容。
     * 例如：`pte_t`等只能使用正确的访问器进行访问的不透明对象。
-* 清除整型类型：有助于避免混淆，无论是int还是long。u8/u16/u32是完美的typedef。
+* 清除整型类型：有助于避免混淆，无论是 int 还是 long。u8/u16/u32 是完美的 typedef。
 * 当你使用稀疏字面创建一个新类型以进行类型检查。【？？？】
     * when you use sparse to literally create a new type for type-checking.
-* 在某些特殊情况下，与标准C99类型相同的新类型。【？？？】
+* 在某些特殊情况下，与标准 C99 类型相同的新类型。【？？？】
 * 在用户空间中安全使用的类型。（内核编程是内核空间）
-    * 在用户空间可见的某些结构中，我们不能要求C99类型，也不能使用u32之类的。因此，我们在与用户空间共享的所有结构中使用__u32和类似的类型。
-规则是：基本上，永远不用使用typedef，除非你能清楚匹配以上其中一个规则。
+    * 在用户空间可见的某些结构中，我们不能要求 C99 类型，也不能使用 u32 之类的。因此，我们在与用户空间共享的所有结构中使用__u32 和类似的类型。
+规则是：基本上，永远不用使用 typedef，除非你能清楚匹配以上其中一个规则。
 
 ## 6) 函数
 
-函数应该是短而甜，只做一件事的，并做好一件事。它们应该只占1到2屏(1屏：80x24)。
+函数应该是短而甜，只做一件事的，并做好一件事。它们应该只占 1 到 2 屏 (1 屏：80x24)。
 函数的最大长度与该函数的复杂度和缩进级别成`反比`。（简单的函数可以很长，但是复杂的函数反而应该短）
 函数的局部变量的数量不应该超过`5-10`个。否则你应该重新考虑功能，并将其拆分成更小的部分。
-在源文件中，使用`一个空行`分隔函数，如果导出该函数，则它的EXPORT宏应该紧随其后。如：
+在源文件中，使用`一个空行`分隔函数，如果导出该函数，则它的 EXPORT 宏应该紧随其后。如：
 ```c
 int system_is_up(void)
 {
@@ -189,14 +189,14 @@ int system_is_up(void)
 EXPORT_SYMBOL(system_is_up);
 ```
 在函数原型中，包含参数名称及其数据类型。
-不要将extern关键字与函数原型一起使用。
+不要将 extern 关键字与函数原型一起使用。
 
 
 ## 7) 集中退出函数
-虽然有些人不赞成使用，但编译器经常以`无条件跳转指令`的形式使用等效的goto语句。
-当函数从多个位置退出并且必须完成一些常见工作(如清理)时，goto语句会派上用场。如果不需要清理，则直接返回。
-标签名称：说明goto的作用或goto存在的原因。如，一个好名称`out_free_buffer`，goto去释放buffer。避免使用`err1:`或`err2:`，因为如果你增加或删除退出路径，你必须重新进行编号。
-使用goto的基本原理是：
+虽然有些人不赞成使用，但编译器经常以`无条件跳转指令`的形式使用等效的 goto 语句。
+当函数从多个位置退出并且必须完成一些常见工作 (如清理) 时，goto 语句会派上用场。如果不需要清理，则直接返回。
+标签名称：说明 goto 的作用或 goto 存在的原因。如，一个好名称`out_free_buffer`，goto 去释放 buffer。避免使用`err1:`或`err2:`，因为如果你增加或删除退出路径，你必须重新进行编号。
+使用 goto 的基本原理是：
 * `无条件语句(uncoditional statments)`更容易理解和遵循。
 * 嵌套减少了。
 * 防止进行修改时不更新各个出口点的错误。
@@ -231,7 +231,7 @@ err:
 	kfree(foo);
 	return ret;
 ```
-当存在退出路径foo是NULL时，会出现bug。通常这种情况的解决方法是分成两个错误标签：
+当存在退出路径 foo 是 NULL 时，会出现 bug。通常这种情况的解决方法是分成两个错误标签：
 ```c
  err_free_bar:
 	kfree(foo->bar);
@@ -247,7 +247,7 @@ err:
 永远不要在注释中解释你的代码如何工作的。应该把代码写好，而不是浪费时间注释差的代码。
 一般来说，注释中应该说明代码是`做什么`而不是`怎么做`。
 并且，尽量不要在函数体内进行注释；如果函数太复杂而需要单独注释它的一部分，那么你应该回到`6)`去看看。你可以进行一些小注释，但是尽量避免过多。相反，将注释放在头部，告诉人们它做什么和它为什么可以做到。
-注释内核API时，请使用`内核文档格式`。详见`Documentation/doc-guide/ <doc_guide>`和`scripts/kernel-doc`。
+注释内核 API 时，请使用`内核文档格式`。详见`Documentation/doc-guide/ <doc_guide>`和`scripts/kernel-doc`。
 多行注释示例：
 ```c
 /*
@@ -272,10 +272,10 @@ err:
 
 
 ## 9) 你弄得一团糟
-> emacs相关，跳过
+> emacs 相关，跳过
 
-## 10) Kconfig配置文件
-代码树中的所有Kconfig配置文件，缩进有所不同。config定义的行，用一个`tab`缩进，而帮助文本缩进再两个空格。
+## 10) Kconfig 配置文件
+代码树中的所有 Kconfig 配置文件，缩进有所不同。config 定义的行，用一个`tab`缩进，而帮助文本缩进再两个空格。
 ```c
   config AUDIT
 	bool "Auditing support"
@@ -299,18 +299,18 @@ err:
 在创建和销毁此数据结构的单线程环境之外具有可见性的数据结构，应始终具有引用计数。内核中没有垃圾回收，因此必须使用引用计数记录所有用途。
 引用计数意味着可以避免`锁定`，并允许多个用户并行访问。
 请注意，`锁定`不是引用计数的代替。**锁定用于保持数据结构的一致性，而引用计数是一种内存管理技术**。两者通常都是必须的，不要相互混淆。
-当存在不同的用户时，许多数据结构可以具有两个级别的引用计数。子类计数计算子类用户的数量，并在子类计数变为0时，仅减少一次全局计数。
-这种`多级引用计数`可以再内存管理(struct mm_struct:mm_users/mm_count)和文件系统(struct super_block: s_count/s_active)中找到。
+当存在不同的用户时，许多数据结构可以具有两个级别的引用计数。子类计数计算子类用户的数量，并在子类计数变为 0 时，仅减少一次全局计数。
+这种`多级引用计数`可以再内存管理 (struct mm_struct:mm_users/mm_count) 和文件系统 (struct super_block: s_count/s_active)中找到。
 请记住：如果另一个线程可以找到你的数据结构，并且你没有进行引用计数，那么几乎可以肯定会有错误！
 
-## 12) 宏、枚举和RTL
-宏和枚举(enum)标签的名称是大写的。如：
+## 12) 宏、枚举和 RTL
+宏和枚举 (enum) 标签的名称是大写的。如：
 ```c
 #define CONSTANT 0x12345
 ```
 在定义几个相关常量时，首选枚举。
 通常，内联函数优于类型函数的宏。
-具有多个语句的宏应该包含在do-while块中：
+具有多个语句的宏应该包含在 do-while 块中：
 ```c
 #define macrofun(a, b, c)			\
 	do {					\
@@ -347,30 +347,30 @@ err:
 	(ret);				\
 })
 ```
-ret是局部变量的通用名称 - __foo_ret不太可能与现有变量发生冲突。
-cpp手册详尽地讨论了宏。gcc internals手册还介绍了RTL，它在内核中经常与汇编语言一起使用。
+ret 是局部变量的通用名称 - __foo_ret 不太可能与现有变量发生冲突。
+cpp 手册详尽地讨论了宏。gcc internals 手册还介绍了 RTL，它在内核中经常与汇编语言一起使用。
 
 
 ## 13) 打印内核消息
-不要使用`dont`，使用`do not`或`don't`，使消息简洁，清晰 ，明确。
+不要使用`dont`，使用`do not`或`don't`，使消息简洁，清晰，明确。
 内核消息不必以句号结尾。
 Printing numbers in parentheses (%d) adds no value and should be avoided.【？？？】
 你应该使用<linux/device.h>中的`驱动程序模型诊断宏`来确保消息与正确的设备和驱动程序匹配，并使用正确的级别标记：`dev_err(), dev_warn(), dev_info()`
 对于与特定设备无关的消息，在<linux/printk.h>中定义：`pr_notice(), pr_info(), pr_warn(), pr_err()`等。
 提供良好的调试信息可能是一个很大的挑战；一旦你拥有他们，它们可以为远程故障排除提供巨大的帮助。但是调试消息打印的处理方式与打印其他非调试消息的方式不同。
-当其他`pr_xxx()`无条件打印是，`pr_debug()`不会；默认情况下调试信息不会被编译进来，除非定义了`DEBUG`或者设置了`CONFIG_DYNAMIC_DEBUG`。对于`dev_dbg()`也是如此。并且相关约定使用VERBOSE_DEBUG将dev_vdbg()消息添加到已由DEBUG启用的消息中。
-许多子系统都有Kconfig调试选项，可以再响应的Makefile中打开`-DDEBUG`；在其他情况在特定文件中`#define DEBUG`。
-当一条debug消息应该被无条件打印时，例如，如果它已经在调试相关的`#ifdef`中，可以使用`printk(KERN_DEBUG...)`。
+当其他`pr_xxx()`无条件打印是，`pr_debug()`不会；默认情况下调试信息不会被编译进来，除非定义了`DEBUG`或者设置了`CONFIG_DYNAMIC_DEBUG`。对于`dev_dbg()`也是如此。并且相关约定使用 VERBOSE_DEBUG 将 dev_vdbg() 消息添加到已由 DEBUG 启用的消息中。
+许多子系统都有 Kconfig 调试选项，可以再响应的 Makefile 中打开`-DDEBUG`；在其他情况在特定文件中`#define DEBUG`。
+当一条 debug 消息应该被无条件打印时，例如，如果它已经在调试相关的`#ifdef`中，可以使用`printk(KERN_DEBUG...)`。
 
 
 ## 14) 分配内存
 内核提供以下通用内存分配器：`kmalloc()/kzalloc()/kmalloc_array()/kcalloc()/vmalloc()/vzalloc()`。详见`Documentation/core-api/memory-allocation.rst<memory_allocation>`
-传递struct大小的首选形式如下：
+传递 struct 大小的首选形式如下：
 ```c
 p = kmalloc(sizeof(*p), ...);
 ```
-拼写出struct名称会损害可读性，并且当类型发生改变时，可能会引发错误。（忘记同步修改的话）
-返回值是`void *`时类型转换是多余的，C语言保证从`void *`到任何其他指针的类型转换。
+拼写出 struct 名称会损害可读性，并且当类型发生改变时，可能会引发错误。（忘记同步修改的话）
+返回值是`void *`时类型转换是多余的，C 语言保证从`void *`到任何其他指针的类型转换。
 分配数组的首选形式是：
 ```c
 p = kmalloc_array(n, sizeof(...), ...);
@@ -379,44 +379,44 @@ p = kmalloc_array(n, sizeof(...), ...);
 ```c
 p = kcalloc(n, sizeof(...), ...);
 ```
-两种形式都检查分配大小`n * sizeof(...)`上的溢出，如果发生则返回NULL。
-这些通用分配函数在没有`__GFP_NOWARN`的情况下使用时，都会在发生故障时发出堆栈转储，因此在返回NULL时没有发出额外的失败消息。
+两种形式都检查分配大小`n * sizeof(...)`上的溢出，如果发生则返回 NULL。
+这些通用分配函数在没有`__GFP_NOWARN`的情况下使用时，都会在发生故障时发出堆栈转储，因此在返回 NULL 时没有发出额外的失败消息。
 
 
 ## 15) 内联危害
-似乎有一种常见的误解，即gcc有一个神奇的“让我更快”的加速选项inline。
-虽然使用内联可能是合适的（例如，作为替换宏的一种方法，请参阅第12章），但通常不是。
-大量使用内联关键字会导致更大的内核，从而导致整个系统整体运行速度变慢，因为CPU的`icache`占用空间更大、页面缓存的可用内存更少。
-考虑一下：页面缓存未命中导致磁盘搜索，这很容易花费5毫秒。5毫秒包含**很多**的cpu周期。
-一个合理的经验法则是：**内联函数不超过3行代码。**
+似乎有一种常见的误解，即 gcc 有一个神奇的“让我更快”的加速选项 inline。
+虽然使用内联可能是合适的（例如，作为替换宏的一种方法，请参阅第 12 章），但通常不是。
+大量使用内联关键字会导致更大的内核，从而导致整个系统整体运行速度变慢，因为 CPU 的`icache`占用空间更大、页面缓存的可用内存更少。
+考虑一下：页面缓存未命中导致磁盘搜索，这很容易花费 5 毫秒。5 毫秒包含**很多**的 cpu 周期。
+一个合理的经验法则是：**内联函数不超过 3 行代码。**
 此规则的一个例外是：已知参数是编译时常量的情况，并且由于此常量，您知道编译器将能够在编译时优化大部分函数。有关后一种情况的一个很好的示例，请参阅`kmalloc()内联函数`。
 通常人们争辩说，将静态且仅使用一次的函数进行内联总是一个胜利，因为没有空间权衡。
-虽然这在技术上是正确的，但是gcc能够在没有帮助的情况下自动内联这些内容，并且当第二个用户(二次使用)出现时删除内联的维护问题，超过了告诉gcc无论如何都要做的事情的暗示的潜在价值。
+虽然这在技术上是正确的，但是 gcc 能够在没有帮助的情况下自动内联这些内容，并且当第二个用户 (二次使用) 出现时删除内联的维护问题，超过了告诉 gcc 无论如何都要做的事情的暗示的潜在价值。
 
 ## 16) 函数返回值和命名
 函数可以返回许多不同类型的值，其中一个最常见的是指示函数是成功还是失败的值。
-这样的值可以表示为错误代码整数(-Exxx=失败，0=成功)或succeeded布尔值(0=失败，非零=成功)。
+这样的值可以表示为错误代码整数 (-Exxx=失败，0=成功) 或 succeeded 布尔值 (0=失败，非零=成功)。
 混合这两种表示形式是难以发现的错误的肥沃来源。
-如果C语言包含整数和布尔值之间的强烈区分，那么编译器会为我们发现这些错误...但事实并非如此。为了帮助防止此类错误，请始终遵循以下约定：
+如果 C 语言包含整数和布尔值之间的强烈区分，那么编译器会为我们发现这些错误...但事实并非如此。为了帮助防止此类错误，请始终遵循以下约定：
 > 如果函数的名称是操作或命令性命令，该函数应返回错误代码整数。
 > 如果名字是一个谓词，该函数应该返回一个“成功”的布尔值。
 
 例如，
-add_work()是一个命令，返回0表示成功，-EBUSY表示失败。
-pci_dev_present()是谓词，如果成功找到匹配的设备，返回1，否则返回0。
+add_work() 是一个命令，返回 0 表示成功，-EBUSY 表示失败。
+pci_dev_present() 是谓词，如果成功找到匹配的设备，返回 1，否则返回 0。
 所有`EXPORTed函数/公共函数`都**必须**遵守此约定。`私有(静态)函数`不需要，但**建议**这样做。
 返回值是`计算的实际结果`而不是`计算是否成功`的函数不受此规则的约束。通常它们通过返回一些超出范围的结果来指示失败。
-典型的例子是返回指针的函数; 他们使用NULL或ERR_PTR机制来报告失败。
+典型的例子是返回指针的函数; 他们使用 NULL 或 ERR_PTR 机制来报告失败。
 
-## 17) 使用bool
-Linux内核`bool`类型是C99`_Bool`类型的别名。bool值只能求值为0或1，而对bool的隐式或显式转换会自动将值转换为true或false。
-当使用bool类型!!不需要构造，这消除了一类错误。【？？？】
-使用bool值时，应使用true和false定义而不是1和0。
-可以在适当的时候使用bool函数返回类型和堆栈变量。鼓励使用bool来提高可读性，存储布尔值(true/flase)时，`bool`通常是比`int`更好地选择。
-如果缓存行布局或值的大小很重要，请不要使用bool，因为其大小和对齐方式因编译的体系结构而异。针对对齐和尺寸优化的结构不应使用bool。
-如果struct具有许多true/false值，请考虑将它们作为1位成员合并到的位域中，或使用适当的固定宽度类型（例如u8）。
-函数参数也是类似的，`许多true/false`值可以合并为`单个按位flags`参数，如果调用点具有裸真/假常量(naked true/false constants)，则flags通常可以是更可读的替代。
-在结构和参数中有限制地使用bool可以提高可读性。
+## 17) 使用 bool
+Linux 内核`bool`类型是 C99`_Bool`类型的别名。bool 值只能求值为 0 或 1，而对 bool 的隐式或显式转换会自动将值转换为 true 或 false。
+当使用 bool 类型!! 不需要构造，这消除了一类错误。【？？？】
+使用 bool 值时，应使用 true 和 false 定义而不是 1 和 0。
+可以在适当的时候使用 bool 函数返回类型和堆栈变量。鼓励使用 bool 来提高可读性，存储布尔值 (true/flase) 时，`bool`通常是比`int`更好地选择。
+如果缓存行布局或值的大小很重要，请不要使用 bool，因为其大小和对齐方式因编译的体系结构而异。针对对齐和尺寸优化的结构不应使用 bool。
+如果 struct 具有许多 true/false 值，请考虑将它们作为 1 位成员合并到的位域中，或使用适当的固定宽度类型（例如 u8）。
+函数参数也是类似的，`许多true/false`值可以合并为`单个按位flags`参数，如果调用点具有裸真/假常量 (naked true/false constants)，则 flags 通常可以是更可读的替代。
+在结构和参数中有限制地使用 bool 可以提高可读性。
 
 ## 18) 不要重新发明内核宏
 头文件`include/linux/kernel.h`包含许多你应该使用的宏，而不是自己编写它们的一些变体。
@@ -428,9 +428,9 @@ Linux内核`bool`类型是C99`_Bool`类型的别名。bool值只能求值为0或
 ```c
 #define FIELD_SIZEOF(t, f) (sizeof(((t*)0)->f))
 ```
-如果需要，还有min()和max()宏可以进行严格的类型检查。请仔细阅读该头文件，看看还有哪些已定义，你不应该在代码中重复实现。
+如果需要，还有 min() 和 max() 宏可以进行严格的类型检查。请仔细阅读该头文件，看看还有哪些已定义，你不应该在代码中重复实现。
 
-## 19) 编辑器模式行和其他需要啰嗦的事情(Editor modelines and other cruft)
+## 19) 编辑器模式行和其他需要啰嗦的事情 (Editor modelines and other cruft)
 Some editors can interpret configuration information embedded in source files,
 indicated with special markers.  For example, emacs interprets lines marked
 like this:
@@ -460,7 +460,7 @@ work correctly.
 应该覆盖别人的配置。这包括有关缩进和模式配置的标记。人们可以使用他们自己定制 
 的模式，或者使用其他可以产生正确的缩进的巧妙方法。
 
-## 20) 内联汇编(Inline assembly)
+## 20) 内联汇编 (Inline assembly)
 In architecture-specific code, you may need to use inline assembly to interface
 with CPU or platform functionality.  Don't hesitate to do so when necessary.
 However, don't use inline assembly gratuitously when C can do the job.  You can
@@ -502,7 +502,7 @@ asm ("magic %reg1, #42\n\t"
 ```
 
 
-## 21) 条件编译(Conditional Compilation)
+## 21) 条件编译 (Conditional Compilation)
 Wherever possible, don't use preprocessor conditionals (#if, #ifdef) in .c
 files; doing so makes code harder to read and logic harder to follow.  Instead,
 use such conditionals in a header file defining functions for use in those .c
@@ -566,7 +566,7 @@ expression used.  For instance:
 ```
 
 
-##  附录I) 参考(References)
+##  附录 I) 参考 (References)
 ----------------------
 The C Programming Language, Second Edition
 by Brian W. Kernighan and Dennis M. Ritchie.

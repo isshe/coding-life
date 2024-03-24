@@ -71,7 +71,7 @@ init_by_lua_file /usr/local/openresty/lua/init.lua
 
 - ngx_http_lua_init_by_inline 如何被调用？
 
-详见上篇文章《[模块初始化](001-module-init.md)》 的 “ngx_http_lua_init 执行流程”
+详见上篇文章《[模块初始化](001-module-init.md)》的“ngx_http_lua_init 执行流程”
 
 - ngx_http_lua_init_by_inline 的执行流程
 

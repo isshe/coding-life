@@ -3,13 +3,13 @@
 iptables
 ---
 
-> 此文件只记录iptables应用层工具的使用。
-> 更多信息详见:
+> 此文件只记录 iptables 应用层工具的使用。
+> 更多信息详见：
 > [wiki](https://wiki.archlinux.org/index.php/Iptables_(%E7%AE%80%E4%BD%93%E4%B8%AD%E6%96%87))
 > [netfilter/iptables](../../H-Linux内核/5.网络/1.Netfilter/Readme.md)
 
-iptables是一个配置Linux内核防火墙的命令行工具，是netfilter项目的一部分。
-iptables可以检测、修改、转发、重定向、丢弃IPv4数据包。
+iptables 是一个配置 Linux 内核防火墙的命令行工具，是 netfilter 项目的一部分。
+iptables 可以检测、修改、转发、重定向、丢弃 IPv4 数据包。
 
 # 用法
 

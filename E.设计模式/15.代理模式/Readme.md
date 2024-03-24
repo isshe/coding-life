@@ -14,28 +14,28 @@
 ![对象图](./ObjectDiagram.png)
 * 出场嘉宾
     * Subject: 
-        * 定义RealSubject和Proxy的共用接口。使得可以在任何使用RealSubject的地方使用Proxy。
-    * Proxy: 代理。继承自Subject。
-        * 保存RealSubject的引用。
-        * 提供与RealSubject相同的接口，以代替RealSubject。
-        * 控制对RealSubject的存取/访问，并可能负责创建、删除。
+        * 定义 RealSubject 和 Proxy 的共用接口。使得可以在任何使用 RealSubject 的地方使用 Proxy。
+    * Proxy: 代理。继承自 Subject。
+        * 保存 RealSubject 的引用。
+        * 提供与 RealSubject 相同的接口，以代替 RealSubject。
+        * 控制对 RealSubject 的存取/访问，并可能负责创建、删除。
         * 针对类型的功能：
             * 远程代理：负责对请求及参数进行编码，编发送给不同地址空间的实体。
             * 虚拟代理：可缓存真实对象的附加信息，以延迟对真实对象的访问/创建。如，图片代理缓存图片的大小，尺寸。
             * 保护代理：检查调用者的权限，保护真实对象。
     * RealSubject: 
-        * 真实的对象，被Proxy代表的实体。
+        * 真实的对象，被 Proxy 代表的实体。
     * Client: 
-        * 使用Subject。
+        * 使用 Subject。
 
 * 协作/工作流程
-    * Client向Proxy进行请求。
-    * Proxy进行相关附加操作后，对请求进行转发或其他操作。
+    * Client 向 Proxy 进行请求。
+    * Proxy 进行相关附加操作后，对请求进行转发或其他操作。
 
 ## 2. 优缺点是什么？
 ### 2.1 优点
 * 可以隐藏被代理对象不再同一地址空间的事实。
-* 可以最优化，根据要求创建对象(管理对象)。
+* 可以最优化，根据要求创建对象 (管理对象)。
 * 可以对被代理对象进行保护。
 * 可以对被访问对象进行一些额外/附加操作。
 
@@ -43,7 +43,7 @@
 * 代码调用层次加深，复杂度更高。
 
 ## 3. 使用场景是什么？
-* 在需要用比较通用和复杂的对象指针代替简单的指针的时候，使用Proxy模式。
+* 在需要用比较通用和复杂的对象指针代替简单的指针的时候，使用 Proxy 模式。
 * 使用代理模式的常见情况：
     * 远程代理：为一个对象在不同的地址空间提供`局部代表`。
     * 虚拟代理：根据需要创建开销很大的对象。一些已知的东西由代理进行提供，只有最必须时，才进行目标对象创建。
@@ -55,9 +55,9 @@
 
 ## 4. 注意
 * 实现注意：
-    * Proxy并不总是需要知道RealSubject的类型。
-        * 如果Proxy`类`能通过一个抽象接口处理它的实体，则无需为每一个RealSubject`类`都生成一个Proxy`类`；Proxy可以统一处理所有RealSubject类。
-        * 如果Proxy要实例化RealSubject，则必须知道具体的类。
+    * Proxy 并不总是需要知道 RealSubject 的类型。
+        * 如果 Proxy`类`能通过一个抽象接口处理它的实体，则无需为每一个 RealSubject`类`都生成一个 Proxy`类`；Proxy 可以统一处理所有 RealSubject 类。
+        * 如果 Proxy 要实例化 RealSubject，则必须知道具体的类。
 
 ## 5. 应用实例？
 * 
@@ -73,5 +73,5 @@
 
 ## z. 参考
 * 《设计模式：可复用面向对象软件的基础》
-* 《Head First设计模式》
+* 《Head First 设计模式》
 

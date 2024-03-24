@@ -6,10 +6,10 @@
 * 类图：
 ![类图](classdiagram.png)
 * 出场嘉宾
-    * 主题(Subject)：出版者、被观察者、
-    * 观察者(Observer)：订阅者、
-    * 具体主题(Concrete Subject): 对主题的实现
-    * 具体观察者(Concrete Observer): 对观察者的实现
+    * 主题 (Subject)：出版者、被观察者、
+    * 观察者 (Observer)：订阅者、
+    * 具体主题 (Concrete Subject): 对主题的实现
+    * 具体观察者 (Concrete Observer): 对观察者的实现
 
 
 > 观察者模式就和报纸订阅/取消订阅、邮件订阅/取消订阅类似。
@@ -37,7 +37,7 @@
 * 需要创建触发链时；
 
 ## 5. 应用实例？
-* 天气预报服务器数据更新，客户端实时展示更新后的数据。（《Head First设计模式》示例）
+* 天气预报服务器数据更新，客户端实时展示更新后的数据。（《Head First 设计模式》示例）
 * 电子商务网站向多个用户推送商品信息。
 
 ## x. 疑问
@@ -59,7 +59,7 @@
 * 开闭原则：对修改关闭，对拓展开放
 
 ## z. 参考
-* 《Head First设计模式》
+* 《Head First 设计模式》
 * http://www.runoob.com/design-pattern/observer-pattern.html
 * https://design-patterns.readthedocs.io/zh_CN/latest/behavioral_patterns/observer.html
 

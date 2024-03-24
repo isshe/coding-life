@@ -1,6 +1,6 @@
 [TOC]
 
-# 命令模式-Java代码示例
+# 命令模式-Java 代码示例
 
 ## 1. 文件列表
 * Command.java: 命令抽象类/接口。
@@ -79,5 +79,5 @@ public class Test {
 ## y. 拓展/总结
 
 ## z. 参考
-* 《Head First设计模式》
+* 《Head First 设计模式》
 

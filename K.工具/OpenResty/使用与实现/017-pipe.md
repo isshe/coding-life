@@ -51,7 +51,7 @@
 
 - 语法：`ok, err = proc:kill(signum)`
 
-- 作用： 向子流程发送一个信号。
+- 作用：向子流程发送一个信号。
 
 - 参数：
   - signum：信号量数字。可以使用  lua-resty-signal 的 signum() 来获取信号量名称对应的信号量值。
@@ -64,14 +64,14 @@
 
 - 语法：`ok, err = proc:shutdown(direction)`
 
-- 作用：关闭子流程的 stderr、 stderr 或 stdin。
+- 作用：关闭子流程的 stderr、stderr 或 stdin。
 
 - 参数：
   - direction：stderr、stdout、stdin。
 
 - 返回值：
   - 成功：true
-    - 如果关闭一个轻线程正在等待的方向(stderr/stdout/stdin)，则返回 true。
+    - 如果关闭一个轻线程正在等待的方向 (stderr/stdout/stdin)，则返回 true。
   - 失败：nil 和错误字符串。
     - 如果指定了 merge_stderr，并且对 stderr 调用 shutdown，则返回 nil 和 "merged to stdout"。
     - 如果子流程已经退出，则返回 nil 和 "closed"。
@@ -142,7 +142,7 @@ proc:stdout_read_any(max)
 
 这个函数主要做了以下事情：
 
-- 创建 2 或 3 个管道(pipe)，如果使用了 merge_stderr 则 2 个，否则 3 个。
+- 创建 2 或 3 个管道 (pipe)，如果使用了 merge_stderr 则 2 个，否则 3 个。
 - 然后 fork 进程
 - 在子进程中关闭不要的 fd，并把标准输入和标准输出重定向到对应管道中
 - 准备工作完成后，子进程执行执行命令

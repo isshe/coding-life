@@ -1,18 +1,18 @@
 [TOC]
 
-# 工厂方法模式-Java代码示例
+# 工厂方法模式-Java 代码示例
 * 类图
 ![类图](./ClassDiagram_Java.png)
 * 示例描述：
-    * pizza发展开加盟店；
+    * pizza 发展开加盟店；
     * 纽约的店负责制作符合纽约口味的披萨（一个店可以制作多种披萨）；
     * 芝加哥的店负责制作符合芝加哥口味的披萨（一个店可以制作多种披萨）；
     * 为保证口碑，要统一制作流程。
 
 ## 1. 文件列表
 * Pizza.java：披萨抽象类，定义统一的披萨接口。（产品）
-* NYStyleCheesePizza.java: 纽约风格的芝士披萨。（具体产品A）
-* ChicagoStyleCheesePizza.java: 芝加哥风格的芝士披萨。（具体产品B）
+* NYStyleCheesePizza.java: 纽约风格的芝士披萨。（具体产品 A）
+* ChicagoStyleCheesePizza.java: 芝加哥风格的芝士披萨。（具体产品 B）
 * PizzaStore.java: 披萨店抽象类，定义统一的披萨店接口。（创建者、工厂）
 * NYPizzaStore.java: 纽约的披萨店。（具体创建者）
 * ChicagoPizzaStore.java: 芝加哥的披萨店。（具体创建者）
@@ -150,5 +150,5 @@ public class ChicagoPizzaStore extends PizzaStore {
 ## y. 拓展/总结
 
 ## z. 参考
-* 《Head First设计模式》
+* 《Head First 设计模式》
 

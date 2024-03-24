@@ -4,24 +4,24 @@ git
 ---
 
 # submodule
-## 添加submodule：
+## 添加 submodule：
 ```
 git submodule add <subproject URL>
 > git submodule add https://github.com/isshe/gitsubproject
 ```
 
-## 查看subproject的commit：
+## 查看 subproject 的 commit：
 ```
 git diff --cached <subproject dir>
 > git diff --cached gitsubproject/
 ```
 
-## 查看subproject的.gitmodules：
+## 查看 subproject 的.gitmodules：
 ```
 git diff --cached --submodule
 ```
 
-## 自动clone每个submodule：
+## 自动 clone 每个 submodule：
 ```
 git clone --recursive <your repository url>
 > git clone --recursive https://github.com/isshe/gitproject
@@ -39,12 +39,12 @@ git submodule update --init --recursive
 git submodule update --remote
 ```
 
-## 调整submodule的commit：
+## 调整 submodule 的 commit：
 ```
 git pull origin xxx
 ```
 
-## 切submodule的分支：
+## 切 submodule 的分支：
 ```
 git config -f .gitmodules submodule.<submodule dir>.branch <submodule target branch name>
 > git config -f .gitmodules submodule.DbConnector.branch stable
@@ -55,7 +55,7 @@ git checkout -b <branch name> --track origin/<branch name>
 > git checkout -b chudai  --track origin/chudai
 ```
 
-## 删除一个submodule：
+## 删除一个 submodule：
 * Delete the relevant section from the `.gitmodules` file.
 * Stage the `.gitmodules` changes `git add .gitmodules`
 * Delete the relevant section from `.git/config`.

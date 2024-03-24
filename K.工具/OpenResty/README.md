@@ -5,10 +5,10 @@ Readme
 
 # 配置指令
 
-|指令|参数|默认值|建议值|功能描述|上下文|备注|
+|指令 | 参数 | 默认值 | 建议值 | 功能描述 | 上下文 | 备注|
 |---|---|---|---|---|---|---|
 |lua_use_default_type|on/off|on|on|响应时，是否在 Content-type 中使用默认的类型|||
-|lua_malloc_trim|num|1000||指定处理 num 个请求后调用libc的 malloc_trim，归还空闲内存给系统，以最小化内存占用。0 禁用。|||
+|lua_malloc_trim|num|1000||指定处理 num 个请求后调用 libc 的 malloc_trim，归还空闲内存给系统，以最小化内存占用。0 禁用。|||
 |lua_need_request_body|on/off|off|off|要求 openresty 在处理前强制读取请求体数据|||
 |lua_http10_buffering|on/off|on|off|启用禁用 HTTP 1.0 的缓冲机制|||
 |rewrite_by_lua_on_postpone|on/off|off|off|是否让 rewrite_by_lua 在 rewrite 阶段的最后执行|||
@@ -23,9 +23,9 @@ Readme
 |lua_socket_send_timeout|time|60s||发送数据的超时时间，可适当减小|||
 |lua_socket_read_timeout||60s||接收数据的超时时间，可适当减小|||
 |lua_socket_pool_size|num|30||cosocket 内存池大小，可适当增大|||
-|lua_socket_keepalive_timeout|time|60s||cosocket空闲时间|||
+|lua_socket_keepalive_timeout|time|60s||cosocket 空闲时间|||
 |共享内存|||||||
-|lua_shared_dict|dict size|||定义名为 dict大小为 size 的共享内存|http||
+|lua_shared_dict|dict size|||定义名为 dict 大小为 size 的共享内存|http||
 |定时器|||||||
 |lua_max_pending_timers|num|1024||最大待运行的定时任务|||
 |lua_max_running_timers||256||最大正在运行的定时任务|||
@@ -67,7 +67,7 @@ options:
 
 # 疑问
 
-* ngx.sleep()及其他 cosocket 相关的函数不能用在 init_by_lua/init_worker_by_lua/set_by_lua/header_filter_by_lua/body_filter_by_lua/log_by_lua 的原因是什么?
+* ngx.sleep() 及其他 cosocket 相关的函数不能用在 init_by_lua/init_worker_by_lua/set_by_lua/header_filter_by_lua/body_filter_by_lua/log_by_lua 的原因是什么？
 
 详见 [ngx.sleep](使用与实现/016-ngx-sleep.md)。
 
@@ -86,9 +86,9 @@ ngx.ctx 的成本较高，应当尽量少用，只存放少量必要的数据，
 
 通常不需要手动执行。
 
-ngx.send_headers 的执行阶段是 “rewrite_by_lua*, access_by_lua*, content_by_lua*”。
+ngx.send_headers 的执行阶段是“rewrite_by_lua*, access_by_lua*, content_by_lua*”。
 
 * 为什么要限制挂起计时器及运行计时器的数量？
-为了避免在服务器中累积并耗尽系统资源，导致Nginx服务器崩溃等极端后果，Nginx工作进程中的“挂起计时器”数量和“运行计时器”数量都有内置的限制。
+为了避免在服务器中累积并耗尽系统资源，导致 Nginx 服务器崩溃等极端后果，Nginx 工作进程中的“挂起计时器”数量和“运行计时器”数量都有内置的限制。
 
 **为何成本高？**

@@ -1,7 +1,7 @@
 [TOC]
 
-# 状态模式-C++示例
-* 如果不熟悉C++，要注意循环引用的问题。
+# 状态模式-C++ 示例
+* 如果不熟悉 C++，要注意循环引用的问题。
 * 这个示例状态转移有问题...
 * 状态转移过程：
 ```cpp
@@ -13,11 +13,11 @@ TCPEstablished->TCPClosed
 ```
 
 ## 1. 文件列表
-* TCPConnection.h/cpp: Context, 保存state，设置state
+* TCPConnection.h/cpp: Context, 保存 state，设置 state
 * TCPState.h/cpp: State，抽象类，实现缺省实现。
-* TCPClosed.h/cpp: ConcreteState，具体状态，继承自TCPState。
-* TCPEstablished.h/cpp: ConcreteState，具体状态，继承自TCPState。
-* TCPListen.h/cpp: ConcreteState，具体状态，继承自TCPState。
+* TCPClosed.h/cpp: ConcreteState，具体状态，继承自 TCPState。
+* TCPEstablished.h/cpp: ConcreteState，具体状态，继承自 TCPState。
+* TCPListen.h/cpp: ConcreteState，具体状态，继承自 TCPState。
 * main.cpp：主函数。
 
 ## 2. 各个文件关键代码
@@ -123,7 +123,7 @@ void TCPState::ChangeState(TCPConnection *c, TCPState *s) {
 ```
 
 ### 2.3 ConcreteState
-> 只贴TCPClosed的代码
+> 只贴 TCPClosed 的代码
 
 * TCPClosed.h
 ```cpp

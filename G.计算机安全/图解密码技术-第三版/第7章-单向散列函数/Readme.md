@@ -3,9 +3,9 @@
 第七章 单向散列函数
 ---
 
-单向散列函数(one-way hash function): 可以根据消息的内容，计算出散列值。
+单向散列函数 (one-way hash function): 可以根据消息的内容，计算出散列值。
 * 散列值可以被用于检查消息的完整性。
-* 输入：消息(message)；输出：散列值(hash value)。
+* 输入：消息 (message)；输出：散列值 (hash value)。
 
 # 性质
 抗碰撞性：collision resistance，难以发生碰撞。

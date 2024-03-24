@@ -83,8 +83,8 @@ Nginx 模块的初始化流程见：[Nginx 模块初始化](../../Nginx/Nginx源
 简而言之就是：
 - 解析到相关配置指令（ngx_http_lua_cmds 数组中定义，如 init_by_lua），就执行指令的处理函数。
   - xxx_by_lua 指令的具体处理见后续的文章。
-- 调用 ngx_http_lua_init 这个 postconfiguration 函数（详见上文的 “模块上下文 ngx_http_lua_module_ctx”）
-  - init_by_lua 设置的 handler 在 postconfiguration 。
+- 调用 ngx_http_lua_init 这个 postconfiguration 函数（详见上文的“模块上下文 ngx_http_lua_module_ctx”）
+  - init_by_lua 设置的 handler 在 postconfiguration。
 
 我们来看下 ngx_http_lua_init 这个函数做了什么。
 
@@ -107,7 +107,7 @@ Nginx 模块的初始化流程见：[Nginx 模块初始化](../../Nginx/Nginx源
     \- init_handler(ngx_http_lua_init_by_inline)：执行 Lua 代码
 ```
 
-可以看到，配置解析完后（postconfiguration）， 立即初始化 Lua VM ，然后调用了 ngx_http_lua_init_by_inline。
+可以看到，配置解析完后（postconfiguration），立即初始化 Lua VM，然后调用了 ngx_http_lua_init_by_inline。
 注意：上面并没有类似于 `lmcf->requires_content` 相关的判断，那么是 content 阶段不需要相关标记么？
 
 ### 进程初始化

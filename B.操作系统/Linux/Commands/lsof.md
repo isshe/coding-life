@@ -12,7 +12,7 @@ lsof: list open file（打开文件列表）。
 - 查看进程打开的端口；
 - 找回/恢复删除的文件；
 
-> *nix中一切皆文件
+> *nix 中一切皆文件
 
 # 1.介绍
 
@@ -81,12 +81,12 @@ lsof -p 123,456
 lsof -p 123,456 -u 6464,ashley  # 默认是or
 ```
 
-## 列出指定PID和协议类型(IPV4/6)打开的文件
+## 列出指定 PID 和协议类型 (IPV4/6) 打开的文件
 ```bash
 lsof -i 4 -a -p 1234
 ```
 
-## 只列出IPV6的网络文件(有些需要sudo才能显示)
+## 只列出 IPV6 的网络文件 (有些需要 sudo 才能显示)
 ```bash
 sudo lsof -i 6
 sudo lsof -i
@@ -108,12 +108,12 @@ lsof -i @ss64.com:513-515   # 指定端口
 lsof -i :80 -r 2
 ```
 
-## 列出具有特殊值mem的内存映射文件
+## 列出具有特殊值 mem 的内存映射文件
 ```bash
 lsof -d mem
 ```
 
-## 列出加载到内存中并使用特殊值txt执行的程序
+## 列出加载到内存中并使用特殊值 txt 执行的程序
 ```bash
 lsof -d txt
 ```
@@ -133,8 +133,8 @@ kill -HUP 'lsof -t /u/abe/bar'
 lsof /dev/log
 ```
 
-## NFS相关
-要在名为`/nfs/mount/point`且服务器不可访问的NFS文件系统上查找具有打开文件的进程
+## NFS 相关
+要在名为`/nfs/mount/point`且服务器不可访问的 NFS 文件系统上查找具有打开文件的进程
 ```bash
 lsof -b /nfs/mount/point
 lsof -bw /nfs/mount/point   # 禁用警告信息
@@ -145,12 +145,12 @@ lsof -bw /nfs/mount/point   # 禁用警告信息
 lsof -Di
 ```
 
-## 找IPv4套接字文件
+## 找 IPv4 套接字文件
 ```bash
 lsof -i@128.210.15.17
 ```
 
-## 找IPv6套接字文件
+## 找 IPv6 套接字文件
 ```bash
 lsof -i@[0:1:2:3:4:5:6:7]
 lsof -i@[::1]

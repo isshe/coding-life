@@ -62,6 +62,6 @@ mod.hello()
 
 * `ma` 和 `mb` 是两个用户自定义模块，形式是存于内存中的字符串。
 * `new_require` 是我们重载的新的 require 函数，按我们的需要来编写。
-* `new_env` 是一个继承于全局环境(_G)的新环境，用于执行自定义代码。
+* `new_env` 是一个继承于全局环境 (_G) 的新环境，用于执行自定义代码。
 * `setfenv` 设置函数的环境（mb 模块被 loadstring 成函数了）
 * `ctype.count` 模块的作用是用于区分是否调用了 ffi 模块，当加载了 ffi 模块时，ctype.count 将增加，因此可以通过判断 pcall 前后 ctype.count 是否变化来判断使用调用了 ffi 模块。

@@ -23,7 +23,7 @@ Docker
 > docker volume inspect <卷名>
 
 ### 挂载数据卷
-docker run中：
+docker run 中：
 > --mount source=<卷名>,target=<容器内目标路径>
 
 ### 删除数据卷
@@ -34,7 +34,7 @@ docker run中：
 > docker volume prune
 
 ## 挂载主机文件/目录
-挂载权限默认是读写，可以用readonly指定为只读。
-docker run中：
+挂载权限默认是读写，可以用 readonly 指定为只读。
+docker run 中：
 > --mount type=bind,source=<主机文件/目录>,target=<容器文件/目录>
 > --mount type=bind,source=<主机文件/目录>,target=<容器文件/目录>,readonly

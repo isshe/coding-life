@@ -1,6 +1,6 @@
 [TOC]
 
-# 状态模式-Java示例
+# 状态模式-Java 示例
 状态转换：
 ```java
 NoQuarterState->HasQuarterState->SoldState->SoldOutState
@@ -8,12 +8,12 @@ NoQuarterState->HasQuarterState->SoldState->SoldOutState
 ```
 
 ## 1. 文件列表
-* GumballMachine.java: Context, 保存state，设置state
+* GumballMachine.java: Context, 保存 state，设置 state
 * State.java: State，抽象类，实现缺省实现。
-* HasQuarterState.java: ConcreteState，具体状态，继承自State。
-* NoQuarterState.java: ConcreteState，具体状态，继承自State。
-* SoldState.java: ConcreteState，具体状态，继承自State。
-* SoldOutState.java: ConcreteState，具体状态，继承自State。
+* HasQuarterState.java: ConcreteState，具体状态，继承自 State。
+* NoQuarterState.java: ConcreteState，具体状态，继承自 State。
+* SoldState.java: ConcreteState，具体状态，继承自 State。
+* SoldOutState.java: ConcreteState，具体状态，继承自 State。
 * Test.java：测试类。
 
 
@@ -103,8 +103,8 @@ public class GumballMachine {
 
     public String toString() {
         StringBuffer result = new StringBuffer();
-        result.append("\nisshe 的糖果机, Inc.");
-        result.append("\n库存糖果: " + count + " 粒");
+        result.append("\nisshe 的糖果机，Inc.");
+        result.append("\n库存糖果：" + count + " 粒");
         result.append("\n糖果机 " + curState + "\n");
         return result.toString();
     }
@@ -124,7 +124,7 @@ public interface State {
 ```
 
 ### 2.3 ConcreteState
-* HasQuarterState.java: ConcreteState，具体状态，继承自State。
+* HasQuarterState.java: ConcreteState，具体状态，继承自 State。
 ```java
 // 有硬币状态
 public class HasQuarterState implements State {
@@ -160,7 +160,7 @@ public class HasQuarterState implements State {
 }
 ```
 
-* NoQuarterState.java: ConcreteState，具体状态，继承自State。
+* NoQuarterState.java: ConcreteState，具体状态，继承自 State。
 ```java
 // 有硬币状态
 public class NoQuarterState implements State {
@@ -195,7 +195,7 @@ public class NoQuarterState implements State {
 }
 ```
 
-* SoldState.java: ConcreteState，具体状态，继承自State。
+* SoldState.java: ConcreteState，具体状态，继承自 State。
 ```java
 // 有硬币状态
 public class SoldState implements State {
@@ -214,7 +214,7 @@ public class SoldState implements State {
         //gumballMachine.setState(gumballMachine.getHasQuarterState());
     }
     public void turnCrank() {
-        System.out.println("正在转动， 请等一等你的糖果机..");
+        System.out.println("正在转动，请等一等你的糖果机..");
     }
 
     public void dispense() {
@@ -237,7 +237,7 @@ public class SoldState implements State {
 }
 ```
 
-* SoldOutState.java: ConcreteState，具体状态，继承自State。
+* SoldOutState.java: ConcreteState，具体状态，继承自 State。
 ```java
 // 有硬币状态
 public class SoldOutState implements State {
@@ -278,12 +278,12 @@ public class SoldOutState implements State {
 ```java
 public class Test {
     public static void main(String[] args) {
-        GumballMachine gumballMachine = new GumballMachine(1);  // NoQuarter状态
+        GumballMachine gumballMachine = new GumballMachine(1);  // NoQuarter 状态
 
         System.out.println(gumballMachine);
 
-        gumballMachine.insertQuarter(); // HasQuarter状态
-        gumballMachine.turnCrank(); // Sold状态
+        gumballMachine.insertQuarter(); // HasQuarter 状态
+        gumballMachine.turnCrank(); // Sold 状态
         //gumballMachine.dispense();
         System.out.println(gumballMachine);
     }

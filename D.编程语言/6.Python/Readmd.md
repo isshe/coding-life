@@ -7,9 +7,9 @@ Python
 * 规则和指南：
   * 变量名只能包含字母、数字和下划线，但不能以数字开头。
   * 变量名不能包含空格。
-  * 不要将python关键字和函数名用作变量名。
+  * 不要将 python 关键字和函数名用作变量名。
   * 变量名应既简短又具描述性。
-  * 慎用小写字母`l`和大写字母`O`。和0/1太像了。
+  * 慎用小写字母`l`和大写字母`O`。和 0/1 太像了。
 
 # 字符串
 ## 大小写转换
@@ -29,7 +29,7 @@ Python
 * str(): 转换为字符串。
     * str(123)
 
-# Python之禅
+# Python 之禅
 ```
 Beautiful is better than ugly.
 Explicit is better than implicit.
@@ -118,7 +118,7 @@ class ClassName(ParentClassName):
 * `Python 3`和`Python 2.7`不同，具体见注释。
 
 > 解决问题时，你从较高的逻辑层面（而不是语法层 面）考虑；你考虑
-> 不是Python，而是如何使用代码来表示实物。
+> 不是 Python，而是如何使用代码来表示实物。
 
 # 导入
 ```python
@@ -133,13 +133,13 @@ from module_name import ClassName
 from module_name import ClassName as NewClassName
 from module_name import Class1, Class2
 
-# 导入所有类(不推荐使用)
+# 导入所有类 (不推荐使用)
 # 1.这样导入不清楚导入了什么东西
 # 2.容易导致冲突
 from module_name import *
 ```
 
-# 解析csv文件
+# 解析 csv 文件
 ```python
 import csv
 
@@ -168,7 +168,7 @@ plt.tick_params(axis='both', which='major', labelsize=16)
 plt.show()
 ```
 
-# 读写json文件
+# 读写 json 文件
 ```python
 filename = 'xxx.json'
 with open(filename) as f:

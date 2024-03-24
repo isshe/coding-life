@@ -53,16 +53,16 @@ find ./ -name "*.log" | xargs grep "hello world"
 fromdos $file
 ```
 
-## 编码转换ISO-8894-1 -> UTF-8
+## 编码转换 ISO-8894-1 -> UTF-8
 ```
 iconv -f GB2312 -t UTF-8 input.file -o output.file
 ```
-## 去除文件行末的空格和table
+## 去除文件行末的空格和 table
 ```
 sed 's/[ \t]*$//g' <filename>
 \t: table
 ```
-## 去除文件行末的空格和table
+## 去除文件行末的空格和 table
 ```
 sed 's/^[ \t]*//g' <filename>
 \t: table

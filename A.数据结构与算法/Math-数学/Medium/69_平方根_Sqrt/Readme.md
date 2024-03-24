@@ -1,3 +1,3 @@
-ÌâÄ¿µØÖ·£ºhttps://leetcode.com/problems/sqrtx/  
-ÌâÄ¿ÃèÊö£º¸øÒ»¸öÕûÊýn£¬ ÇóËüµÄÕûÊýÆ½·½¸ù¡£
-Ë¼Â·£¬¶þ·Ö·¨¡£
+é¢˜ç›®åœ°å€ï¼šhttps://leetcode.com/problems/sqrtx/  
+é¢˜ç›®æè¿°ï¼šç»™ä¸€ä¸ªæ•´æ•° nï¼Œæ±‚å®ƒçš„æ•´æ•°å¹³æ–¹æ ¹ã€‚
+æ€è·¯ï¼ŒäºŒåˆ†æ³•ã€‚

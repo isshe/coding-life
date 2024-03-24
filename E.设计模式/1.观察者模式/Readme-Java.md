@@ -1,9 +1,9 @@
 [TOC]
 
-# 观察者模式-Java实现示例
+# 观察者模式-Java 实现示例
 * 此示例使用`推`的方式。
 * 示例《气象监测应用》描述：
-    * 气象站(Weather Station)提供气象数据（温度、湿度、气压）；
+    * 气象站 (Weather Station) 提供气象数据（温度、湿度、气压）；
     * 实现一个应用，气象站提供数据后，更新到对应的显示板上；
     * 显示板支持自定义：其他开发人员可以写自己的显示板；
 
@@ -79,7 +79,7 @@ public class WeatherData implements Subject {
         }
     }
 
-    // measurementsChanged函数是为了：确定数据变化时，才调用notifyObservers()（而不是每次都直接调用）
+    // measurementsChanged 函数是为了：确定数据变化时，才调用 notifyObservers()（而不是每次都直接调用）
     // 这里实现做了简化，实际应用时，这样更好
     public void measurementsChanged() {
         notifyObservers();
@@ -140,7 +140,7 @@ public class WeatherStation {
 
 
 ## x. 参考
-* 《Head First设计模式》
+* 《Head First 设计模式》
 
 
 

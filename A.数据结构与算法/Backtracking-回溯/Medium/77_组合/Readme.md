@@ -1,3 +1,3 @@
-ÌâÄ¿µØÖ·£º https://leetcode.com/problems/combinations/  
-ÌâÄ¿ÃèÊö£º¸øÁ½¸öÊýnºÍk£¬ Çó[1,2,...,n-1,n] ÖÐÈÎÒâk¸öÊýµÄ×éºÏ¡£
-Ë¼Â·£º»ØËÝ¡£¾ßÌå¿´´úÂë¡£
+é¢˜ç›®åœ°å€ï¼šhttps://leetcode.com/problems/combinations/  
+é¢˜ç›®æè¿°ï¼šç»™ä¸¤ä¸ªæ•° n å’Œ kï¼Œæ±‚[1,2,...,n-1,n] ä¸­ä»»æ„ k ä¸ªæ•°çš„ç»„åˆã€‚
+æ€è·¯ï¼šå›žæº¯ã€‚å…·ä½“çœ‹ä»£ç ã€‚

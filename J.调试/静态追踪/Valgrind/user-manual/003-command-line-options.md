@@ -10,7 +10,7 @@
 
 - `-q, --quiet`: 静默模式，只打印错误信息。
 - `trace-children=<yes|no> [default: no]`: 是否跟踪通过 exec 初始化的子程序。
-- `--log-*`: 输出的信息发送到哪里去。支持文件描述符(fd)，文件(filename)，套接字(socket)。
+- `--log-*`: 输出的信息发送到哪里去。支持文件描述符 (fd)，文件 (filename)，套接字 (socket)。
 
 ### 错误相关选项
 

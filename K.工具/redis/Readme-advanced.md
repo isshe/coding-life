@@ -4,7 +4,7 @@ Redis 高端操作
 
 # 主从服务器
 ## 建立主从服务器
-* 在slave端执行
+* 在 slave 端执行
 ```
 SLAVEOF IPADDRESS:PORT
 如：SLAVEOF 127.0.0.1:6379
@@ -17,15 +17,15 @@ SLAVEOF IPADDRESS:PORT
 
 ## 主从复制过程
 * `slave`与`master`建立连接，发送`psync`同步命令。
-* `master`启动一个**后台进程**，将数据库快照保存到文件中，同时master**主进程**收集新的写命令，进行缓存。
+* `master`启动一个**后台进程**，将数据库快照保存到文件中，同时 master**主进程**收集新的写命令，进行缓存。
 * 后台完成保存后，将此文件发送给`slave`。
-* slave将此文件保存到磁盘上。
+* slave 将此文件保存到磁盘上。
 
 
 ## 主从复制特点
-* 可以拥有多个slave。
-* 多个slave可以连接其他slave，master宕机后，相连的slave转为master。
-* 主从复制不会阻塞master，在同步数据时，master可以继续处理client请求。
+* 可以拥有多个 slave。
+* 多个 slave 可以连接其他 slave，master 宕机后，相连的 slave 转为 master。
+* 主从复制不会阻塞 master，在同步数据时，master 可以继续处理 client 请求。
 * 提高了系统的可伸缩性。
 
 
@@ -38,10 +38,10 @@ set name b
 exec        # 此时执行
 get name
 ```
-**注意：redis事务执行出错后，不会恢复到之前的状态，因此不能用redis事务来保证数据的一致性**
+**注意：redis 事务执行出错后，不会恢复到之前的状态，因此不能用 redis 事务来保证数据的一致性**
 
 # 持久化
-redis的持久化方式：`snapshotting(快照)`和`Append-only file(AOF)`。
+redis 的持久化方式：`snapshotting(快照)`和`Append-only file(AOF)`。
 快照：将数据保存到文件中，默认方式。
 AOF：将读写操作保存到文件中。
 
@@ -65,7 +65,7 @@ save        # 将数据写入磁盘
 
 
 # 虚拟内存
-> 虚拟内存的管理在`2.6`版本之后取消了，之后版本由redis进行管理。
+> 虚拟内存的管理在`2.6`版本之后取消了，之后版本由 redis 进行管理。
 
 ## 虚拟内存配置
 * redis.config:

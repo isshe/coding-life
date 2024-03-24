@@ -20,7 +20,7 @@ filename = "xxx.xlsx"
 # 加载文档
 workbook = openpyxl.load_workbook(filename)
 
-# 获取worksheet
+# 获取 worksheet
 worksheet = wb.get_sheet_by_name("Sheet1")  # worksheet = workbook.active
 
 # 获取单元格：第一行第一列
@@ -38,13 +38,13 @@ import openpyxl
 # 创建对象
 workbook = openpyxl.Workbook()
 
-# 获取当前活跃的worksheet,默认就是第一个worksheet
+# 获取当前活跃的 worksheet，默认就是第一个 worksheet
 worksheet = workbook.active
 
 # 设置标题
 worksheet.title = "Sheet1"
 
-# 设置row行，col列的值为value
+# 设置 row 行，col 列的值为 value
 row = 1
 col = 2
 worksheet.cell(row, col, "value")
@@ -57,7 +57,7 @@ worksheet.column_dimensions[col].width = sheet.column_dimensions[col].width # 20
 row = 1
 worksheet.row_dimensions[row].height = sheet.row_dimensions[row].height    # 20
 
-# 获取单元格: (1,1)
+# 获取单元格：(1,1)
 cell = worksheet["A1"]
 
 # 设置单元格背景颜色等

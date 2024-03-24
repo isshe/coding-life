@@ -233,7 +233,7 @@ int ngx_http_lua_coroutine_create_helper(lua_State *L, ngx_http_request_t *r,
     ```
 
 不是应该 resume 吗？这里为什么调用的 lua_yield 呢？看到这里或许会有这样的疑惑。
-其实 review、access 等阶段的 Lua 代码，都是通过 ngx_http_lua_run_thread 来执行的，ngx_http_lua_coroutine_resume 这里执行完 lua_yield 后，会回到 ngx_http_lua_run_thread 中，由于状态是 LUA_YIELD 和操作是 NGX_HTTP_LUA_USER_CORO_RESUME，会继续(continue) ngx_http_lua_run_thread 的死循环，进而执行到刚刚要 resume 的协程。
+其实 review、access 等阶段的 Lua 代码，都是通过 ngx_http_lua_run_thread 来执行的，ngx_http_lua_coroutine_resume 这里执行完 lua_yield 后，会回到 ngx_http_lua_run_thread 中，由于状态是 LUA_YIELD 和操作是 NGX_HTTP_LUA_USER_CORO_RESUME，会继续 (continue) ngx_http_lua_run_thread 的死循环，进而执行到刚刚要 resume 的协程。
 
 - lj_ffh_coroutine_resume
 

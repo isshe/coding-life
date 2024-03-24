@@ -1,5 +1,5 @@
 
-# 第2章 技术背景
+# 第 2 章 技术背景
 
 
 ## 2.1 图释 BPF
@@ -88,7 +88,7 @@ BPF 对事件的支持：
 
 ## 2.7 kprobes
 
-> kprobes 向 BCC 和 bpftrace提供了内核`动态插桩`的机制。
+> kprobes 向 BCC 和 bpftrace 提供了内核`动态插桩`的机制。
 
 BPF 接口：
 * BCC：attach_kprobe()、attach_kretprobe()
@@ -143,7 +143,7 @@ bpftrace -e 'uprobe:/bin/bash:readline { @ = count() }'
 
 * 新建窗口进行 gdb 跟踪：`gdb -p <pid of /bin/bash>`
 * 执行 gdb 命令：`disas readline`
-* 可以看到第一个指令是 int3（原来不是int3，已被替换成int3）
+* 可以看到第一个指令是 int3（原来不是 int3，已被替换成 int3）
 * 此时退出跟踪；重新执行 gdb 命令查看，会发现指令恢复了。
 
 BCC 示例：对 DNS 跟踪。（通过对 getaddrinfo() 和 gethostbyname() 插桩）
@@ -157,7 +157,7 @@ gethostlatency-bpfcc
 # 03:45:50  10302  curl                 450.70 ifconfig.io
 ```
 
-**注意：uprobe 跟踪 malloc/free 之类的高频事件时，可能会导致性能问题。（不知道现在解了没有，详见 《BPF 之巅》 2.8.4 节）**
+**注意：uprobe 跟踪 malloc/free 之类的高频事件时，可能会导致性能问题。（不知道现在解了没有，详见《BPF 之巅》2.8.4 节）**
 
 拓展阅读：
 

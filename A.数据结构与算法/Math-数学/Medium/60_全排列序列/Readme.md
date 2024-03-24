@@ -1,3 +1,3 @@
-ÌâÄ¿µØÖ·£º https://leetcode.com/problems/permutation-sequence/  
-ÌâÄ¿ÃèÊö£º¸øÒ»¸ön ºÍÒ»¸öÊık£¬Çó1~nÈ«ÅÅĞòµÄµÚk¸öĞòÁĞ¡£  
-Ë¼Â·£º¼û´úÂë¡£  
+é¢˜ç›®åœ°å€ï¼šhttps://leetcode.com/problems/permutation-sequence/  
+é¢˜ç›®æè¿°ï¼šç»™ä¸€ä¸ª n å’Œä¸€ä¸ªæ•° kï¼Œæ±‚ 1~n å…¨æ’åºçš„ç¬¬ k ä¸ªåºåˆ—ã€‚  
+æ€è·¯ï¼šè§ä»£ç ã€‚  

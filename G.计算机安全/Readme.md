@@ -6,8 +6,8 @@
 Exif(exchange image file format, 交换图像文件格式)：定义了如何存储图像和音频文件的标准。
 获取文件信息。
 ### Beautiful Soup
-快速解析HTML和XML文档。
-提取URL。
+快速解析 HTML 和 XML 文档。
+提取 URL。
 
 ### Pillow
 图片相关。可以`_getexif`。
@@ -54,20 +54,20 @@ def func:
 sniff(prn=func, store=0)
 ```
 
-### IPy: IP信息
+### IPy: IP 信息
 ```python
 from IPy import IP as IPTEST
 if IPTEST(ipsrc).iptype() == "PRIVATE":
     pass
 ```
 
-### aircrack-ng设置网卡为混杂模式
+### aircrack-ng 设置网卡为混杂模式
 ```shell
 sudo apt-get install aircrack-ng
 sudo airmon-ng start <interface_name>
 ifconfig 后就能看到mon0之类的新接口
 ```
 
-### Mechanize：对WEB内容进行操作
+### Mechanize：对 WEB 内容进行操作
 ```
 ```

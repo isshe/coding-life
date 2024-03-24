@@ -54,7 +54,7 @@ struct ngx_listening_s {
     // 如果为新的 TCP 连接创建内存池，则内存池的初始大小应该是 pool_size
     size_t              pool_size;
 
-    // 注：此解释是 post_accept_timeout（已删除） 的：TCP_DEFER_ACCEPT 选项将在建立 TCP 连接成功且接收到用户的请求数据后，才向对监听套接字感兴趣的进程发送事件通知，而如果连接建立成功后 post_accept_timeout 秒后仍然没有收到用户数据，则内核直接丢弃连接
+    // 注：此解释是 post_accept_timeout（已删除）的：TCP_DEFER_ACCEPT 选项将在建立 TCP 连接成功且接收到用户的请求数据后，才向对监听套接字感兴趣的进程发送事件通知，而如果连接建立成功后 post_accept_timeout 秒后仍然没有收到用户数据，则内核直接丢弃连接
     // post_accept_buffer_size：连接建立后临时缓冲区的大小，windows 专用。
     /* should be here because of the AcceptEx() preread */
     size_t              post_accept_buffer_size;
@@ -103,7 +103,7 @@ struct ngx_listening_s {
     // 1：表示 Nginx 会将网络地址转变成字符串形式的地址
     unsigned            addr_ntop:1;
 
-    // 是否监听的是任意地址，如 IPv4：0.0.0.0 (INADDR_ANY)
+    // 是否监听的是任意地址，如 IPv4:0.0.0.0 (INADDR_ANY)
     unsigned            wildcard:1;
 
 #if (NGX_HAVE_INET6)

@@ -1,3 +1,3 @@
-ÌâÄ¿µØÖ·£ºhttps://leetcode.com/problems/climbing-stairs/  
-ÌâÄ¿ÃèÊö£ºÉÏÌ¨½×£¬Ò»´Î¿ÉÒÔÉÏÒ»¼¶»òÕßÒ»´Î¿ÉÒÔÉÏÁ½¼¶¡£ÎÊn¼¶Ì¨½×ÓÐ¶àÉÙÖÖ·½·¨¿ÉÉÏ¡£
-Ë¼Â·£ºÕâÊÇÒ»¸öì³²¨ÄÇÆõÊýÁÐ¡£  
+é¢˜ç›®åœ°å€ï¼šhttps://leetcode.com/problems/climbing-stairs/  
+é¢˜ç›®æè¿°ï¼šä¸Šå°é˜¶ï¼Œä¸€æ¬¡å¯ä»¥ä¸Šä¸€çº§æˆ–è€…ä¸€æ¬¡å¯ä»¥ä¸Šä¸¤çº§ã€‚é—® n çº§å°é˜¶æœ‰å¤šå°‘ç§æ–¹æ³•å¯ä¸Šã€‚
+æ€è·¯ï¼šè¿™æ˜¯ä¸€ä¸ªæ–æ³¢é‚£å¥‘æ•°åˆ—ã€‚  

@@ -4,7 +4,7 @@
 
 - 相关 Lua API 如 `ngx.shared.DICT.get` 是如何使用的？
 - 如何定义 lua_shared_dict 的，lua_shared_dict 做了哪些工作？
-- 详细跟踪各类 Lua 接口（set、get 每类一个）的实现，了解shared dict的设计/实现细节。
+- 详细跟踪各类 Lua 接口（set、get 每类一个）的实现，了解 shared dict 的设计/实现细节。
 - 这些 Lua 接口是否是原子的？是否需要考虑竞争问题？原子性是如何保证的？
 - ngx_http_lua_shdict_shctx_t 等关键数据结构是什么作用？它们之间有什么联系？
 
@@ -74,9 +74,9 @@ http {
 
 ## 实现
 
-怎么入手呢？先看看shared dict是怎么定义的吧。
+怎么入手呢？先看看 shared dict 是怎么定义的吧。
 
-### 定义shared dict（lua_shared_dict）
+### 定义 shared dict（lua_shared_dict）
 
 指令定义：
 
@@ -121,7 +121,7 @@ ngx_http_lua_shdict_rbtree_insert_value): 初始化红黑树，也就是 shared 
 
 - 获取并检查名称、大小参数
 - 分配 shared dict 上下文结构
-- 分配shared dict、设置相关初始化函数
+- 分配 shared dict、设置相关初始化函数
 - 加入到 main 配置的 shdict_zones 数组中
 
 ngx_http_lua_shared_memory_add 只是注册一个新的 shared dict，不会立即分配对应大小的内存。
@@ -308,7 +308,7 @@ get 接口的实现，在 2019.8.1（commit ID: 947fa0088b7a0387f43eb016436a2e44
 
 这个函数的主要逻辑是：
 
-- 先找 key 是否存在于shared dict中
+- 先找 key 是否存在于 shared dict 中
 - 如果 key 存在，就检查过期了没有
 - 过期了，如果是 list 类型，就直接复用，只是删除列表里面的所有值；如果不是 list 类型，直接删除这个 key。
 - 没过期，如果是 list 类型，就表示是要找的那个 list，直接 push，如果不是 list 类型，就报错返回，说明不是要找的，用户操作错了。
@@ -337,7 +337,7 @@ get 接口的实现，在 2019.8.1（commit ID: 947fa0088b7a0387f43eb016436a2e44
 
 内存分布：
 
-- list 类型, `-` 表示减去
+- list 类型，`-` 表示减去
 
 ```
 [ngx_rbtree_node_t-color-data|color|ngx_http_lua_shdict_node_t-data|key|ngx_queue_t]
@@ -347,7 +347,7 @@ get 接口的实现，在 2019.8.1（commit ID: 947fa0088b7a0387f43eb016436a2e44
 `ngx_http_lua_shdict_node_t` 的 data 就是 key 的开始，包含了 key 的首个字符。
 `ngx_queue_t` 是双端队列，用于存储所有值。
 
-- list 中每个值, `-` 表示减去
+- list 中每个值，`-` 表示减去
 
 ```
 [ngx_http_lua_shdict_list_node_t-data|value]

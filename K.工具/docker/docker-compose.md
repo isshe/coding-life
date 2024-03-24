@@ -16,7 +16,7 @@ services:
   nginx:
     restart: always
     build:
-      context: ../   # dockerfile文件目录
+      context: ../   # dockerfile 文件目录
       dockerfile: Dockerfile # dockerfile 名
     image: daocloud.io/library/nginx:1.13.2
     container_name: nginx

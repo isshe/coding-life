@@ -1,7 +1,7 @@
-题目地址： https://leetcode.com/problems/next-permutation/  
-题目描述： 给一个序列，求它的全排序的下一个序列。  
+题目地址：https://leetcode.com/problems/next-permutation/  
+题目描述：给一个序列，求它的全排序的下一个序列。  
 思路：字典序排列。  
 1. 从后往前找第一对升序元素[i],[i+1]。  
 2. 从后往前找第一个比 [i] 大的元素 [j];  
 3. 如果 i >= 0, 交换[i]和[j].（否则说明给的序列是降序）   
-4. 倒序 i+1到 end 。  
+4. 倒序 i+1 到 end。  

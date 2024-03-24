@@ -36,7 +36,7 @@ npm list <module>
 * name: 包名。
 * version: 包版本。
 * description: 包描述。
-* homepage: 包的官网URL。
+* homepage: 包的官网 URL。
 * author: 包的作者。
 * contributer: 贡献者。
 * dependencise: 包的依赖列表。
@@ -77,8 +77,8 @@ eventEmitter.setMaxListeners(n);
 ```
 
 # Buffer
-> Buffer是类。
-> buf是变量/实例。
+> Buffer 是类。
+> buf 是变量/实例。
 
 ```js
 // 创建
@@ -96,7 +96,7 @@ buf.write(string[, offset[, length]][, encoding])
 // 读取
 buf.toString([encoding[, start[, end]]])
 
-// 转json
+// 转 json
 buf.toJSON()
 
 // 比较
@@ -108,9 +108,9 @@ Buffer.concat(list[, totalLength])
 // 复制
 buf.copy(targetBuffer[, targetStart[, sourceStart[, sourceEnd]]])
 // targetBuffer - 要拷贝的 Buffer 对象。
-// targetStart - 数字, 可选, 默认: 0
-// sourceStart - 数字, 可选, 默认: 0
-// sourceEnd - 数字, 可选, 默认: buffer.length
+// targetStart - 数字，可选，默认：0
+// sourceStart - 数字，可选，默认：0
+// sourceEnd - 数字，可选，默认：buffer.length
 
 // 裁剪
 buf.slice([start[, end]])
@@ -120,11 +120,11 @@ buf.length;
 ```
 
 # Stream
-> 示例:
+> 示例：
 > [stream_write.js](./examples/stream_write.js)
 > [stream_read.js](./examples/stream_read.js)
 
-nodejs流的类型:
+nodejs 流的类型：
 * Readable: 可读
 * Writable：可写
 * Duplex：可读可写
@@ -181,7 +181,7 @@ console.log();
 ```
 
 ## process
-用于描述当前Node.js 进程状态的对象；提供了一个与操作系统交互的简单接口。
+用于描述当前 Node.js 进程状态的对象；提供了一个与操作系统交互的简单接口。
 ```
 process.on('exit', callback_func);
 process.exit();

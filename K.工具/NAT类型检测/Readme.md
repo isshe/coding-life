@@ -1,11 +1,11 @@
 
 [TOC]
 
-# NAT类型检测工具
+# NAT 类型检测工具
 
 ## 1.前置依赖
 
-假设环境为ubuntu环境：
+假设环境为 ubuntu 环境：
 * lua: `sudo apt-get install lua luarocks`
 * luasocket: `sudo luarocks install luasocket`
 * lua-cjson: `sudo luarocks install lua-cjson`
@@ -18,22 +18,22 @@
                 \
                  [Server2]
 ```
-* Server1和Server2可以是一台设备的两个Wan口，或者是两台设备。
+* Server1 和 Server2 可以是一台设备的两个 Wan 口，或者是两台设备。
 
 
 ## 3.使用方法
-* 修改stun_server3.lua里面的IP+其他服务器IP，然后运行第一个服务器。
-* 修改stun_server3.lua里面的IP+其他服务器IP，然后运行第二个服务器。
-* 修改stun_client3.lua里面的客户端IP，服务器IP（两个）
-* 运行stun_client3.lua，进行测试。
+* 修改 stun_server3.lua 里面的 IP+ 其他服务器 IP，然后运行第一个服务器。
+* 修改 stun_server3.lua 里面的 IP+ 其他服务器 IP，然后运行第二个服务器。
+* 修改 stun_client3.lua 里面的客户端 IP，服务器 IP（两个）
+* 运行 stun_client3.lua，进行测试。
 
 ## 4.检测方法
 * 检测流程
 ![测试流程](./nat_type_check.png)
-* Test I: 内网客户端发送信息给外网服务器，外网服务器（用相同的IP和相同的端口）直接回复。
-* Test II: 内网客户端发送信息给外网服务器，外网服务器（用不同的IP和不同的端口）回复。（要求服务器有多个IP或者有多个服务器）
-* Test III: 内网客户端发送信息给外网服务器，外网服务器（用相同的IP和不同的端口）直接回复。
-* 如果没理解错，"Symmetric NAT"检测那里，应该是两次`Test I`后，两次得到的NAT映射的公网IP和端口都相同（图片中只有公网IP不同）。
+* Test I: 内网客户端发送信息给外网服务器，外网服务器（用相同的 IP 和相同的端口）直接回复。
+* Test II: 内网客户端发送信息给外网服务器，外网服务器（用不同的 IP 和不同的端口）回复。（要求服务器有多个 IP 或者有多个服务器）
+* Test III: 内网客户端发送信息给外网服务器，外网服务器（用相同的 IP 和不同的端口）直接回复。
+* 如果没理解错，"Symmetric NAT"检测那里，应该是两次`Test I`后，两次得到的 NAT 映射的公网 IP 和端口都相同（图片中只有公网 IP 不同）。
 
 ## 5.使用示例
 * 拓扑图

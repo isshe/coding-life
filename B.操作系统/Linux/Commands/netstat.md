@@ -3,7 +3,7 @@
 netstat
 ---
 
-显示当前的连接情况。（UDP、TCP、UNIX、ICMP等）
+显示当前的连接情况。（UDP、TCP、UNIX、ICMP 等）
 显示路由表、网络接口列表、网络统计信息、多播信息、伪装连接等。
 # 1. 介绍
 ## 1.1 用法
@@ -61,7 +61,7 @@ netstat { [-vWeenNac] -i | [-cWnNe] -M | -s }
 netstat -tuanp | grep 53
 ```
 
-## 获取进程ID/进程名
+## 获取进程 ID/进程名
 ```bash
 netstat -ap
 ```
@@ -82,10 +82,10 @@ netstat -i
 netstat -ie
 ```
 
-## 显示LISTENING(监听)状态的连接
+## 显示 LISTENING(监听) 状态的连接
 ```bash
 netstat -l
 ```
 
 # 3. 疑问
-## masqueraded connections是什么？
+## masqueraded connections 是什么？

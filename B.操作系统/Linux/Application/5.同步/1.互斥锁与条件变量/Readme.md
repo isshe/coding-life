@@ -30,9 +30,9 @@ int pthread_mutex_unlock(pthread_mutex_t *mptr);
 int pthread_mutexattr_init(pthread_mutexattr_t *attr);
 int pthread_mutexattr_destroy(pthread_mutexattr_t *attr)
 
-// 属性设置：进程间共享等（MACOS和LINUX相关函数有所不同）
+// 属性设置：进程间共享等（MACOS 和 LINUX 相关函数有所不同）
 
-// 均返回：成功：0，失败：正的Exxx值
+// 均返回：成功：0，失败：正的 Exxx 值
 ```
 
 ## 2. 条件变量
@@ -68,7 +68,7 @@ struct timespec {
 int pthread_condattr_init(pthread_condattr_t *attr);
 int pthread_condattr_destroy(pthread_condattr_t *attr);
 
-// 属性设置：进程间共享等（MACOS和LINUX相关函数有所不同: MACOX没有条件变量属性设置函数）
+// 属性设置：进程间共享等（MACOS 和 LINUX 相关函数有所不同：MACOX 没有条件变量属性设置函数）
 ```
 
 ## 2. 注意
@@ -77,8 +77,8 @@ int pthread_condattr_destroy(pthread_condattr_t *attr);
     * 【详见[2_ex](./Examples/2_ex_prod_cons_cond.c)】
 
 ## A. 拓展
-* 生产者-消费者问题，也称为`有界缓冲区`问题。
-    * 当生产者-消费者使用管道、消息队列(SystemV/Posix)进行通信时，同步是`隐式的(implicit)`，由内核执行同步。
+* 生产者 - 消费者问题，也称为`有界缓冲区`问题。
+    * 当生产者 - 消费者使用管道、消息队列 (SystemV/Posix) 进行通信时，同步是`隐式的(implicit)`，由内核执行同步。
     * 当使用内存共享时，生产者/消费者必须执行某种`显式的(explicit)`的同步。
 
     

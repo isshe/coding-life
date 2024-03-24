@@ -3,29 +3,29 @@
 gdb
 ---
 
-gdb - GNU调试器。
+gdb - GNU 调试器。
 
-调试器(如GDB)的目的是允许你查看其他程序在执行时的"内部"的内容，或者程序奔溃的时候正在做什么。
-GDB可以做4种主要的事情来帮助你捕捉bug：
+调试器 (如 GDB) 的目的是允许你查看其他程序在执行时的"内部"的内容，或者程序奔溃的时候正在做什么。
+GDB 可以做 4 种主要的事情来帮助你捕捉 bug：
 * 启动你的程序，指定任何可能影响程序行为的内容。
 * 使程序在指定条件下停止。
 * 检查你程序停止时，正在发生的事情。
 * 更改程序中的内容，以便你可以尝试纠正一个错误的影响并继续了解另一个错误。
 
-你可以用GDB来调试C、C++、Fortran、Modula-2编写的程序。
-使用`gdb`命令来调用GDB。一旦启动，它会从中断读取命令，直到你用GDB命令"exit"告诉它退出。你可以用GDB命令`help`来查看帮助（不用退出gdb）。
-你可以运行没有参数或选项的gdb ; 但是最常用的启动GDB的方法是使用一个或两个参数，将可执行程序指定为参数：
+你可以用 GDB 来调试 C、C++、Fortran、Modula-2 编写的程序。
+使用`gdb`命令来调用 GDB。一旦启动，它会从中断读取命令，直到你用 GDB 命令"exit"告诉它退出。你可以用 GDB 命令`help`来查看帮助（不用退出 gdb）。
+你可以运行没有参数或选项的 gdb ; 但是最常用的启动 GDB 的方法是使用一个或两个参数，将可执行程序指定为参数：
 > gdb program
 
-您还可以从可执行程序和指定的core文件开始：
+您还可以从可执行程序和指定的 core 文件开始：
 > gdb program core
 
-如果要调试正在运行的进程，则可以将进程ID指定为第二个参数：
+如果要调试正在运行的进程，则可以将进程 ID 指定为第二个参数：
 > gdb program 1234
 > gdb -p 1234
 
-将GDB附加(attach)到1234进程（除非你由一个名字为1234的core文件，gdb会先查找core文件）。
-以下是一些常用的GDB命令:
+将 GDB 附加 (attach) 到 1234 进程（除非你由一个名字为 1234 的 core 文件，gdb 会先查找 core 文件）。
+以下是一些常用的 GDB 命令：
 ```bash
 break [file:]function
     在函数(文件)中设置断点。
@@ -76,7 +76,7 @@ quit
     退出GDB。
     缩写：q
 ```
-有关GDB的完整详细信息，请参阅：A Guide to the GNU Source-Level Debugger
+有关 GDB 的完整详细信息，请参阅：A Guide to the GNU Source-Level Debugger
 
 # 用法
 ```bash
@@ -86,7 +86,7 @@ gdb [-help] [-nh] [-nx] [-q] [-batch] [-cd=dir] [-f] [-b bps]
 ```
 
 # 选项
-选项之外的任何参数都需要指定可执行文件和核心文件（或进程ID）。
+选项之外的任何参数都需要指定可执行文件和核心文件（或进程 ID）。
 所有选项和命令行参数都按顺序处理。使用' -x '选项时，顺序会有所不同。
 
 ```bash
@@ -211,8 +211,8 @@ gdb sbin/nginx
 ```
 
 # 拓展
-* shell命令：info gdb
-* [gdb在线文档](https://sourceware.org/gdb/current/onlinedocs/gdb/)
+* shell 命令：info gdb
+* [gdb 在线文档](https://sourceware.org/gdb/current/onlinedocs/gdb/)
     * [A Guide to the GNU Source-Level Debugger](http://mermaja.act.uji.es/docencia/is37/data/gdb.pdf)
 
 # 参考

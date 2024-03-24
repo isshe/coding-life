@@ -1,9 +1,9 @@
-ÌâÄ¿µØÖ·£ºhttps://leetcode.com/problems/sort-colors/  
-ÌâÄ¿ÃèÊö£ºÓÐ3ÖÖÑÕÉ«red,white,blue·Ö±ðÓÃ0£¬1£¬2±íÊ¾¡£ÅÅÐòÒ»¸öÑÕÉ«Êý×é£¬²»¿ÉÓÃ¿âº¯ÊýÖ®Àà¡£
-Ë¼Â·1£º±éÀúÁ½±é
-1. ±éÀúµÚÒ»±éÒ»±é£¬¼ÇÂ¼¸÷ÖÖÑÕÉ«µÄÊýÁ¿¡£
-2. ÖØÐÂÌî³äÊý×é¡£
+é¢˜ç›®åœ°å€ï¼šhttps://leetcode.com/problems/sort-colors/  
+é¢˜ç›®æè¿°ï¼šæœ‰ 3 ç§é¢œè‰² red,white,blue åˆ†åˆ«ç”¨ 0ï¼Œ1ï¼Œ2 è¡¨ç¤ºã€‚æŽ’åºä¸€ä¸ªé¢œè‰²æ•°ç»„ï¼Œä¸å¯ç”¨åº“å‡½æ•°ä¹‹ç±»ã€‚
+æ€è·¯ 1ï¼šéåŽ†ä¸¤é
+1. éåŽ†ç¬¬ä¸€éä¸€éï¼Œè®°å½•å„ç§é¢œè‰²çš„æ•°é‡ã€‚
+2. é‡æ–°å¡«å……æ•°ç»„ã€‚
 
-Ë¼Â·2£º±éÀúÒ»±é
-1. leftºÍrihgt·Ö±ðÖ¸Ïò0£¬ºÍn-1µÄÔªËØ¡£
-2. ±éÀúÊ±£¬[i] == 0, ÔòºÍ[left]»»¡£[i]==2Ê±ºÍ[rihgt]»»²¢i--[½»»»ºó»¹ÒªÖØÐÂ±È½ÏÒ»±é]
+æ€è·¯ 2ï¼šéåŽ†ä¸€é
+1. left å’Œ rihgt åˆ†åˆ«æŒ‡å‘ 0ï¼Œå’Œ n-1 çš„å…ƒç´ ã€‚
+2. éåŽ†æ—¶ï¼Œ[i] == 0, åˆ™å’Œ[left]æ¢ã€‚[i]==2 æ—¶å’Œ[rihgt]æ¢å¹¶ i--[äº¤æ¢åŽè¿˜è¦é‡æ–°æ¯”è¾ƒä¸€é]

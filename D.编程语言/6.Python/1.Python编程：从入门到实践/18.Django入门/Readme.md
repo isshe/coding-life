@@ -2,7 +2,7 @@
 Django
 ---
 
-# Django工作流程
+# Django 工作流程
 ```
 urls -> views(GET) -> .html -> views(POST)
 ```
@@ -41,7 +41,7 @@ python3 manage.py runserver
 # python3 manage.py shell
 ```
 
-# django项目
+# django 项目
 > 前置条件：激活环境
 
 ```python

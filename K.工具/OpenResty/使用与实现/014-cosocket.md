@@ -233,7 +233,7 @@ sock:close()
 - 获取模块 ctx
 - 检查 ctx 是否是可以 YIELD 的
 - 创建新表
-- 设置新表的元表为前面张杰中注入的元表， key：tcp_socket_metatable_key。
+- 设置新表的元表为前面张杰中注入的元表，key：tcp_socket_metatable_key。
 - 返回新表
 
 ### 创建连接
@@ -359,7 +359,7 @@ sock:close()
 
 ## 总结
 
-### 1.Nginx 是如何进行域名解析的？ ngx_resolve_start、ngx_resolve_name，是异步的吗，会等待解析结果吗？
+### 1.Nginx 是如何进行域名解析的？ngx_resolve_start、ngx_resolve_name，是异步的吗，会等待解析结果吗？
 
 答：详见 [Nginx 是如何进行 DNS 解析的？](../../Nginx/Nginx源码分析/7-nginx-dns-resolve.md)。
 
@@ -367,7 +367,7 @@ sock:close()
 
 答：进行非阻塞连接，返回 rc == -1 && err == NGX_EINPROGRESS 时，表示连接正在进行中。openresty 设置好读写事件，在 ngx_http_lua_socket_connected_handler 中检查连接实际是否成功。
 
-更多参考 [I/O多路复用与非阻塞连接](../../../B.操作系统/Linux/Application/7.IO多路复用/IO多路复用与非阻塞连接/README.md)
+更多参考 [I/O 多路复用与非阻塞连接](../../../B.操作系统/Linux/Application/7.IO多路复用/IO多路复用与非阻塞连接/README.md)
 
 ### 3.TCP 连接进行中（NGX_AGAIN）时，yield 出去后，会在哪里恢复？
 
@@ -406,7 +406,7 @@ rv = lua_resume(orig_coctx->co, nrets);
 ...
 ```
 
-### 4.什么是 cosocket 呢？ cosocket 是如何实现的呢？
+### 4.什么是 cosocket 呢？cosocket 是如何实现的呢？
 
 答：cosocket 是一种基于协程的高性能、低延迟的 I/O 模型。cosocket 基于事件驱动和异步 I/O，使用 Nginx 事件驱动框架监听套接字事件，通过异步 I/O 读写套接字数据，实现面向协议编程（解析/处理协议）的目的。
 

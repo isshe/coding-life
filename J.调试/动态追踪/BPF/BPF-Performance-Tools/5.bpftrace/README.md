@@ -1,4 +1,4 @@
-# 第5章 bpftrace
+# 第 5 章 bpftrace
 
 bpftrace 是一款基于 BPF 和 BCC 的开源跟踪器。
 
@@ -7,7 +7,7 @@ bpftrace 一行教程：https://github.com/iovisor/bpftrace/blob/master/docs/tut
 
 ## 5.2 探针类型
 
-|类型|缩写|描述|
+|类型 | 缩写 | 描述|
 |---|---|---
 | tracepoint | t | 内核静态插桩点 |
 | usdt | U | 用户态静态定义插桩点 |
@@ -16,9 +16,9 @@ bpftrace 一行教程：https://github.com/iovisor/bpftrace/blob/master/docs/tut
 | uprobe | u | 用户态动态函数插桩 |
 | uretprobe | ur | 用户态动态函数返回值插桩 |
 | software | s | 内核软件事件 |
-| hardware | h | 硬件基于计数器的插桩, PMC |
+| hardware | h | 硬件基于计数器的插桩，PMC |
 | profile | p | 对全部 CPU 进行时间采样 |
-| interval | i | 周期性报告（从一个CPU 上） |
+| interval | i | 周期性报告（从一个 CPU 上） |
 | BEGIN | | bpirace 启动 |
 | END | |bpftrace 退出 |
 
@@ -89,8 +89,8 @@ uprobe:/bin/bash/readline
 有 3 种类型的变量：内置变量、临时变量和映射表变量。
 
 内置变量：由 bpftrace 预先定义，通常只读。如 pid，comm、nsecs、curtask。
-临时变量：以 “$” 作为前缀，如 `$x = 1;`，只能在当前动作中使用。
-映射表变量；以 “@” 作为前缀，可以跨动作使用。如 `@a = 1; @path[pid, $fd] = arg0`。
+临时变量：以“$”作为前缀，如 `$x = 1;`，只能在当前动作中使用。
+映射表变量；以“@”作为前缀，可以跨动作使用。如 `@a = 1; @path[pid, $fd] = arg0`。
 
 
 ### 5.7.11 映射表函数

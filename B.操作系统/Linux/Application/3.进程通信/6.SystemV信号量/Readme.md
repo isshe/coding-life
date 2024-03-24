@@ -2,16 +2,16 @@
 
 
 ## 1. 概述
-* 二值信号量(binary semaphore): 其值为0或1的信号量；
-* 计数信号量(counting semaphore): 其值为0~某个限制值之间的信号量；
-> * 以上两种信号量，等待(waiting)操作都等待信号量的值变为大于0；
-* 计数信号量集(set of counting semaphores): 一个或多个信号量(构成一个集合), 其中的每个都是计数信号量。
-    * System V信号量通过此概念给信号量增加了一级复杂度。
-> 当讨论System V信号量时，都是指`计数信号量集`；当讨论Posix信号量时，都是指`计数信号量`。
+* 二值信号量 (binary semaphore): 其值为 0 或 1 的信号量；
+* 计数信号量 (counting semaphore): 其值为 0~某个限制值之间的信号量；
+> * 以上两种信号量，等待 (waiting) 操作都等待信号量的值变为大于 0；
+* 计数信号量集 (set of counting semaphores): 一个或多个信号量 (构成一个集合), 其中的每个都是计数信号量。
+    * System V 信号量通过此概念给信号量增加了一级复杂度。
+> 当讨论 System V 信号量时，都是指`计数信号量集`；当讨论 Posix 信号量时，都是指`计数信号量`。
 * 约定：
     * semval: 信号量当前值
-    * semncnt: 等待semval变为大于其当前值的线程数；
-    * semzcnt: 等待semval变为0的线程数；
+    * semncnt: 等待 semval 变为大于其当前值的线程数；
+    * semzcnt: 等待 semval 变为 0 的线程数；
     * semadj: 所指定信号量针对调用进程的调整值；【？？？】
 
 ## 2.信号量集相关数据结构
@@ -55,16 +55,16 @@ union semun {
 // 创建或访问一个信号量集
 // @nsems: 指定集合中的信号量数
 // @oflag:
-//  * IPC_CREAT: 不存在就创建，返回ID
-//  * IPC_EXCL: 不管是否存在，都返回-1；
-//  * IPC_CREAT|IPC_EXCL: 存在返回-1；不存在，创建，返回ID；
+//  * IPC_CREAT: 不存在就创建，返回 ID
+//  * IPC_EXCL: 不管是否存在，都返回 -1；
+//  * IPC_CREAT|IPC_EXCL: 存在返回 -1；不存在，创建，返回 ID；
 int semget(key_t key, int nsems, int oflag);
 
 // 信号量操纵函数
 // @opsptr->sem_op:
-//  * > 0：加到信号量当前值上(semval)；如果指定SEM_UNDO标志，从相应信号量的semadj值中减去sem_op;
-//  * = 0: 调用者希望等待信号量变为0；
-//  * < 0: 等待信号量值变为`>=sem_op的绝对值`
+//  * > 0：加到信号量当前值上 (semval)；如果指定 SEM_UNDO 标志，从相应信号量的 semadj 值中减去 sem_op;
+//  * = 0: 调用者希望等待信号量变为 0；
+//  * < 0: 等待信号量值变为 `>=sem_op 的绝对值`
 int semop(int semid, struct sembuf *opsptr, size_t nops);
 
 // 对一个信号量执行各种控制操作
@@ -73,15 +73,15 @@ int semctl(int semid, int semnum, int cmd, ... /*union semun org*/);
 ```
 
 ## 3. 注意
-* semget()并不初始化信号量，初始化工作需要通过semctl来完成。这会存在问题如多次初始化。【详见[示例6_ex](./Examples/6_ex_lock_sv_sem.c)】
+* semget() 并不初始化信号量，初始化工作需要通过 semctl 来完成。这会存在问题如多次初始化。【详见[示例 6_ex](./Examples/6_ex_lock_sv_sem.c)】
     * 解决方案是：指定`IPC_CREAT|IPC_EXCL`，保证只有一个进程创建信号量并初始化信号量。
-        * 其他进程semget会放着EEXIST错误，并再次调用semget()。（一次不指定IPC_CREAT，也不指定IPC_EXCL）
+        * 其他进程 semget 会放着 EEXIST 错误，并再次调用 semget()。（一次不指定 IPC_CREAT，也不指定 IPC_EXCL）
         * 创建和初始化分为两步，这个方案还是存在竞争问题：
-            * 进程A进行创建(semget)后，未进行初始化(semctl), 时间片到；进程B进行信号量操作（但是信号量还未初始化）。
+            * 进程 A 进行创建 (semget) 后，未进行初始化 (semctl), 时间片到；进程 B 进行信号量操作（但是信号量还未初始化）。
             * 解决办法是：
-                * 调用以IPC_STAT命令semctl，等待sem_otime变为非零值。
-                * 原因：System V手册保证semget创建一个新的信号量集时，semid_ds的sem_otime成员一定被初始化为0。
-* semop()睡眠时, 如果被中断，会返回`EINTR`错误；
-    * semop()是需被所捕获的信号中断的`慢系统调用`。
-* 删除信号量将导致等待此信号量的(睡眠中的)线程返回`EIDRM(identifier removed)`错误。
-* 指定SEM_UNDO时，进程结束后，信号量会被还原。
+                * 调用以 IPC_STAT 命令 semctl，等待 sem_otime 变为非零值。
+                * 原因：System V 手册保证 semget 创建一个新的信号量集时，semid_ds 的 sem_otime 成员一定被初始化为 0。
+* semop() 睡眠时，如果被中断，会返回`EINTR`错误；
+    * semop() 是需被所捕获的信号中断的`慢系统调用`。
+* 删除信号量将导致等待此信号量的 (睡眠中的) 线程返回`EIDRM(identifier removed)`错误。
+* 指定 SEM_UNDO 时，进程结束后，信号量会被还原。

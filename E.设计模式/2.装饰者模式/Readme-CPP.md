@@ -1,16 +1,16 @@
 [TOC]
 
-# 装饰者模式-C++代码示例
+# 装饰者模式-C++ 代码示例
 * 这部分代码直接参考装饰者模式类图实现，不举现实中的例子，个人感觉还是这样来得直接。
 * 如有错误，请指出。
 
 ## 1. 文件列表及功能
 * Component.h: 组件/被装饰者；抽象类
-* Decorator.h: 装饰者；抽象类，继承自Component
-* ConcreteComponentA.h/cpp: 具体组件A；继承自Component，属于基础组件。
-* ConcreteComponentB.h/cpp: 具体组件B；同组件A。
-* comcreteDecoratorA.h/cpp: 具体装饰者A；继承自Decorator，用于装饰其他(被装饰过，没被装饰过的)组件。
-* comcreteDecoratorB.h/cpp: 具体装饰者B；同装饰者A。
+* Decorator.h: 装饰者；抽象类，继承自 Component
+* ConcreteComponentA.h/cpp: 具体组件 A；继承自 Component，属于基础组件。
+* ConcreteComponentB.h/cpp: 具体组件 B；同组件 A。
+* comcreteDecoratorA.h/cpp: 具体装饰者 A；继承自 Decorator，用于装饰其他 (被装饰过，没被装饰过的) 组件。
+* comcreteDecoratorB.h/cpp: 具体装饰者 B；同装饰者 A。
 * main.cpp: 测试代码，主函数。
 
 ## 2. 各个文件关键代码

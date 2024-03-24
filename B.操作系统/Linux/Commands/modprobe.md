@@ -4,15 +4,15 @@
 modprobe
 ---
 
-modprobe - 向Linux内核添加或从内核移除模块。
+modprobe - 向 Linux 内核添加或从内核移除模块。
 
-modprobe智能地从Linux内核添加或删除模块：
+modprobe 智能地从 Linux 内核添加或删除模块：
 * 注意，模块名称中`-`和`_`没有区别（自动执行下划线转换）。
-* modprobe在模块目录`/lib/modules/'uname -r'`(符号冲突了，用`'`代替)中查找所有模块和其他文件。
+* modprobe 在模块目录`/lib/modules/'uname -r'`(符号冲突了，用`'`代替) 中查找所有模块和其他文件。
     * 除了`/etc/modprobe.d`目录是的可选配置文件。详见`modprobe.d`
-* modprobe还将以`<module>.<option>`的形式使用内核命令行上指定的模块选项。
+* modprobe 还将以`<module>.<option>`的形式使用内核命令行上指定的模块选项。
     * `modprobe.blacklist=<module>`的形式使用黑名单。
-* 如果在modulename之后给出了任何参数，它们将被传递给内核。
+* 如果在 modulename 之后给出了任何参数，它们将被传递给内核。
     * 除了配置文件中列出的选项。
 
 # 用法
@@ -143,7 +143,7 @@ alias symbol:ct_sip_parse_request nf_conntrack_sip
 * symbol：应该是说这个是`nf_conntrack`中的符号（也就是函数）。【？？？】
 
 # 疑问
-* modprobe -r输出的含义？
+* modprobe -r 输出的含义？
 
 # 相关
 * modprobe.d

@@ -1,6 +1,6 @@
 [TOC]
 
-# 抽象工厂模式-Java代码示例
+# 抽象工厂模式-Java 代码示例
 * 类图
 ![类图](./Java/ClassDiagram.png)
 
@@ -9,11 +9,11 @@
 * NYPizzaIngredientFactory.java: 具体工厂
 * ChicagoPizzaIngredientFactory.java: 具体工厂
 * Dough.java: 抽象产品——产品类
-* ThickCrustDough.java: 具体产品，Dough的一种
-* ThinCrustDough.java: 具体产品，Dough的一种
+* ThickCrustDough.java: 具体产品，Dough 的一种
+* ThinCrustDough.java: 具体产品，Dough 的一种
 * Sauce.java: 抽象产品——产品类
-* MarinaraSauce.java: 具体产品，sauce的一种
-* PlumTomatoSauce.java: 具体产品，sauce的一种
+* MarinaraSauce.java: 具体产品，sauce 的一种
+* PlumTomatoSauce.java: 具体产品，sauce 的一种
 
 ## 2. 各个文件关键代码
 ### 2.1 抽象工厂
@@ -89,7 +89,7 @@ public class ThickCrustDough implements Dough {
 }
 ```
 
-* ThinCrustDough.java: 具体产品，Dough的一种
+* ThinCrustDough.java: 具体产品，Dough 的一种
 ```java
 public class ThinCrustDough implements Dough {
     public String toString() {
@@ -98,7 +98,7 @@ public class ThinCrustDough implements Dough {
 }
 ```
 
-* MarinaraSauce.java: 具体产品，sauce的一种
+* MarinaraSauce.java: 具体产品，sauce 的一种
 ```java
 public class MarinaraSauce implements Sauce {
     public String toString() {
@@ -107,7 +107,7 @@ public class MarinaraSauce implements Sauce {
 }
 ```
 
-* PlumTomatoSauce.java: 具体产品，sauce的一种
+* PlumTomatoSauce.java: 具体产品，sauce 的一种
 ```java
 public class PlumTomatoSauce implements Sauce {
     public String toString() {
@@ -136,9 +136,9 @@ public class Test {
 ## x. 疑问
 
 ## y. 拓展/总结
-* 注意：这个例子并没有全部照搬《Head First设计模式》，把多余的部分去掉了。
+* 注意：这个例子并没有全部照搬《Head First 设计模式》，把多余的部分去掉了。
     * 因为个人在学习过程中，感觉干扰很大。
-    * 如果想看更详细的应用，得去看《Head First设计模式》。
+    * 如果想看更详细的应用，得去看《Head First 设计模式》。
 ## z. 参考
-* 《Head First设计模式》
+* 《Head First 设计模式》
 

@@ -130,7 +130,7 @@ ngx_http_lua_inject_uthread_api(ngx_log_t *log, lua_State *L)
 }
 ```
 
-在这个函数中，拿到了 “spawn” 等操作实际调用的 C 函数，我们后续从这些函数着手进行探索。
+在这个函数中，拿到了“spawn”等操作实际调用的 C 函数，我们后续从这些函数着手进行探索。
 
 ### ngx.thread.spawn: ngx_http_lua_uthread_spawn
 

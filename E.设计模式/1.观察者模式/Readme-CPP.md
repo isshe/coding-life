@@ -1,20 +1,20 @@
 [TOC]
 
-# 观察者模式-C++实现示例
+# 观察者模式-C++ 实现示例
 * 此示例使用`拉`的方式。
 * 示例描述：
     * `具体主题`状态变更时，通知所有`具体观察者`
     
 ## 1. 文件列表
-* Subject.h: 主题，类里的函数实现为纯虚函数，提供类似Java中`interface`的功能。
-* Observer.h：观察者，类里的函数实现为纯虚函数，提供类似Java中`interface`的功能。
+* Subject.h: 主题，类里的函数实现为纯虚函数，提供类似 Java 中`interface`的功能。
+* Observer.h：观察者，类里的函数实现为纯虚函数，提供类似 Java 中`interface`的功能。
 * ConcreteSubject.h/cpp: 具体的主题
 * ConcreteObserver.h/cpp: 具体的观察者
 * main.java: 测试程序
 
 ## 2. 主题
 提供`注册`、`取消注册`、`通知`、`获取状态`接口。
-注意：getStatus()这里计划是放具体主题的类里面的，无奈当前不懂其他实现。
+注意：getStatus() 这里计划是放具体主题的类里面的，无奈当前不懂其他实现。
 
 * Subject.h
 ```cpp
@@ -36,7 +36,7 @@ public:
 ```
 
 ## 3. 观察者
-提供`主题`更新后更新`观察者`的update接口。
+提供`主题`更新后更新`观察者`的 update 接口。
 * Observer.h
 ```cpp
 #ifndef _OBSERVER_H_
@@ -194,7 +194,7 @@ int main()
 
 
 ## x. 参考
-* 《Head First设计模式》
+* 《Head First 设计模式》
 * [纯虚函数](https://harttle.land/2015/06/28/cpp-polymorphism.html)
 
 

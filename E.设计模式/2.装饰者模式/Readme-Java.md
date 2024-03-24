@@ -1,18 +1,18 @@
 [TOC]
 
-# 装饰者模式-Java代码示例
-* 这个例子是《Head First设计模式》上面的例子
+# 装饰者模式-Java 代码示例
+* 这个例子是《Head First 设计模式》上面的例子
 * 类图
 ![类图](xingbazi-classdiagram.png)
 
 ## 1. 文件列表及功能
 * Beverage.java: 组件/被装饰者，抽象类，用于定义具体组件的接口。其他类的公共类。
 * CondimentDecorator.java: 装饰者，抽象类，用于定义具体装饰者的接口。
-* DarkRoast.java: 以下4个是具体组件/被装饰者。
+* DarkRoast.java: 以下 4 个是具体组件/被装饰者。
 * Decaf.java: 
 * Espresso.java:
 * HouseBlend.java:
-* Milk.java: 以下4个是具体装饰者。
+* Milk.java: 以下 4 个是具体装饰者。
 * Mocha.java:
 * Soy.java:
 * Whip.java:
@@ -21,8 +21,8 @@
 ## 2. 各个文件关键代码
 ### 2.1 组件抽象类
 * Beverage.java
-> 个人感觉getDescription()在这个例子里面有一定干扰作用。
-> CondimentDecorator里面的getDescription()是抽象的。
+> 个人感觉 getDescription() 在这个例子里面有一定干扰作用。
+> CondimentDecorator 里面的 getDescription() 是抽象的。
 ```java
 public abstract class Beverage {
     String description = "Unknown Beverage";
@@ -116,16 +116,16 @@ public class StarbuzzCoffee {
 ```
 
 ## x. 疑问
-* getDescription()是否有更好的用法？这里是不是有割裂感？
+* getDescription() 是否有更好的用法？这里是不是有割裂感？
 
 ## y. 拓展/总结
-* 抽象类就是不能使用new方法进行实例化的类，即没有具体实例对象的类。
+* 抽象类就是不能使用 new 方法进行实例化的类，即没有具体实例对象的类。
 * 子类继承抽象类时:(注意下面是`祖宗类`, 不是父类)
-    * A. 子类声明为抽象类: 部分实现或完全不实现`祖宗类`的所有抽象方法；
-    * B. 子类不声明为抽象类: 实现`祖宗类`所有的抽象方法。
-* 抽象方法必须为public或者protected。
+    * A. 子类声明为抽象类：部分实现或完全不实现`祖宗类`的所有抽象方法；
+    * B. 子类不声明为抽象类：实现`祖宗类`所有的抽象方法。
+* 抽象方法必须为 public 或者 protected。
 
 ## z. 参考
 * [抽象类/抽象方法](http://www.runoob.com/java/java-abstraction.html)
 * [Java 抽象类、抽象方法](https://www.jianshu.com/p/0530e14192b4)
-* [java抽象类和抽象方法](https://blog.csdn.net/tsuliuchao/article/details/5423026)
+* [java 抽象类和抽象方法](https://blog.csdn.net/tsuliuchao/article/details/5423026)

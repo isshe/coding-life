@@ -1,3 +1,3 @@
-��Ŀ��ַ��https://leetcode.com/problems/subsets-ii/    
-��Ŀ��������һ�����飬�������Ӽ��� ������Ԫ�ؿ����ظ���  
-˼·��ÿ�εݹ�ȡһ����������ظ����������ٿ����롣���һ�ݲ����Ĵ��롣��һ������ݹ��ʱ����ܵõ���������  
+题目地址：https://leetcode.com/problems/subsets-ii/    
+题目描述：给一个数组，求它的子集，数组中元素可能重复。  
+思路：每次递归取一个数，如果重复则跳过。再看代码。这个一份不错的代码。在一次深向递归的时候就能得到多个结果。  

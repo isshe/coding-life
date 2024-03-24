@@ -1,6 +1,6 @@
 [TOC]
 
-# 单件模式-Java代码示例
+# 单件模式-Java 代码示例
 
 ## 1. 文件列表
 * Java1/：第一个Java示例，对整个`getInstance`方法进行原子限制。
@@ -77,11 +77,11 @@ public class Singleton {
 ## x. 疑问
 
 ## y. 拓展/总结
-* Java3示例中，两次判空应对的场景是：
+* Java3 示例中，两次判空应对的场景是：
     * 同时有`2个及以上`线程通过第一个`if (_instance == null)`判断；
     * 第一个线程进入`synchronized`区域，进行对象创建，创建完以后出去。
     * 第二个线程进入`synchronized`区域，如果没有第二个`if (_instance == null)`，就会创建第二个对象。
 
 ## z. 参考
-* 《Head First设计模式》
+* 《Head First 设计模式》
 

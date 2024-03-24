@@ -4,8 +4,8 @@
 
 ## 用法
 
-- 上下文: http, server, location, location if
-- 阶段: access tail
+- 上下文：http, server, location, location if
+- 阶段：access tail
   - **注意：执行阶段晚于标准 ngx_http_access_module 模块。**
 - 语法：
     - 与 `init_by_lua*` 类似，不再赘述。

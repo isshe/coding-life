@@ -1,4 +1,4 @@
-# 第4章 BCC
+# 第 4 章 BCC
 
 BCC：BPF 编译器集合，BPC Compiler Collection。
 
@@ -91,7 +91,7 @@ BCC 由以下几部分组成：
 
 BPF 调试选项：
 
-|标志位|名称|调试|
+|标志位 | 名称 | 调试|
 |---|---|---|
 |0x1|DEBUG_LLVM_IR|打印编译好的 LLVM 中间表达形式|
 |0x2|DEBUG_BPF|在分支处打印 BPF 字节码和寄存器状态|

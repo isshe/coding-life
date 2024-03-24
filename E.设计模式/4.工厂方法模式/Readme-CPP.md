@@ -1,6 +1,6 @@
 [TOC]
 
-# 工厂方法模式-C++代码示例
+# 工厂方法模式-C++ 代码示例
 * 类图
 ![类图](./ClassDiagram_CPP.png)
 
@@ -10,8 +10,8 @@
 * ConcreteProductB.h/cpp:
 
 * Creator.h: 创建者/工厂抽象类，定义创建者的接口。
-* ConcreteCreatorA.h/cpp: 具体的创建者，主要用来创建ConcreteProductA。（产品A可以是一类，而不知一个）
-* ConcreteCreatorB.h/cpp: 具体的创建者，主要用来创建ConcreteProductB。（产品B类似产品A）
+* ConcreteCreatorA.h/cpp: 具体的创建者，主要用来创建 ConcreteProductA。（产品 A 可以是一类，而不知一个）
+* ConcreteCreatorB.h/cpp: 具体的创建者，主要用来创建 ConcreteProductB。（产品 B 类似产品 A）
 * main.cpp: 测试程序入口函数。
 * run.sh: 运行的脚本。
 

@@ -1,17 +1,17 @@
 [TOC]
 
-# 抽象工厂模式-C++代码示例
+# 抽象工厂模式-C++ 代码示例
 
 ## 1. 文件列表
 * AbstractFactory.h：抽象工厂，声明所有具体工厂的接口。
-* AbstractProductA.h: 抽象产品A（相当于类别，下面有多种产品）
-* AbstractProductB.h: 抽象产品B（相当于类别，下面有多种产品）
+* AbstractProductA.h: 抽象产品 A（相当于类别，下面有多种产品）
+* AbstractProductB.h: 抽象产品 B（相当于类别，下面有多种产品）
 * ConcreteFactory1.h/cpp: 第一个具体工厂
 * ConcreteFactory2.h/cpp: 第二个具体工厂
-* ConcreteProductA1.h/cpp: 抽象产品A下的一个产品。
-* ConcreteProductA2.h/cpp: 抽象产品A下的另一个产品。
-* ConcreteProductB1.h/cpp: 抽象产品B下的一个产品。
-* ConcreteProductB2.h/cpp: 抽象产品B下的另一个产品。
+* ConcreteProductA1.h/cpp: 抽象产品 A 下的一个产品。
+* ConcreteProductA2.h/cpp: 抽象产品 A 下的另一个产品。
+* ConcreteProductB1.h/cpp: 抽象产品 B 下的一个产品。
+* ConcreteProductB2.h/cpp: 抽象产品 B 下的另一个产品。
 
 ## 2. 各个文件关键代码
 ### 2.1 抽象工厂
@@ -104,9 +104,9 @@ ConcreteProductA1::ConcreteProductA1() {
 }
 
 ```
-* ConcreteProductA2.h/cpp: 类似ConcreteProductA1.h/cpp
-* ConcreteProductB1.h/cpp: 类似ConcreteProductA1.h/cpp
-* ConcreteProductB2.h/cpp: 类似ConcreteProductA1.h/cpp
+* ConcreteProductA2.h/cpp: 类似 ConcreteProductA1.h/cpp
+* ConcreteProductB1.h/cpp: 类似 ConcreteProductA1.h/cpp
+* ConcreteProductB2.h/cpp: 类似 ConcreteProductA1.h/cpp
 
 ### 2.5 测试代码
 * main.cpp

@@ -4,7 +4,7 @@
 
 ## 用法
 
-`init_by_lua*` 系列指令会在配置加载阶段(loading-config)执行，上下文是 "http"。
+`init_by_lua*` 系列指令会在配置加载阶段 (loading-config) 执行，上下文是 "http"。
 init_by_lua 已不建议使用，使用 init_by_lua_block 和 init_by_lua_file 代替。
 
 - 语法：
@@ -62,7 +62,7 @@ init_by_lua_file /usr/local/openresty/lua/init.lua
 
 ### ngx_http_lua_init_by_inline 执行流程
 
-上篇文章《[模块初始化](001-module-init.md)》 的 “ngx_http_lua_init 执行流程” 中，已经有提到 ngx_http_lua_init_by_inline 如何被调用，
+上篇文章《[模块初始化](001-module-init.md)》的“ngx_http_lua_init 执行流程”中，已经有提到 ngx_http_lua_init_by_inline 如何被调用，
 这里我们直接贴过来。
 
 - ngx_http_lua_init_by_inline 的调用栈
@@ -126,7 +126,7 @@ init_by_lua_file /usr/local/openresty/lua/init.lua
 
 ## 示例
 
-TODO：通过具体示例，看下 “闭包工厂” 及 “闭包工厂产出的内容” 之类的是什么样子。**猜测**应该是像：
+TODO：通过具体示例，看下“闭包工厂”及“闭包工厂产出的内容”之类的是什么样子。**猜测**应该是像：
 
 ```
 function()
