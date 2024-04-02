@@ -126,3 +126,22 @@ BEGIN
 END;
 $$;
 ```
+
+# 从 csv 文件中插入数据到指定表格中（冲突时更新）
+
+```sql
+-- 创建临时表
+CREATE TEMP TABLE temp_test LIKE test;
+
+-- 插入数据到临时表
+/usr/local/openresty-postgresql12/bin/psql -U postgres -d or_edge_admin -c "\COPY temp_test FROM 'test.csv' WITH CSV HEADER"
+
+-- 从临时表更新到目标表
+INSERT INTO test
+SELECT * FROM temp_test
+ON CONFLICT (id) DO UPDATE
+SET code = EXCLUDED.code;
+
+-- 删除临时表
+DROP TABLE temp_test;
+```
