@@ -74,3 +74,10 @@ ops.script.log
 
 # valgrind
 callgrind.out.*
+logs/
+client_body_temp/
+fastcgi_temp/
+proxy_temp/
+scgi_temp/
+uwsgi_temp/
+proxy_cache/
