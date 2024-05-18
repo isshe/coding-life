@@ -1,4 +1,4 @@
-# OpenResty 中的 `*_by_lua*` 及阶段
+# OpenResty 中 HTTP 模块的 `*_by_lua*` 及阶段
 
 目的：
 
