@@ -11,21 +11,21 @@
     "dst-path": "coding-life/linux/application-io-multiplexing",
     "articles": [
         {
-            "title": "操作系统 —— IO 多路复用之 select",
+            "title": "操作系统 —— I/O 多路复用之 select",
             "src-dir": "1.select",
             "dst-dir": "select",
             "filename": "Readme.md",
             "date": "2022-10-16 12:00:00 +0800"
         },
         {
-            "title": "操作系统 —— IO 多路复用之 poll",
+            "title": "操作系统 —— I/O 多路复用之 poll",
             "src-dir": "2.poll",
             "dst-dir": "poll",
             "filename": "Readme.md",
             "date": "2022-10-16 12:00:00 +0800"
         },
         {
-            "title": "操作系统 —— IO 多路复用之 epoll",
+            "title": "操作系统 —— I/O 多路复用之 epoll",
             "src-dir": "3.epoll",
             "dst-dir": "epoll",
             "filename": "Readme.md",
