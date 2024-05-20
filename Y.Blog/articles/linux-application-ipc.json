@@ -37,7 +37,7 @@
         },
         {
             "title": "操作系统 —— 进程间通信之 SystemV 消息队列",
-            "src-dir": "3.SystemV 消息队列",
+            "src-dir": "3.SystemV-消息队列",
             "dst-dir": "systemvmq",
             "filename": "Readme.md",
             "categories": [
@@ -51,7 +51,7 @@
         },
         {
             "title": "操作系统 —— 进程间通信之 Posix 消息队列",
-            "src-dir": "4.Posix 消息队列",
+            "src-dir": "4.Posix-消息队列",
             "dst-dir": "posixmq",
             "filename": "Readme.md",
             "categories": [
@@ -65,7 +65,7 @@
         },
         {
             "title": "操作系统 —— 进程间通信之 Posix 信号量",
-            "src-dir": "5.Posix 信号量",
+            "src-dir": "5.Posix-信号量",
             "dst-dir": "posixsem",
             "filename": "Readme.md",
             "categories": [
@@ -79,7 +79,7 @@
         },
         {
             "title": "操作系统 —— 进程间通信之 SystemV 信号量",
-            "src-dir": "6.SystemV 信号量",
+            "src-dir": "6.SystemV-信号量",
             "dst-dir": "systemvsem",
             "filename": "Readme.md",
             "categories": [
@@ -107,7 +107,7 @@
         },
         {
             "title": "操作系统 —— 进程间通信之 Posix 共享内存",
-            "src-dir": "8.Posix 共享内存区",
+            "src-dir": "8.Posix-共享内存区",
             "dst-dir": "posixshm",
             "filename": "Readme.md",
             "categories": [
@@ -121,7 +121,7 @@
         },
         {
             "title": "操作系统 —— 进程间通信之 SystemV 共享内存",
-            "src-dir": "9.SystemV 共享内存区",
+            "src-dir": "9.SystemV-共享内存区",
             "dst-dir": "systemvshm",
             "filename": "Readme.md",
             "categories": [
