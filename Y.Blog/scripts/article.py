@@ -98,10 +98,9 @@ class Article(object):
             # src is directory
             files = os.listdir(src_path)
             for file in files:
-                time = get_git_file_modtime(src_path, file)
                 date = info.get('date', None)
-                if not date or date < time:
-                    info['date'] = time
+                if not date:
+                    info['date'] = get_git_file_modtime(src_path, file)
 
                 if (file.endswith('.png')
                     or file.endswith('.jpg')
@@ -110,10 +109,9 @@ class Article(object):
                     info['image'] = file
         else:
             file = info.get("filename", None)
-            time = get_git_file_modtime(src_path, file)
             date = info.get('date', None)
-            if not date or date < time:
-                info['date'] = time
+            if not date:
+                info['date'] = get_git_file_modtime(src_path, file)
 
         if isinstance(info['date'], float):
             ts = int(info['date'])

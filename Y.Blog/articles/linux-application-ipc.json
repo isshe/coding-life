@@ -19,10 +19,11 @@
             ],
             "tags": [
                 "pipe"
-            ]
+            ],
+            "date": "2022-10-16 12:00:00 +0800"
         },
         {
-            "title": "操作系统 —— 进程间通信之FIFO",
+            "title": "操作系统 —— 进程间通信之 FIFO",
             "src-dir": "2.FIFO",
             "dst-dir": "fifo",
             "filename": "Readme.md",
@@ -31,11 +32,12 @@
             ],
             "tags": [
                 "fifo"
-            ]
+            ],
+            "date": "2022-10-16 12:00:00 +0800"
         },
         {
             "title": "操作系统 —— 进程间通信之 SystemV 消息队列",
-            "src-dir": "3.SystemV消息队列",
+            "src-dir": "3.SystemV 消息队列",
             "dst-dir": "systemvmq",
             "filename": "Readme.md",
             "categories": [
@@ -44,11 +46,12 @@
             "tags": [
                 "systemv",
                 "消息队列"
-            ]
+            ],
+            "date": "2022-10-16 12:00:00 +0800"
         },
         {
             "title": "操作系统 —— 进程间通信之 Posix 消息队列",
-            "src-dir": "4.Posix消息队列",
+            "src-dir": "4.Posix 消息队列",
             "dst-dir": "posixmq",
             "filename": "Readme.md",
             "categories": [
@@ -57,11 +60,12 @@
             "tags": [
                 "posix",
                 "消息队列"
-            ]
+            ],
+            "date": "2022-10-16 12:00:00 +0800"
         },
         {
             "title": "操作系统 —— 进程间通信之 Posix 信号量",
-            "src-dir": "5.Posix信号量",
+            "src-dir": "5.Posix 信号量",
             "dst-dir": "posixsem",
             "filename": "Readme.md",
             "categories": [
@@ -70,11 +74,12 @@
             "tags": [
                 "posix",
                 "信号量"
-            ]
+            ],
+            "date": "2022-10-16 12:00:00 +0800"
         },
         {
             "title": "操作系统 —— 进程间通信之 SystemV 信号量",
-            "src-dir": "6.SystemV信号量",
+            "src-dir": "6.SystemV 信号量",
             "dst-dir": "systemvsem",
             "filename": "Readme.md",
             "categories": [
@@ -83,7 +88,8 @@
             "tags": [
                 "systemv",
                 "信号量"
-            ]
+            ],
+            "date": "2022-10-16 12:00:00 +0800"
         },
         {
             "title": "操作系统 —— 进程间通信之共享内存",
@@ -96,11 +102,12 @@
             "tags": [
                 "posix",
                 "共享内存"
-            ]
+            ],
+            "date": "2022-10-16 12:00:00 +0800"
         },
         {
             "title": "操作系统 —— 进程间通信之 Posix 共享内存",
-            "src-dir": "8.Posix共享内存区",
+            "src-dir": "8.Posix 共享内存区",
             "dst-dir": "posixshm",
             "filename": "Readme.md",
             "categories": [
@@ -109,11 +116,12 @@
             "tags": [
                 "posix",
                 "共享内存"
-            ]
+            ],
+            "date": "2022-10-16 12:00:00 +0800"
         },
         {
             "title": "操作系统 —— 进程间通信之 SystemV 共享内存",
-            "src-dir": "9.SystemV共享内存区",
+            "src-dir": "9.SystemV 共享内存区",
             "dst-dir": "systemvshm",
             "filename": "Readme.md",
             "categories": [
@@ -122,7 +130,8 @@
             "tags": [
                 "systemv",
                 "共享内存"
-            ]
+            ],
+            "date": "2022-10-16 12:00:00 +0800"
         }
     ]
 }

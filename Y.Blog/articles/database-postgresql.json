@@ -13,7 +13,8 @@
             "title": "数据库 —— Postgresql 慢查询分析",
             "src-dir": "慢查询分析",
             "dst-dir": "slow-query",
-            "filename": "README.md"
+            "filename": "README.md",
+            "date": "2023-02-01 12:00:00 +0800"
         }
     ]
 }

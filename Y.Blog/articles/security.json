@@ -13,7 +13,8 @@
             "src-dir": "Vulnerability-Scan-漏洞扫描",
             "dst-dir": "vulnerability-scan",
             "filename": "README.md",
-            "image": "images/snyk-result-2.png"
+            "image": "images/snyk-result-2.png",
+            "date": "2022-10-16 12:00:00 +0800"
         }
     ]
 }

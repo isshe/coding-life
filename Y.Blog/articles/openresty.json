@@ -15,133 +15,155 @@
             "title": "OpenResty 核心技术点",
             "src-dir": "000-core-tech",
             "dst-dir": "core-tech",
-            "filename": "README.md"
+            "filename": "README.md",
+            "date": "2023-02-24 12:00:00 +0800"
         },
         {
             "title": "OpenResty 代码结构",
             "src-dir": "000-source-code-structure",
             "dst-dir": "source-code-structure",
-            "filename": "README.md"
+            "filename": "README.md",
+            "date": "2023-02-24 12:00:00 +0800"
         },
         {
             "title": "OpenResty 模块初始化",
             "src-dir": "001-1-module-init",
             "dst-dir": "module-init",
-            "filename": "README.md"
+            "filename": "README.md",
+            "date": "2023-02-24 12:00:00 +0800"
         },
         {
             "title": "OpenResty HTTP 模块的 *_by_lua* 及阶段",
             "src-dir": "001-2-http-phase",
             "dst-dir": "x-by-luax-and-phase",
-            "filename": "README.md"
+            "filename": "README.md",
+            "date": "2023-02-24 12:00:00 +0800"
         },
         {
             "title": "OpenResty init_by_lua*",
             "src-dir": "002-init_by_lua",
             "dst-dir": "init-by-lua",
-            "filename": "README.md"
+            "filename": "README.md",
+            "date": "2023-02-24 12:00:00 +0800"
         },
         {
             "title": "OpenResty init_worker_by_lua*",
             "src-dir": "003-init_worker_by_lua",
             "dst-dir": "init-worker-by-lua",
-            "filename": "README.md"
+            "filename": "README.md",
+            "date": "2023-02-24 12:00:00 +0800"
         },
         {
             "title": "OpenResty Lua 代码执行实例跟踪",
             "src-dir": "004-lua-code-execution-trace",
             "dst-dir": "lua-code-exec-trace",
-            "filename": "README.md"
+            "filename": "README.md",
+            "date": "2023-02-24 12:00:00 +0800"
         },
         {
             "title": "OpenResty rewrite_by_lua*",
             "src-dir": "005-rewrite_by_lua",
             "dst-dir": "rewrite-by-lua",
-            "filename": "README.md"
+            "filename": "README.md",
+            "date": "2023-02-24 12:00:00 +0800"
         },
         {
             "title": "OpenResty access_by_lua*",
             "src-dir": "006-access_by_lua",
             "dst-dir": "access-by-lua",
-            "filename": "README.md"
+            "filename": "README.md",
+            "date": "2023-02-24 12:00:00 +0800"
         },
         {
             "title": "OpenResty content_by_lua*",
             "src-dir": "007-content_by_lua",
             "dst-dir": "content-by-lua",
-            "filename": "README.md"
+            "filename": "README.md",
+            "date": "2023-02-24 12:00:00 +0800"
         },
         {
             "title": "OpenResty log_by_lua*",
             "src-dir": "008-log_by_lua",
             "dst-dir": "log-by-lua",
-            "filename": "README.md"
+            "filename": "README.md",
+            "date": "2023-02-24 12:00:00 +0800"
         },
         {
             "title": "OpenResty ngx.log",
             "src-dir": "009-ngx-log",
             "dst-dir": "ngx-log",
-            "filename": "README.md"
+            "filename": "README.md",
+            "date": "2023-02-24 12:00:00 +0800"
         },
         {
             "title": "OpenResty Lua VM 初始化",
             "src-dir": "010-lua-vm-init",
             "dst-dir": "lua-vm-init",
-            "filename": "README.md"
+            "filename": "README.md",
+            "date": "2023-02-24 12:00:00 +0800"
         },
         {
             "title": "OpenResty 协程",
             "src-dir": "011-corountine",
             "dst-dir": "coroutine",
-            "filename": "README.md"
+            "filename": "README.md",
+            "date": "2023-02-24 12:00:00 +0800"
         },
         {
             "title": "OpenResty 轻量级线程",
             "src-dir": "012-ngx-lightthread",
             "dst-dir": "lightthread",
-            "filename": "README.md"
+            "filename": "README.md",
+            "date": "2023-02-24 12:00:00 +0800"
         },
         {
             "title": "OpenResty 线程",
             "src-dir": "013-thread",
             "dst-dir": "thread",
-            "filename": "README.md"
+            "filename": "README.md",
+            "date": "2023-02-24 12:00:00 +0800"
         },
         {
             "title": "OpenResty cosocket",
             "src-dir": "014-cosocket",
             "dst-dir": "cosocket",
-            "filename": "README.md"
+            "filename": "README.md",
+            "date": "2023-02-24 12:00:00 +0800"
         },
         {
             "title": "OpenResty 信号量",
             "src-dir": "015-ngx-semaphore",
             "dst-dir": "semaphore",
-            "filename": "README.md"
+            "filename": "README.md",
+            "date": "2023-02-24 12:00:00 +0800"
         },
         {
             "title": "OpenResty ngx.sleep",
             "src-dir": "016-ngx-sleep",
             "dst-dir": "ngx-sleep",
-            "filename": "README.md"
+            "filename": "README.md",
+            "date": "2023-02-24 12:00:00 +0800"
         },
         {
             "title": "OpenResty 管道（pipe）",
             "src-dir": "017-pipe",
             "dst-dir": "pipe",
-            "filename": "README.md"
+            "filename": "README.md",
+            "date": "2023-02-24 12:00:00 +0800"
         },
         {
             "title": "OpenResty Lua 代码加载",
             "src-dir": "018-load_cache_lua_code",
             "dst-dir": "load-cache-lua-code",
-            "filename": "README.md"
+            "filename": "README.md",
+            "date": "2023-02-24 12:00:00 +0800"
         },
         {
             "title": "OpenResty 共享字典（内存）",
             "src-dir": "019-ngx_shared_dict",
             "dst-dir": "lua-shard-dict",
-            "filename": "README.md"
+            "filename": "README.md",
+            "date": "2023-02-24 12:00:00 +0800"
         }
     ]
 }

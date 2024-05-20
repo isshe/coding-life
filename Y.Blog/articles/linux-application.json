@@ -17,7 +17,8 @@
             "image": "process_address_map.png",
             "tags": [
                 "process"
-            ]
+            ],
+            "date": "2022-10-16 12:00:00 +0800"
         },
         {
             "title": "操作系统 —— 信号",
@@ -26,7 +27,8 @@
             "filename": "Readme.md",
             "tags": [
                 "signal"
-            ]
+            ],
+            "date": "2022-10-16 12:00:00 +0800"
         },
         {
             "title": "操作系统 —— 线程",
@@ -35,7 +37,8 @@
             "filename": "Readme.md",
             "tags": [
                 "thread"
-            ]
+            ],
+            "date": "2022-10-16 12:00:00 +0800"
         }
     ]
 }

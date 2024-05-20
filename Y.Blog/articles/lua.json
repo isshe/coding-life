@@ -12,7 +12,8 @@
             "title": "Lua —— 重载全局函数 require",
             "src-dir": "global-function-overloading",
             "dst-dir": "global-function-overloading",
-            "filename": "README.md"
+            "filename": "README.md",
+            "date": "2022-10-16 12:00:00 +0800"
         }
     ]
 }
