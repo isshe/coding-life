@@ -13,7 +13,12 @@ gdb -q -ex "set follow-fork-mode child" \
         -ex "b ngx_http_file_cache_update" \
         -ex "b ngx_http_file_cache_free" \
         -ex "b ngx_http_file_cache_valid" \
+        -ex "b ngx_http_upstream_cache_get" \
+        -ex "b ngx_http_upstream_cache" \
         -ex "run" \
         -ex "bt" \
         -ex "quit" \
         /usr/local/openresty/nginx/sbin/nginx
+
+# then send request manually:
+# curl localhost:88/anything

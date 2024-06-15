@@ -5,6 +5,8 @@
 - 了解如何使用 Proxy Cache。
 - 了解 Proxy Cache 是如何实现的。
   - 处理流程。
+- keys zone 中存储了哪些信息？如何构建生成的？Nginx 进程启动时，是否会自动构建 key 信息存到 keys zone 中？
+  - 当超过 keys zone 不够用了，会怎么处理？
 
 ## 使用
 
@@ -19,7 +21,7 @@ http {
     # 5368709120: 5GB
     proxy_cache_path /mnt/data/proxy_cache levels=1
         use_temp_path=off
-        keys_zone=proxycache
+        keys_zone=proxycache:104857600
         inactive=2592000
         max_size=5368709120;
 
@@ -92,8 +94,9 @@ bash trace.sh
 ```
 - ngx_http_upstream_init_request
     \- rc = ngx_http_upstream_cache(): 进行缓存处理
-        \- if (c == NULL): 首先检查一下缓存对象是否存在，这个判断为真表示不存在
-            \- TODO
+        \- if (r->cache == NULL): 首先检查一下缓存对象是否存在，这个判断为真表示不存在
+            \- if (!(r->method & u->conf->cache_methods)): 检查是否是能缓存的方法，不是直接返回 NGX_DECLINED。
+            \- ngx_http_upstream_cache_get(r, u, &cache): TODO 这个是什么作用？没看懂，把 Nginx 跑起来看看
     \- if (rc == NGX_BUSY): 正忙，下次再进来，通过设置 r->write_event_handler = ngx_http_upstream_init_request 实现
     \- if (rc == NGX_ERROR): 出错了，直接结束请求
         \- ngx_http_finalize_request
