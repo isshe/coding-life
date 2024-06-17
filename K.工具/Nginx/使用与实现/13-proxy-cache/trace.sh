@@ -18,7 +18,7 @@ gdb -q -ex "set follow-fork-mode child" \
         -ex "run" \
         -ex "bt" \
         -ex "quit" \
-        /usr/local/openresty/nginx/sbin/nginx
+        /opt/nginx/sbin/nginx
 
 # then send request manually:
 # curl localhost:88/anything

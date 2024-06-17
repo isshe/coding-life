@@ -7,9 +7,9 @@ if [ ! -d $basepath/logs ]; then
 fi
 
 echo "stopping nginx..."
-/usr/local/openresty/nginx/sbin/nginx -p $(pwd) -c nginx.conf -s stop
+/opt/nginx/sbin/nginx -p $(pwd) -c nginx.conf -s stop
 
 echo "starting nginx..."
-/usr/local/openresty/nginx/sbin/nginx -p $(pwd) -c nginx.conf
+/opt/nginx/sbin/nginx -p $(pwd) -c nginx.conf
 
 echo "done"

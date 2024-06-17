@@ -1,5 +1,8 @@
 # Proxy Cache 的使用与实现
 
+> 基于 nginx-1.24.0
+> 编译配置：./configure --prefix=/opt/nginx --with-debug
+
 目的：
 
 - 了解如何使用 Proxy Cache。
@@ -52,6 +55,7 @@ bash trace.sh
     ngx_http_file_cache_new at src/http/ngx_http_file_cache.c
     ngx_http_upstream_cache at src/http/ngx_http_upstream.c
     ngx_http_upstream_init_request at src/http/ngx_http_upstream.c
+    ngx_http_upstream_init at src/http/ngx_http_upstream.c
     ngx_http_read_client_request_body at src/http/ngx_http_request_body.c
     ngx_http_proxy_handler at src/http/modules/ngx_http_proxy_module.c
     ngx_http_core_content_phase at src/http/ngx_http_core_module.c
@@ -66,6 +70,8 @@ bash trace.sh
 
     调用 `ngx_http_file_cache_new` 后，后续还会继续调用 `ngx_http_file_cache_open`、`ngx_http_file_cache_update`、`ngx_http_file_cache_free` 等，都在 `ngx_http_upstream_cache`。相关函数的作用后续继续探究（TODO）。
 
+    > 后续看了代码后，发现 `ngx_http_upstream_init` 是作为参数传递给 ngx_http_read_client_request_body 的。
+
 - 命中 Cache 时：
 
     ```lua
@@ -73,6 +79,7 @@ bash trace.sh
     ngx_http_upstream_cache_send at src/http/ngx_http_file_cache.c
     ngx_http_upstream_init_request at src/http/ngx_http_upstream.c
     ngx_http_read_client_request_body at src/http/ngx_http_request_body.c
+    ngx_http_upstream_init at src/http/ngx_http_upstream.c
     ngx_http_proxy_handler at src/http/modules/ngx_http_proxy_module.c
     ngx_http_core_content_phase at src/http/ngx_http_core_module.c
     ngx_http_core_run_phases at src/http/ngx_http_core_module.c
@@ -91,11 +98,13 @@ bash trace.sh
 
 ### ngx_http_upstream_init_request
 
+> 看函数名称猜测它的功能应该是用于构造上游请求的。
+
 ```
 - ngx_http_upstream_init_request
     \- rc = ngx_http_upstream_cache(): 进行缓存处理
         \- if (r->cache == NULL): 首先检查一下缓存对象是否存在，这个判断为真表示不存在
-            \- if (!(r->method & u->conf->cache_methods)): 检查是否是能缓存的方法，不是直接返回 NGX_DECLINED。
+            \- if (!(r->method & u->conf->cache_methods)): 检查是否是能缓存的方法，不是直接返回 NGX_DECLINED
             \- ngx_http_upstream_cache_get(r, u, &cache): TODO 这个是什么作用？没看懂，把 Nginx 跑起来看看
     \- if (rc == NGX_BUSY): 正忙，下次再进来，通过设置 r->write_event_handler = ngx_http_upstream_init_request 实现
     \- if (rc == NGX_ERROR): 出错了，直接结束请求
@@ -105,7 +114,18 @@ bash trace.sh
             \- TODO
     \- if (rc != NGX_DECLINED): 非缓存未命中的情况，就直接结束请求
         \- ngx_http_finalize_request
-    \- ...: TODO
-    \- ngx_http_upstream_connect:
+    \- if (u->create_request(r) != NGX_OK): 构建请求
+    \- if (ngx_http_upstream_set_local(r, u, u->conf->local) != NGX_OK): TODO?
+    \- ...: 中间还有一大堆东西，设置发送、接收回调等
+    \- ngx_http_upstream_connect: 发起连接到上游
         \- TODO
 ```
+
+首先从最外层（ngx_http_upstream_init_request 直接调用）可以看到，与猜测一样，这里是进行上游请求的初始化（创建请求、连接到上游）。
+不过更关键的是，会先检查是否有 cache，再进行请求创建，如果有 cache，则会直接使用。
+
+TODO：
+
+一层一层解释 ngx_http_upstream_cache、ngx_http_upstream_cache_send 等。
+
+create_request、ngx_http_upstream_connect 不是本文重点，因此先跳过。
