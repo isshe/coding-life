@@ -103,9 +103,16 @@ bash trace.sh
 ```
 - ngx_http_upstream_init_request
     \- rc = ngx_http_upstream_cache(): 进行缓存处理
-        \- if (r->cache == NULL): 首先检查一下缓存对象是否存在，这个判断为真表示不存在
+        \- if (r->cache == NULL): 首先检查一下缓存是否存在，这个判断为真表示不存在
             \- if (!(r->method & u->conf->cache_methods)): 检查是否是能缓存的方法，不是直接返回 NGX_DECLINED
-            \- ngx_http_upstream_cache_get(r, u, &cache): TODO 这个是什么作用？没看懂，把 Nginx 跑起来看看
+            \- ngx_http_upstream_cache_get(r, u, &cache): 选择 cache zone，决定要把 cache 存到哪里去
+            \- ngx_http_file_cache_new(r): 创建缓存对象
+            \- ngx_http_file_cache_create_key(r): 创建缓存 key
+            \- ngx_http_test_predicates(r, u->conf->cache_bypass): u->conf->cache_bypass 即是 predicates，对应 proxy_cache_bypass 指令的配置。
+                \- 返回 NGX_ERROR 表示出错；NGX_DECLINED 表示测试通过，需要 bypass（回源上游）；NGX_OK 表示测试没通过，继续进行缓存相关动作。
+            \- u->cache_status = NGX_HTTP_CACHE_MISS: 状态设置为 MISS，没有命中缓存但需要缓存（继续后续流程）。
+        \- 缓存存在；或是缓存不存在，但是需要进行缓存，也就是前面 if 执行完了
+        \- rc = ngx_http_file_cache_open(r): 打开缓存
     \- if (rc == NGX_BUSY): 正忙，下次再进来，通过设置 r->write_event_handler = ngx_http_upstream_init_request 实现
     \- if (rc == NGX_ERROR): 出错了，直接结束请求
         \- ngx_http_finalize_request
@@ -124,8 +131,17 @@ bash trace.sh
 首先从最外层（ngx_http_upstream_init_request 直接调用）可以看到，与猜测一样，这里是进行上游请求的初始化（创建请求、连接到上游）。
 不过更关键的是，会先检查是否有 cache，再进行请求创建，如果有 cache，则会直接使用。
 
+ngx_http_upstream_cache_get 是获取 cache zone。可以是硬编码名称的形式 `proxy_cache proxy_cache_name;`，也可以是变量形式 `proxy_cache $arg_cache;`，当变量的值是 `off` 时不启用缓存。
+什么是 predicate（谓词），`set $predicate1 "$arg_param1";` 像这样的配置中的 `$predicate1` 即是
+缓存命中后，调用 `ngx_http_upstream_cache_send`，
+
 TODO：
 
 一层一层解释 ngx_http_upstream_cache、ngx_http_upstream_cache_send 等。
 
 create_request、ngx_http_upstream_connect 不是本文重点，因此先跳过。
+
+## 函数与指令之间的关联整理
+
+- proxy_cache_bypass: ngx_http_test_predicates
+  - 示例：`proxy_cache_bypass $cookie_nocache $arg_nocache$arg_comment;`
