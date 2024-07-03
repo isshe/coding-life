@@ -59,12 +59,17 @@ select drop_chunks(table_name =>'TABLE_NAME', older_than => INTERVAL '1 week', c
 
 ```sql
 -- interval_length，单位是微秒
-SELECT * FROM "_timescaledb_catalog"."dimension"
+SELECT b.table_name, a.interval_length as interval
+FROM _timescaledb_catalog.dimension as a
+left join _timescaledb_catalog.hypertable as b
+on b.id = a.hypertable_id;
 
 -- 转换成天数
-SELECT *, (interval_length / 24 / 60 / 60 / 1000000) as interval  FROM "_timescaledb_catalog"."dimension";
+SELECT b.table_name, (a.interval_length / 24 / 60 / 60 / 1000000)::text || ' day(s)' as interval
+FROM _timescaledb_catalog.dimension as a
+left join _timescaledb_catalog.hypertable as b
+on b.id = a.hypertable_id;
 ```
-
 
 - 更新时序表 chunk 创建间隔
 
