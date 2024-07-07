@@ -1,13 +1,15 @@
 # Proxy Cache 的使用与实现
 
 > 基于 nginx-1.24.0
-> 编译配置：./configure --prefix=/opt/nginx --with-debug
+> 编译选项：./configure --prefix=/opt/nginx --with-debug --with-stream --with-http_stub_status_module --with-http_ssl_module
 
 目的：
 
 - 了解如何使用 Proxy Cache。
 - 了解 Proxy Cache 是如何实现的。
-  - 处理流程。
+  - 命中 cache 时是如何处理的。
+  - 没命中 cache 时是如何处理的。
+  - 如何保存 cache 的。
 - keys zone 中存储了哪些信息？如何构建生成的？Nginx 进程启动时，是否会自动构建 key 信息存到 keys zone 中？
   - 当超过 keys zone 不够用了，会怎么处理？
 
@@ -33,6 +35,9 @@ http {
     # ...
 }
 ```
+
+以上是 cache 最基本的使用方式，proxy_cache_path 指令用于定义缓存文件的存储路径等信息，proxy_cache 指令用于指定使用哪个 cache zone。proxy_cache_key 指令则是用于指定 cache key 的生成方式。
+可以看到，配置中使用 URI 作为了 cache key。在 OpenResty 中，可以通过 Lua 代码，动态修改 proxy_cache_zone 和 proxy_cache_key 成指定的内容，以达到定制  cache zone 和 cache key 的目的。
 
 ## 实现
 
@@ -121,14 +126,11 @@ bash trace.sh
 
 ngx_http_upstream_cache_get 是获取 cache zone。可以是硬编码名称的形式 `proxy_cache proxy_cache_name;`，也可以是变量形式 `proxy_cache $arg_cache;`，当变量的值是 `off` 时不启用缓存。
 什么是 predicate（谓词），`set $predicate1 "$arg_param1";` 像这样的配置中的 `$predicate1` 即是
-缓存命中后，调用 `ngx_http_upstream_cache_send`，
+缓存命中后，调用 `ngx_http_upstream_cache_send`。
 
-TODO：
-
-一层一层解释 ngx_http_upstream_cache、ngx_http_upstream_cache_send 等。
+接下来，我们一层一层解释 ngx_http_upstream_cache、ngx_http_upstream_cache_send 等。
 
 create_request、ngx_http_upstream_connect 不是本文重点，因此先跳过。
-
 
 ## ngx_http_upstream_cache
 
@@ -161,14 +163,17 @@ create_request、ngx_http_upstream_connect 不是本文重点，因此先跳过�
     \- r->cached = 0: 将请求对象 `r` 的 `cached` 字段设置为 0，表示该请求没有使用缓存，而是从后端服务器获取了响应
 ```
 
+ngx_http_upstream_cache 函数主要是检查缓存是否存在，如何存在就打开缓存，后续读取返回；不存在就继续后续的回源处理。以及会设置响应体中的缓存状态。
+
 ## ngx_http_upstream_cache_send
 
 ```
-- ngx_http_upstream_cache_send: 直接将缓存作为响应
+- ngx_http_upstream_cache_send: 直接将缓存作为响应发送给客户端
     \- r->cached = 1: 上来先把缓存状态设置成 1，表示请求使用了缓存。
     \- if (c->header_start == c->body_start): 表示缓存中没有头部信息，是 HTTP 0.9。
         \- ngx_http_cache_send：直接发送缓存响应
-        \- TODO
+            \- ngx_http_send_header: 发送响应头
+            \- ngx_http_output_filter: 调用输出过滤链，最后发送响应
     \- 接下来主要是设置上游对象（u）的信息
     \- ngx_list_init(&u->headers_in.headers, ...): 初始化上游的响应头部列表，就是普通的请求头如 Content-Type。
     \- ngx_list_init(&u->headers_in.trailers, ...): 初始化上游的响应尾部列表。尾部列表通常用于传输一些元数据或附加信息，主要用于分块传输编码。
@@ -180,6 +185,66 @@ create_request、ngx_http_upstream_connect 不是本文重点，因此先跳过�
         \- rc == NGX_AGAIN: 返回值设置为 `NGX_HTTP_UPSTREAM_INVALID_HEADER`，表示无效的响应头部
 ```
 
+ngx_http_upstream_cache_send 用于把缓存作为响应发送回给客户端。
+
+到这里为止可以回答，命中 cache 和没命中 cache 时，进行了哪些操作：
+
+- 命中 cache 时，读取 cache 并发送给客户端。
+- 没命中 cache 时，返回对应的状态码，后续进行回源。
+
+接下来继续看下回源后，是如何保存响应体到 cache 文件中的。
+
+## 获取保存 cache 的调用流程
+
+- 缓存验证：
+
+    ```lua
+    ngx_http_file_cache_valid at src/http/ngx_http_file_cache.c:2299
+    ngx_http_upstream_send_response at src/http/ngx_http_upstream.c:3156
+    ngx_http_upstream_process_header at src/http/ngx_http_upstream.c:2503
+    ngx_http_upstream_handler src/http/ngx_http_upstream.c:1292
+    ngx_epoll_process_events at src/event/modules/ngx_epoll_module.c:901
+    ```
+
+- 缓存更新/保存：
+
+    ```lua
+    ngx_http_file_cache_update at src/http/ngx_http_file_cache.c:1360
+    ngx_http_upstream_process_request at src/http/ngx_http_upstream.c:4154
+    ngx_http_upstream_process_upstream at src/http/ngx_http_upstream.c:4097
+    ngx_http_upstream_handler src/http/ngx_http_upstream.c:1292
+    ngx_epoll_process_events at src/event/modules/ngx_epoll_module.c:901
+    ```
+
+从这两个调用栈，我们可以想到大致会进行以下两个工作：
+
+1. 发送响应头给客户端前，需要知道缓存是否有效，是否使用的缓存，响应头也可能有和缓存相同的需要进行响应。
+2. 处理上游发送过来的响应时，如果需要缓存，则进行缓存。
+
+此外，获取这两个调用栈时，我们也可以再次确认，当命中缓存时，是**不会**再进入到这两个逻辑，也就是和我们前面看的的那样，已经提前返回了。
+
+这两个调用栈共同的入口是 `ngx_http_upstream_handler`，因此接下来看下这个函数。以及 ngx_http_file_cache_valid 和 ngx_http_file_cache_update 这两个关键的操作缓存的函数，我们后续也来跟一下。
+
+## ngx_http_upstream_handler
+
+```
+- ngx_http_upstream_handler
+    \- TODO
+```
+
+## ngx_http_file_cache_valid
+
+```
+- ngx_http_file_cache_valid
+    \- TODO
+```
+
+## ngx_http_file_cache_update
+
+```
+- ngx_http_file_cache_update
+    \- TODO
+```
 
 ## 函数与指令之间的关联整理
 
