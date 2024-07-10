@@ -10,7 +10,7 @@ TimescaleDB
 select table_name, table_size, total_size
     from timescaledb_information.hypertable where table_schema='public' and total_size is not null;
 
-select table_name, table_schema, pg_size_bytes(total_size) / 1024 / 1024 as total_size
+select table_name, table_schema, pg_size_pretty(pg_size_bytes(total_size)) as total_size
 from timescaledb_information.hypertable
 where total_size is not null order by total_size desc;
 ```
@@ -20,7 +20,7 @@ where total_size is not null order by total_size desc;
 ```sql
 select sum(pg_size_bytes(total_size)) from timescaledb_information.hypertable where total_size is not null;
 
-select sum(pg_size_bytes(total_size)) / 1024 / 1024  from timescaledb_information.hypertable where total_size is not null;
+select pg_size_pretty(sum(pg_size_bytes(total_size))) from timescaledb_information.hypertable where total_size is not null;
 ```
 
 - 增加清理策略：
