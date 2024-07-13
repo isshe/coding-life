@@ -118,7 +118,11 @@ bash trace.sh
     \- if (u->create_request(r) != NGX_OK): 构建请求
     \- if (ngx_http_upstream_set_local(r, u, u->conf->local) != NGX_OK): TODO?
     \- ...: 中间还有一大堆东西，设置发送、接收回调等
-    \- ngx_http_upstream_connect: 发起连接到上游
+    \- ngx_http_upstream_connect: 发起连接到上游，其中与缓存流程相关的主要有以下几个 handler 的设置
+        \- c->write->handler = ngx_http_upstream_handler
+        \- c->read->handler = ngx_http_upstream_handler
+        \- u->write_event_handler = ngx_http_upstream_send_request_handler
+        \- u->read_event_handler = ngx_http_upstream_process_header
 ```
 
 首先从最外层（ngx_http_upstream_init_request 直接调用）可以看到，与猜测一样，这里是进行上游请求的初始化（创建请求、连接到上游）。
@@ -130,7 +134,7 @@ ngx_http_upstream_cache_get 是获取 cache zone。可以是硬编码名称的�
 
 接下来，我们一层一层解释 ngx_http_upstream_cache、ngx_http_upstream_cache_send 等。
 
-create_request、ngx_http_upstream_connect 不是本文重点，因此先跳过。
+ngx_http_upstream_connect 中设置的各个 handler，我们后续在“保存缓存”的章节进行说明。
 
 ## ngx_http_upstream_cache
 
@@ -194,7 +198,7 @@ ngx_http_upstream_cache_send 用于把缓存作为响应发送回给客户端。
 
 接下来继续看下回源后，是如何保存响应体到 cache 文件中的。
 
-## 获取保存 cache 的调用流程
+## 保存 cache 的调用流程
 
 - 缓存验证：
 
@@ -218,19 +222,27 @@ ngx_http_upstream_cache_send 用于把缓存作为响应发送回给客户端。
 
 从这两个调用栈，我们可以想到大致会进行以下两个工作：
 
-1. 发送响应头给客户端前，需要知道缓存是否有效，是否使用的缓存，响应头也可能有和缓存相同的需要进行响应。
+1. 发送响应头给客户端前，需要知道缓存是否有效，是否使用了缓存，响应头也可能有和缓存相同的需要进行响应。
 2. 处理上游发送过来的响应时，如果需要缓存，则进行缓存。
 
-此外，获取这两个调用栈时，我们也可以再次确认，当命中缓存时，是**不会**再进入到这两个逻辑，也就是和我们前面看的的那样，已经提前返回了。
+此外，获取这两个调用栈过程中，我们也可以再次确认，当命中缓存时，是**不会**再进入到这两个逻辑，也就是和我们前面看的的那样，已经提前返回了。
 
 这两个调用栈共同的入口是 `ngx_http_upstream_handler`，因此接下来看下这个函数。以及 ngx_http_file_cache_valid 和 ngx_http_file_cache_update 这两个关键的操作缓存的函数，我们后续也来跟一下。
 
 ## ngx_http_upstream_handler
 
+在代码中搜索了 ngx_http_upstream_handler 后，发现有必要介绍上游 handler 的设置节点以及串联起所有流程。
+不过我们先继续看具体的函数，都介绍完后，再进行串联。
+
 ```
 - ngx_http_upstream_handler
-    \- TODO
+    \- ngx_http_set_log_request: 这是一个宏，用于将当前请求关联到连接的日志对象上。
+    \- write_event_handler: 如果是写事件，调用写处理函数。
+    \- read_event_handler: 如果是读事件，调用读处理函数。
+    \- ngx_http_run_posted_requests: 处理 posted 的请求。（之前中断执行，接下来还需要执行的请求）
 ```
+
+write_event_handler、read_event_handler 是 [ngx_http_upstream_init_request](#ngx_http_upstream_init_request) 中提到的 ngx_http_upstream_send_request_handler 和 ngx_http_upstream_process_header。
 
 ## ngx_http_file_cache_valid
 
@@ -245,6 +257,22 @@ ngx_http_upstream_cache_send 用于把缓存作为响应发送回给客户端。
 - ngx_http_file_cache_update
     \- TODO
 ```
+
+## 如何回源？如何保存 Cache 的？
+
+- ngx_http_upstream_init_request 的时候
+  - 判断是否命中缓存，如何命中并且缓存可用，直接使用缓存。
+  - 如果需要回源，则创建回源请求，并连接到上游；连接到上游后，会设置好客户端与代理服务器的读写回调以及代理服务器与上游的读写回调。分别是：
+    - c->write->handler = ngx_http_upstream_handler
+    - c->read->handler = ngx_http_upstream_handler
+    - u->write_event_handler = ngx_http_upstream_send_request_handler
+    - u->read_event_handler = ngx_http_upstream_process_header
+- 当读写事件到达时，调用对应的回调。
+- 当 ngx_http_upstream_process_header 回调中处理完上游的响应头时，会把 u->read_event_handler 更改为 ngx_http_upstream_process_upstream 以处理响应体。
+- 在 ngx_http_upstream_process_header 的处理中，会调用 ngx_http_file_cache_valid 来验证缓存。
+- 在 ngx_http_upstream_process_upstream 的处理中，会调用 ngx_http_file_cache_update 更新/保存缓存。
+
+至此，我们串联起来了 cache 处理的核心流程，同时也是回源上游的核心流程。
 
 ## 函数与指令之间的关联整理
 
