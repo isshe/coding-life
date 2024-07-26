@@ -200,7 +200,7 @@ ngx_http_upstream_cache_send 用于把缓存作为响应发送回给客户端。
 
 ## 保存 cache 的调用流程
 
-- 缓存验证：
+- 获取缓存保持时间（不是验证缓存！）：
 
     ```lua
     ngx_http_file_cache_valid at src/http/ngx_http_file_cache.c:2299
@@ -248,15 +248,34 @@ write_event_handler、read_event_handler 是 [ngx_http_upstream_init_request](#n
 
 ```
 - ngx_http_file_cache_valid
-    \- TODO
+    \- for (i = 0; i < cache_valid->nelts; i++): 遍历 cache_valid 数组
+        \- if (valid[i].status == 0): 如果状态码是 0，返回验证时间（表示会进行缓存）
+        \- if (valid[i].status == status): 如果上游响应状态码和 proxy_cache_valid 指令设置的相同，则返回对应的验证时间。
 ```
+
+与之前猜测的不同，这个函数并不是验证缓存，而是获取缓存的保持的时间。配置示例：
+
+```nginx.conf
+proxy_cache_valid 200 302 10m;
+```
+
+对 200 和 302 状态码的上游响应，设置缓存时间为 10 分钟。
 
 ## ngx_http_file_cache_update
 
 ```
 - ngx_http_file_cache_update
-    \- TODO
+    \- 检查是否需要更新缓存
+    \- 如果需要更新:
+        \- 创建临时文件
+        \- 写入缓存元数据(如headers)
+        \- 写入响应体数据
+        \- 重命名临时文件为正式缓存文件
+    \- 更新缓存元数据(如访问时间、过期时间等)
+    \- 更新缓存键在内存中的信息
 ```
+
+TODO
 
 ## 如何回源？如何保存 Cache 的？
 
@@ -267,17 +286,57 @@ write_event_handler、read_event_handler 是 [ngx_http_upstream_init_request](#n
     - c->read->handler = ngx_http_upstream_handler
     - u->write_event_handler = ngx_http_upstream_send_request_handler
     - u->read_event_handler = ngx_http_upstream_process_header
+      - header 处理完后，会将 handler 改为 ngx_http_upstream_process_upstream。
 - 当读写事件到达时，调用对应的回调。
 - 当 ngx_http_upstream_process_header 回调中处理完上游的响应头时，会把 u->read_event_handler 更改为 ngx_http_upstream_process_upstream 以处理响应体。
-- 在 ngx_http_upstream_process_header 的处理中，会调用 ngx_http_file_cache_valid 来验证缓存。
+- 在 ngx_http_upstream_process_header 的处理中，会调用 ngx_http_file_cache_valid 来获取缓存验证时间，以标记缓存什么时候过期。
 - 在 ngx_http_upstream_process_upstream 的处理中，会调用 ngx_http_file_cache_update 更新/保存缓存。
 
 至此，我们串联起来了 cache 处理的核心流程，同时也是回源上游的核心流程。
+
+## Key zone
+
+TODO
+
+Key zone 是 Nginx 用于存储缓存键和元数据的共享内存区域。以下是关于 Key zone 的一些重要信息：
+
+存储的信息：
+
+缓存键 (通常是请求的 URL)
+缓存文件名
+缓存使用次数
+上次访问时间
+缓存创建时间
+缓存过期时间
+构建生成：
+
+当配置了 proxy_cache_path 指令时，Nginx 会在启动时创建指定大小的共享内存区域。
+缓存键信息是在请求处理过程中动态生成和存储的。
+Nginx 进程启动时：
+
+Nginx 不会自动构建所有可能的缓存键信息。
+它只会分配指定大小的共享内存区域。
+缓存键信息是在处理请求时动态添加的。
+当 Key zone 不够用时：
+
+Nginx 会使用 LRU (Least Recently Used) 算法。
+最近最少使用的缓存项会被移除，为新的缓存项腾出空间。
+被移除的缓存项对应的磁盘文件不会立即删除，而是在 inactive 参数指定的时间后才会被清理。
+优化建议：
+
+合理设置 Key zone 大小，以平衡内存使用和缓存效率。
+监控 Key zone 使用情况，适时调整大小。
+考虑使用多个缓存区域来分散负载。
 
 ## 函数与指令之间的关联整理
 
 - proxy_cache_bypass: ngx_http_test_predicates
   - 示例：`proxy_cache_bypass $cookie_nocache $arg_nocache$arg_comment;`
+
+- ngx_http_file_cache_valid: proxy_cache_valid
+  - 示例：
+    - proxy_cache_valid 200 302 10m;
+    - proxy_cache_valid 404      1m;
 
 ## 更多说明
 
