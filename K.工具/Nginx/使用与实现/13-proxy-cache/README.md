@@ -123,6 +123,11 @@ bash trace.sh
         \- c->read->handler = ngx_http_upstream_handler
         \- u->write_event_handler = ngx_http_upstream_send_request_handler
         \- u->read_event_handler = ngx_http_upstream_process_header
+            \- ngx_http_upstream_send_response
+                \- ngx_http_file_cache_valid: 获取缓存有效时间
+                \- ngx_http_upstream_process_upstream: 更新 u->read_event_handler 成这个函数
+                    \- ngx_http_upstream_process_request
+                        \- ngx_http_file_cache_update
 ```
 
 首先从最外层（ngx_http_upstream_init_request 直接调用）可以看到，与猜测一样，这里是进行上游请求的初始化（创建请求、连接到上游）。
@@ -167,7 +172,7 @@ ngx_http_upstream_connect 中设置的各个 handler，我们后续在“保存�
     \- r->cached = 0: 将请求对象 `r` 的 `cached` 字段设置为 0，表示该请求没有使用缓存，而是从后端服务器获取了响应
 ```
 
-ngx_http_upstream_cache 函数主要是检查缓存是否存在，如何存在就打开缓存，后续读取返回；不存在就继续后续的回源处理。以及会设置响应体中的缓存状态。
+ngx_http_upstream_cache 函数主要是检查缓存是否存在，如果存在就打开缓存，后续读取返回；不存在就继续后续的回源处理。以及会设置响应体中的缓存状态。
 
 ## ngx_http_upstream_cache_send
 
@@ -189,7 +194,7 @@ ngx_http_upstream_cache 函数主要是检查缓存是否存在，如何存在�
         \- rc == NGX_AGAIN: 返回值设置为 `NGX_HTTP_UPSTREAM_INVALID_HEADER`，表示无效的响应头部
 ```
 
-ngx_http_upstream_cache_send 用于把缓存作为响应发送回给客户端。
+ngx_http_upstream_cache_send 用于把缓存作为响应发送回给客户端，也就是缓存命中的情况。
 
 到这里为止可以回答，命中 cache 和没命中 cache 时，进行了哪些操作：
 
@@ -200,7 +205,9 @@ ngx_http_upstream_cache_send 用于把缓存作为响应发送回给客户端。
 
 ## 保存 cache 的调用流程
 
-- 获取缓存保持时间（不是验证缓存！）：
+以下是缓存没命中的情况。
+
+- 获取缓存保持时间（不是验证缓存，详见 [ngx_http_file_cache_valid](#ngx_http_file_cache_valid)）：
 
     ```lua
     ngx_http_file_cache_valid at src/http/ngx_http_file_cache.c:2299
@@ -210,7 +217,7 @@ ngx_http_upstream_cache_send 用于把缓存作为响应发送回给客户端。
     ngx_epoll_process_events at src/event/modules/ngx_epoll_module.c:901
     ```
 
-- 缓存更新/保存：
+- 缓存更新/保存（详见 [ngx_http_file_cache_update](#ngx_http_file_cache_update)）：
 
     ```lua
     ngx_http_file_cache_update at src/http/ngx_http_file_cache.c:1360
@@ -232,7 +239,7 @@ ngx_http_upstream_cache_send 用于把缓存作为响应发送回给客户端。
 ## ngx_http_upstream_handler
 
 在代码中搜索了 ngx_http_upstream_handler 后，发现有必要介绍上游 handler 的设置节点以及串联起所有流程。
-不过我们先继续看具体的函数，都介绍完后，再进行串联。
+不过我们先继续看具体的函数，都介绍完后，再进行串联。详见[如何回源？如何保存 Cache 的？](#如何回源？如何保存Cache的？)
 
 ```
 - ngx_http_upstream_handler
@@ -246,6 +253,8 @@ write_event_handler、read_event_handler 是 [ngx_http_upstream_init_request](#n
 
 ## ngx_http_file_cache_valid
 
+注释版代码见 [ngx_http_file_cache.c](https://github.com/isshe/reading-codes/blob/master/nginx-1.24.0/src/http/ngx_http_file_cache.c#L2334)
+
 ```
 - ngx_http_file_cache_valid
     \- for (i = 0; i < cache_valid->nelts; i++): 遍历 cache_valid 数组
@@ -253,7 +262,7 @@ write_event_handler、read_event_handler 是 [ngx_http_upstream_init_request](#n
         \- if (valid[i].status == status): 如果上游响应状态码和 proxy_cache_valid 指令设置的相同，则返回对应的验证时间。
 ```
 
-与之前猜测的不同，这个函数并不是验证缓存，而是获取缓存的保持的时间。配置示例：
+与之前猜测的不同，**这个函数并不是验证缓存，而是获取缓存的保持的时间**。配置示例：
 
 ```nginx.conf
 proxy_cache_valid 200 302 10m;
@@ -263,19 +272,19 @@ proxy_cache_valid 200 302 10m;
 
 ## ngx_http_file_cache_update
 
+注释版代码见 [ngx_http_file_cache.c](https://github.com/isshe/reading-codes/blob/master/nginx-1.24.0/src/http/ngx_http_file_cache.c#L1372)
+
 ```
 - ngx_http_file_cache_update
-    \- 检查是否需要更新缓存
-    \- 如果需要更新:
-        \- 创建临时文件
-        \- 写入缓存元数据(如headers)
-        \- 写入响应体数据
-        \- 重命名临时文件为正式缓存文件
-    \- 更新缓存元数据(如访问时间、过期时间等)
-    \- 更新缓存键在内存中的信息
+    \- ngx_ext_rename_file: 重命名临时缓存文件成正式缓存文件
+    \- if (rc == NGX_OK): 重命名成功
+        \- ngx_fd_info(tf->file.fd, &fi): 获取文件信息
+        \- uniq = ngx_file_uniq(&fi): 获取文件唯一标识符
+    \- ngx_shmtx_lock/ngx_shmtx_unlock: 加锁来更新缓存节点信息
 ```
 
-TODO
+顾名思义，这个函数是用于更新缓存的，包括添加、删除、更新缓存文件。
+调用这个函数时，已经确定是**可以缓存**并且**已经回源完成**有缓存文件的了。
 
 ## 如何回源？如何保存 Cache 的？
 
