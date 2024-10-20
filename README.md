@@ -69,6 +69,10 @@ keep breathing...
 - [OpenResty Lua 代码缓存](K.工具/OpenResty/使用与实现/018-ngx_lua_cache/README.md)
 - [OpenResty 共享内存](K.工具/OpenResty/使用与实现/019-ngx_shared_dict/README.md)
 
+### Nginx
+
+- [Nginx 代理缓存](K.工具/Nginx/使用与实现/13-proxy-cache/README.md)
+
 ### 网络编程
 
 - [I/O 多路复用与非阻塞连接](B.操作系统/Linux/Application/7.IO多路复用/IO多路复用与非阻塞连接/README.md)
