@@ -116,7 +116,7 @@ bash trace.sh
     \- if (rc != NGX_DECLINED): 非缓存未命中的情况，就直接结束请求
         \- ngx_http_finalize_request
     \- if (u->create_request(r) != NGX_OK): 构建请求
-    \- if (ngx_http_upstream_set_local(r, u, u->conf->local) != NGX_OK): TODO?
+    \- if (ngx_http_upstream_set_local(r, u, u->conf->local) != NGX_OK): 设置用于连接上游的本地地址（本地可能有多个地址）
     \- ...: 中间还有一大堆东西，设置发送、接收回调等
     \- ngx_http_upstream_connect: 发起连接到上游，其中与缓存流程相关的主要有以下几个 handler 的设置
         \- c->write->handler = ngx_http_upstream_handler
@@ -253,7 +253,7 @@ write_event_handler、read_event_handler 是 [ngx_http_upstream_init_request](#n
 
 ## ngx_http_file_cache_valid
 
-注释版代码见 [ngx_http_file_cache.c](https://github.com/isshe/reading-codes/blob/master/nginx-1.24.0/src/http/ngx_http_file_cache.c#L2334)
+注释版代码见 [ngx_http_file_cache_valid](https://github.com/isshe/reading-codes/blob/master/nginx-1.24.0/src/http/ngx_http_file_cache.c#L2383)
 
 ```
 - ngx_http_file_cache_valid
@@ -272,7 +272,7 @@ proxy_cache_valid 200 302 10m;
 
 ## ngx_http_file_cache_update
 
-注释版代码见 [ngx_http_file_cache.c](https://github.com/isshe/reading-codes/blob/master/nginx-1.24.0/src/http/ngx_http_file_cache.c#L1372)
+注释版代码见 [ngx_http_file_cache_update](https://github.com/isshe/reading-codes/blob/master/nginx-1.24.0/src/http/ngx_http_file_cache.c#L1421)
 
 ```
 - ngx_http_file_cache_update
@@ -305,37 +305,45 @@ proxy_cache_valid 200 302 10m;
 
 ## Key zone
 
-TODO
+### 解析 keys_zone 配置，初始化共享内存
 
-Key zone 是 Nginx 用于存储缓存键和元数据的共享内存区域。以下是关于 Key zone 的一些重要信息：
+```lua
+- ngx_http_file_cache_set_slot
+    \- cache->shm_zone = ngx_shared_memory_add(cf, &name, size, cmd->post): 解析完指令后，会添加共享内存用于 keys_zone
+    \- cache->shm_zone->init = ngx_http_file_cache_init: 然后设置共享内存的初始化函数
+        \- ngx_http_file_cache_init(): 设置 keys zone 这块共享内存的一些属性
+            \- cache->sh = ngx_slab_alloc(cache->shpool, sizeof(ngx_http_file_cache_sh_t)): 分配内存，如果已经存在旧的内存和信息，则会直接使用
+            \- ngx_rbtree_init: 缓存 key 信息通过红黑树进行组织，可以提供 O(Logn) 的增删查的时间复杂度
+            \- ngx_queue_init: 缓存 key 信息通过双向队列进行管理，可以用于维护缓存项的使用顺序，实现LRU（最近最少使用）策略。
+            \- 设置 cache->shpool, cache->bsize, cache->max_size 等
+```
 
-存储的信息：
+上面的 keys zone 缓存空间初始化（ngx_http_file_cache_init）流程中，省略了存在旧缓存空间等内容。详见[ngx_http_file_cache_init 源码注释](https://github.com/isshe/reading-codes/blob/master/nginx-1.24.0/src/http/ngx_http_file_cache.c#L99)。
 
-缓存键 (通常是请求的 URL)
-缓存文件名
-缓存使用次数
-上次访问时间
-缓存创建时间
-缓存过期时间
-构建生成：
+同时使用红黑树和双向队列配合管理缓存信息：
 
-当配置了 proxy_cache_path 指令时，Nginx 会在启动时创建指定大小的共享内存区域。
-缓存键信息是在请求处理过程中动态生成和存储的。
-Nginx 进程启动时：
+- 红黑树提供快速查找特定缓存项的能力。
+- 队列允许按照特定顺序（如 LRU）遍历或操作缓存项。
 
-Nginx 不会自动构建所有可能的缓存键信息。
-它只会分配指定大小的共享内存区域。
-缓存键信息是在处理请求时动态添加的。
-当 Key zone 不够用时：
+### 缓存 Keys 的处理
 
-Nginx 会使用 LRU (Least Recently Used) 算法。
-最近最少使用的缓存项会被移除，为新的缓存项腾出空间。
-被移除的缓存项对应的磁盘文件不会立即删除，而是在 inactive 参数指定的时间后才会被清理。
-优化建议：
+```lua
+- ngx_http_file_cache_create_key
+    \- ngx_crc32_init(c->crc32)
+    \- ngx_md5_init(&md5)
+    \- ngx_crc32_update(&c->crc32, key[i].data, key[i].len)
+    \- ngx_md5_update(&md5, key[i].data, key[i].len)
+    \- ngx_crc32_final(c->crc32)
+    \- ngx_md5_final(c->key, &md5)
+    \- ngx_memcpy(c->main, c->key, NGX_HTTP_CACHE_KEY_LEN): 复制到 c->main
+```
 
-合理设置 Key zone 大小，以平衡内存使用和缓存效率。
-监控 Key zone 使用情况，适时调整大小。
-考虑使用多个缓存区域来分散负载。
+代码注释见 [ngx_http_file_cache_create_key](https://github.com/isshe/reading-codes/blob/master/nginx-1.24.0/src/http/ngx_http_file_cache.c#L272)
+
+ngx_http_file_cache_create_key 与 ngx_http_file_cache_new 不同，ngx_http_file_cache_new 用于新建一个文件缓存的结构；ngx_http_file_cache_create_key 用于创建一个缓存的 Key。
+其实 proxy cache key 的值已经在 `u->create_key = ngx_http_proxy_create_key;` 回调中创建好了，后面的 ngx_http_file_cache_create_key 只是计算 crc32 和 md5，最终用于 keys zone 的值是这些 crc32 或 md5，不是 proxy cache key（例如 URI）。
+
+keys zone 共享内存中主要存储的内容是 ngx_http_file_cache_node_t，结构见 [ngx_http_file_cache_node_t](https://github.com/isshe/reading-codes/blob/master/nginx-1.24.0/src/http/ngx_http_file_cache.h#L39)。
 
 ## 函数与指令之间的关联整理
 
