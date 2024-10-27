@@ -5,7 +5,7 @@ keep writing,
 keep coding,
 keep breathing...
 
-正在进行（On-CPU）
+## 正在进行（On-CPU）
 
 - 主线：整理 OpenResty Edge 的核心逻辑，完成后继续动态追踪。
 - 支线：学习以下内容，以继续个人项目
@@ -19,8 +19,7 @@ keep breathing...
   - [SystemTap 最佳实践 - 获取调用栈](J.调试/动态追踪/SystemTap/最佳实践/003-c-stack-trace/README.md)
   - 学习 SystemTap 官方文档的同时总结输出《SystemTap 最佳实践》
 
-
-持续中（Off-CPU）
+## 持续中（Off-CPU）
 
 - [编程、设计经验教训汇总](M.方法论/经验教训汇总.md)
 - [一个请求在 OpenResty 中的生命周期（优先级高，持续补充完善）](K.工具/OpenResty/使用与实现/022-life-cycle/README.md)
@@ -29,13 +28,13 @@ keep breathing...
 - [Luajit 核心技术点汇总](K.工具/Luajit/设计与实现/000-core-tech.md)
 - [Nginx 的 http 模块阶段解析](K.工具/Nginx/使用与实现/4-nginx-phase/README.md)
 
-下一步
+## 下一步
 
+- [OpenResty 中 SSL 证书设置及加载](K.工具/OpenResty/使用与实现/023-ssl/README.md)
 - [OpenResty 中 stream 模块的阶段解析](K.工具/OpenResty/使用与实现/001-3-stream-phase/README.md)
 - [Nginx 的 stream 模块阶段解析](K.工具/Nginx/使用与实现/14-stream-phase/README.md)
 - [OpenResty 时间更新机制](K.工具/OpenResty/使用与实现/021-time-sync/README.md)
 - [SystemTap 最佳实践 - 介绍](J.调试/动态追踪/SystemTap/最佳实践/001-introduction/README.md)
-- [SystemTap 最佳实践 - 安装](J.调试/动态追踪/SystemTap/最佳实践/002-installation/README.md)
 - [如何生成火焰图？](J.调试/动态追踪/如何生成火焰图.md)
 - [Luajit 垃圾回收机制](K.工具/Luajit/设计与实现/004-garbage-collection.md)
 - [Nginx timer 是如何实现的？](K.工具/Nginx/使用与实现/8-nginx-timer/README.md)
@@ -49,7 +48,11 @@ keep breathing...
 - [内存泄漏分析](Q.问题解决/memory-leak/README.md)
 - 继续 OpenResty Xray 相关 —— 20231005 已经完成第一部分。
 
-## 索引
+## 已完成
+
+### 动态追踪
+
+- [SystemTap 最佳实践 - 安装](J.调试/动态追踪/SystemTap/最佳实践/002-installation/README.md)
 
 ### 数据库
 
@@ -59,8 +62,8 @@ keep breathing...
 
 ### Linux 系统
 
-- [如何查找并清理 Linux 系统中多余的文件？](B.操作系统/Linux/存储空间占用情况分析.md)
-- [如何排查磁盘空间泄漏？](B.操作系统/Linux/存储空间占用情况分析.md)
+- [如何查找并清理 Linux 系统中多余的文件？](Q.问题解决/disk/存储空间占用情况分析-硬盘满了.md#使用-du-命令逐级检查磁盘占用情况)
+- [如何排查磁盘空间泄漏？](Q.问题解决/disk/存储空间占用情况分析-硬盘满了.md#检查被进程打开的已删除文件)
 
 ### OpenResty
 
@@ -96,6 +99,10 @@ keep breathing...
 **网络问题**
 
 [TCP 连接被中断](Q.问题解决/network/TCP连接被中断.md)
+
+**硬盘问题**
+
+- [存储空间占用情况分析](Q.问题解决/disk/存储空间占用情况分析-硬盘满了.md#使用-du-命令逐级检查磁盘占用情况)
 
 **其他问题**
 

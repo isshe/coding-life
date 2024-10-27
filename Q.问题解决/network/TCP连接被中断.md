@@ -47,7 +47,7 @@
         3c215: _start[2c]
         ```
 
-   4. 仔细排查后，发现是 c->recv（这个在 nginx 中最终调用 ngx_unix_recv 等平台相关函数）传入 0 时，导致 C 库的 recv 返回 0，进而设置了 eof = 1：
+   4. 仔细排查后，发现是 c->recv（这个在 nginx 中最终调用 ngx_unix_recv 等平台相关函数）传入 size=0 时，导致 C 库的 recv 返回 0，进而设置了 eof = 1：
 
         ```c
         // ngx_http_ssl_handshake
