@@ -65,6 +65,10 @@ keep breathing...
 - [如何查找并清理 Linux 系统中多余的文件？](Q.问题解决/disk/存储空间占用情况分析-硬盘满了.md#使用-du-命令逐级检查磁盘占用情况)
 - [如何排查磁盘空间泄漏？](Q.问题解决/disk/存储空间占用情况分析-硬盘满了.md#检查被进程打开的已删除文件)
 
+### Qume
+
+- [Qume —— 在 M1 Mac Mini 中安装银河麒麟 kylin 系统](K.工具/qemu/install-kylin-linux.md)
+
 ### OpenResty
 
 - [cosocket](K.工具/OpenResty/使用与实现/014-cosocket/README.md)
