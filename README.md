@@ -7,7 +7,7 @@ keep breathing...
 
 ## 正在进行（On-CPU）
 
-- 主线：整理 OpenResty Edge 的核心逻辑，完成后继续动态追踪。
+- 主线：整理 OpenResty Xray 的核心功能，完成后继续动态追踪案例分析。
 - 支线：学习以下内容，以继续个人项目
   - 架构：https://www.thebyte.com.cn/
   - istio/mosn/envoy
