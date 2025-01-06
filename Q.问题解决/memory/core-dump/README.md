@@ -27,3 +27,8 @@ zstd -d xxx.zst
 zstd -d xxx.zst -o xxx.core
 ```
 
+- 如果使用 systemd-coredump 但是没有找到文件，则修改 core_pattern 后重新生成
+
+```bash
+echo core-%e | sudo tee /proc/sys/kernel/core_pattern
+```
