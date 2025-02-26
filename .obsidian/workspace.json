@@ -8,13 +8,27 @@
         "type": "tabs",
         "children": [
           {
-            "id": "04180fff9f734867",
+            "id": "32d8550eb3521d2d",
             "type": "leaf",
             "state": {
               "type": "graph",
               "state": {},
               "icon": "lucide-git-fork",
               "title": "关系图谱"
+            }
+          },
+          {
+            "id": "e256def4acc5fd72",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "B.操作系统/Linux/Application/7.IO多路复用/IO多路复用与非阻塞连接/README.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "README"
             }
           }
         ]
@@ -37,7 +51,7 @@
               "type": "file-explorer",
               "state": {
                 "sortOrder": "alphabetical",
-                "autoReveal": false
+                "autoReveal": true
               },
               "icon": "lucide-folder-closed",
               "title": "文件列表"
@@ -49,7 +63,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "",
+                "query": "tag:#news",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -70,7 +84,8 @@
               "title": "书签"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "horizontal",
@@ -143,6 +158,20 @@
               "icon": "lucide-list",
               "title": "大纲"
             }
+          },
+          {
+            "id": "03e4fd8d5a17afed",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "添加笔记属性"
+            }
           }
         ]
       }
@@ -158,14 +187,40 @@
       "canvas:新建白板": false,
       "daily-notes:打开/创建今天的日记": false,
       "templates:插入模板": false,
-      "command-palette:打开命令面板": false
+      "command-palette:打开命令面板": false,
+      "obsidian-git:Open Git source control": false,
+      "templater-obsidian:Templater": false,
+      "workspaces:管理工作区布局": false
     }
   },
-  "active": "04180fff9f734867",
+  "active": "32d8550eb3521d2d",
   "lastOpenFiles": [
+    "D.编程语言/3.CSS/Readme.md",
+    "B.操作系统/Linux/Kernel/1.内核编码规范/Readme.md",
+    "K.工具/Luajit/设计与实现/004-garbage-collection.md",
+    "README.md",
+    "B.操作系统/Linux/Application/7.IO多路复用/IO多路复用与非阻塞连接/README.md",
+    "B.操作系统/Linux/Application/7.IO多路复用/IO多路复用与非阻塞连接",
+    "B.操作系统/Linux/Application/7.IO多路复用",
+    "doc-title.md.md",
+    "doc-title/index.md",
+    "doc-title",
+    "abc.md",
+    "未命名.canvas",
+    "F.数据库/4.PostgreSQL/unexpected-chunk-number.md",
+    "Q.问题解决/memory-leak/README.md",
+    "Q.问题解决/memory-leak",
+    "K.工具/OpenResty/编码规范.md",
+    "M.方法论/README.md",
+    "Y.Blog/articles/nginx.json",
+    "Y.Blog/articles/classic-cases-network.json",
+    "R.经典案例/Network/tcp-reset/README.md",
+    "R.经典案例/Network/tcp-reset",
+    "R.经典案例/Network",
+    "K.工具/OpenSSL/使用/README.md",
+    "K.工具/OpenSSL/使用",
     "K.工具/OpenResty/使用与实现/018-ngx_lua_cache/README.md",
     "K.工具/OpenResty/使用与实现/018-ngx_lua_cache",
-    "README.md",
     "K.工具/Nginx/Nginx的数据结构/ngx_module_t.md"
   ]
 }

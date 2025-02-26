@@ -1,9 +1,9 @@
 # Chapter 6: Packet filtering with Raw Sockets
 
 - A full description of this example can be found in Chapter 6.
-- Please remember that the examples here are tested in the Vagrant machine. Please read more in [README.md](/README.md).
+- Please remember that the examples here are tested in the Vagrant machine. Please read more in [README.md](README.md).
 - Make sure to change the example accordingly if you wish to build somewhere else, open an issue if you have problems doing so!
-- All the dependencies are already handled if you followed the instructions in the main [README.md](/README.md).
+- All the dependencies are already handled if you followed the instructions in the main [README.md](README.md).
 
 In the machine:
 

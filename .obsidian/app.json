@@ -1,1 +1,9 @@
-{}
+{
+  "alwaysUpdateLinks": true,
+  "aliases": {
+    "display": "first-alias"
+  },
+  "showLineNumber": false,
+  "foldIndent": true,
+  "foldHeading": true
+}
