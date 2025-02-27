@@ -11,10 +11,14 @@
             "id": "32d8550eb3521d2d",
             "type": "leaf",
             "state": {
-              "type": "graph",
-              "state": {},
-              "icon": "lucide-git-fork",
-              "title": "关系图谱"
+              "type": "markdown",
+              "state": {
+                "file": "C.计算机网络/README.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "README"
             }
           },
           {
@@ -84,8 +88,7 @@
               "title": "书签"
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "horizontal",
@@ -193,12 +196,62 @@
       "workspaces:管理工作区布局": false
     }
   },
-  "active": "32d8550eb3521d2d",
+  "floating": {
+    "id": "321ad6aab77b8c4c",
+    "type": "floating",
+    "children": [
+      {
+        "id": "3b2632512f23887b",
+        "type": "window",
+        "children": [
+          {
+            "id": "cd680d684cc45666",
+            "type": "tabs",
+            "children": [
+              {
+                "id": "6a6660f7a19cd1b7",
+                "type": "leaf",
+                "state": {
+                  "type": "webviewer",
+                  "state": {
+                    "url": "https://github.com/logancyang/obsidian-copilot",
+                    "title": "GitHub - logancyang/obsidian-copilot: THE Copilot in Obsidian",
+                    "mode": "webview"
+                  },
+                  "icon": "globe-2",
+                  "title": "GitHub - logancyang/obsidian-copilot: THE Copilot in Obsidian"
+                }
+              }
+            ]
+          }
+        ],
+        "direction": "vertical",
+        "x": 448,
+        "y": 84,
+        "width": 1024,
+        "height": 800,
+        "maximize": false,
+        "zoom": 0
+      }
+    ]
+  },
+  "active": "6a6660f7a19cd1b7",
   "lastOpenFiles": [
+    "C.计算机网络/README.md",
+    "B.操作系统/Linux/Application/1.进程/Readme.md",
+    "B.操作系统/Linux/Application/1.进程/c_program_start_end.png",
+    "B.操作系统/Linux/Application/1.进程/7_exec_relationship.png",
+    "A.数据结构与算法/Array-数组/Easy/283_移动数组中的0/Readme.md",
+    "A.数据结构与算法/Array-数组/Easy/122_求买卖股票的利润II/Readme.md",
+    "A.数据结构与算法/Array-数组/Easy/121_求买卖股票的利润/Readme.md",
+    "A.数据结构与算法/Array-数组/Easy/119_帕斯卡三角形II/Readme.md",
+    "A.数据结构与算法/Array-数组/Easy/118_PascalsTriangle/Readme.md",
+    "A.数据结构与算法/Array-数组/Easy/66_plus_One/Readme.md",
+    "A.数据结构与算法/Array-数组/Easy/26_RemoveDuplicates/Readme.md",
+    "README.md",
     "D.编程语言/3.CSS/Readme.md",
     "B.操作系统/Linux/Kernel/1.内核编码规范/Readme.md",
     "K.工具/Luajit/设计与实现/004-garbage-collection.md",
-    "README.md",
     "B.操作系统/Linux/Application/7.IO多路复用/IO多路复用与非阻塞连接/README.md",
     "B.操作系统/Linux/Application/7.IO多路复用/IO多路复用与非阻塞连接",
     "B.操作系统/Linux/Application/7.IO多路复用",
