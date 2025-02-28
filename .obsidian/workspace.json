@@ -108,6 +108,7 @@
             "state": {
               "type": "backlink",
               "state": {
+                "file": "C.计算机网络/README.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -117,7 +118,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "反向链接"
+              "title": "README 的反向链接列表"
             }
           },
           {
@@ -126,11 +127,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
+                "file": "C.计算机网络/README.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "出链"
+              "title": "README 的出链列表"
             }
           },
           {
@@ -154,12 +156,13 @@
             "state": {
               "type": "outline",
               "state": {
+                "file": "C.计算机网络/README.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "大纲"
+              "title": "README 的大纲"
             }
           },
           {
@@ -193,49 +196,11 @@
       "command-palette:打开命令面板": false,
       "obsidian-git:Open Git source control": false,
       "templater-obsidian:Templater": false,
-      "workspaces:管理工作区布局": false
+      "workspaces:管理工作区布局": false,
+      "copilot:Open Copilot Chat": false
     }
   },
-  "floating": {
-    "id": "321ad6aab77b8c4c",
-    "type": "floating",
-    "children": [
-      {
-        "id": "3b2632512f23887b",
-        "type": "window",
-        "children": [
-          {
-            "id": "cd680d684cc45666",
-            "type": "tabs",
-            "children": [
-              {
-                "id": "6a6660f7a19cd1b7",
-                "type": "leaf",
-                "state": {
-                  "type": "webviewer",
-                  "state": {
-                    "url": "https://github.com/logancyang/obsidian-copilot",
-                    "title": "GitHub - logancyang/obsidian-copilot: THE Copilot in Obsidian",
-                    "mode": "webview"
-                  },
-                  "icon": "globe-2",
-                  "title": "GitHub - logancyang/obsidian-copilot: THE Copilot in Obsidian"
-                }
-              }
-            ]
-          }
-        ],
-        "direction": "vertical",
-        "x": 448,
-        "y": 84,
-        "width": 1024,
-        "height": 800,
-        "maximize": false,
-        "zoom": 0
-      }
-    ]
-  },
-  "active": "6a6660f7a19cd1b7",
+  "active": "32d8550eb3521d2d",
   "lastOpenFiles": [
     "C.计算机网络/README.md",
     "B.操作系统/Linux/Application/1.进程/Readme.md",
