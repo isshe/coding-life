@@ -30,6 +30,7 @@ keep breathing...
 
 ## 下一步
 
+- [进程录制/回放工具的使用与实现](J.调试/进程录制回放工具的使用与实现.md)
 - [OpenResty 中 SSL 证书设置及加载](K.工具/OpenResty/使用与实现/023-ssl/README.md)
 - [OpenResty 中 stream 模块的阶段解析](K.工具/OpenResty/使用与实现/001-3-stream-phase/README.md)
 - [Nginx 的 stream 模块阶段解析](K.工具/Nginx/使用与实现/14-stream-phase/README.md)
@@ -94,7 +95,9 @@ keep breathing...
 
 - [性能测试要点及常见问题](T.测试/性能测试.md)
 
-### 问题排查/解决
+### 问题排查与解决
+
+- [问题排查 - 保留现场](Q.问题解决/问题排查步骤之保留现场.md)
 
 **CPU 问题**
 
@@ -102,7 +105,7 @@ keep breathing...
 
 **网络问题**
 
-[TCP 连接被中断](Q.问题解决/network/TCP连接被中断.md)
+- [TCP 连接被中断](Q.问题解决/network/TCP连接被中断.md)
 
 **硬盘问题**
 

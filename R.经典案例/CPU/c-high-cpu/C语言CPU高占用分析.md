@@ -29,3 +29,7 @@ make wrk
 
 # 进行分析
 ```
+
+## 更多参考
+
+[打印进程当前调用栈](../../../J.调试/动态追踪/SystemTap/最佳实践/003-c-stack-trace/README.md)
