@@ -81,3 +81,6 @@ proxy_temp/
 scgi_temp/
 uwsgi_temp/
 proxy_cache/
+
+# obsidian
+.obsidian/
