@@ -11,7 +11,7 @@ yum install libstdc++-static-11.3.1-4.3.el9.x86_64.rpm
 ```
 
 ```
-compilepkg: missing strict dependencies:
+compile pkg: missing strict dependencies:
 	/root/.cache/bazel/_bazel_root/4643dbd8b634ef9663ca6c879c08d349/sandbox/linux-sandbox/574/execroot/envoy/external/com_github_lyft_protoc_gen_star/entity.go: import of "google.golang.org/protobuf/runtime/protoimpl"
 	/root/.cache/bazel/_bazel_root/4643dbd8b634ef9663ca6c879c08d349/sandbox/linux-sandbox/574/execroot/envoy/external/com_github_lyft_protoc_gen_star/enum.go: import of "google.golang.org/protobuf/runtime/protoimpl"
 	/root/.cache/bazel/_bazel_root/4643dbd8b634ef9663ca6c879c08d349/sandbox/linux-sandbox/574/execroot/envoy/external/com_github_lyft_protoc_gen_star/enum_value.go: import of "google.golang.org/protobuf/runtime/protoimpl"
