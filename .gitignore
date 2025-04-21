@@ -84,3 +84,7 @@ proxy_cache/
 
 # obsidian
 .obsidian/
+
+# dmesg
+*.log
+
