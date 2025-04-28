@@ -7,7 +7,7 @@
 #include <linux/sched.h>
 
 MODULE_LICENSE("GPL");
-MODULE_AUTHOR("Your Name");
+MODULE_AUTHOR("isshe");
 MODULE_DESCRIPTION("PID Radix Tree Visualization Module");
 
 static void print_radix_tree_layer(struct radix_tree_root *root, int height)
