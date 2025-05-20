@@ -27,6 +27,11 @@ keep breathing...
 - [OpenResty 核心技术点汇总](K.工具/OpenResty/使用与实现/000-core-tech/README.md)
 - [Luajit 核心技术点汇总](K.工具/Luajit/设计与实现/000-core-tech.md)
 - [Nginx 的 http 模块阶段解析](K.工具/Nginx/使用与实现/4-nginx-phase/README.md)
+- [Linux 内核数据结构 —— struct pid_namespace](B.操作系统/Linux/Kernel/2.数据结构/struct-pid_namespace.md)
+- [Linux 内核数据结构 —— struct dir](B.操作系统/Linux/Kernel/2.数据结构/struct-idr.md)
+- [Linux 内核数据结构 —— struct page](B.操作系统/Linux/Kernel/2.数据结构/struct-page.md)
+- [Linux 内核数据结构 —— struct vm_area_struct](B.操作系统/Linux/Kernel/2.数据结构/struct-vm_area_struct.md)
+- [Linux 内核中的宏](B.操作系统/Linux/Kernel/15.宏/macro.md)
 
 ## 下一步
 
