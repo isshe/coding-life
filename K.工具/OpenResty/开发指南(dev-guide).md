@@ -30,6 +30,8 @@ cd openresty-VERSION/bundle/nginx-VERSION
 
 ### 生成 Patch
 
+- 方法 1：
+
 ```bash
 # 把 Nginx 源码目录纳入 git 以生成 patch 文件
 cd openresty
@@ -52,6 +54,15 @@ git diff > NEW.patch
 git add NEW.file
 git commit -m "change: commit 2."
 git diff <commit id 2> <commit id 1> > NEW.patch
+```
+
+- 方法 2：
+
+正常修改，commit 后，直接通过 commit 来生成：
+
+```bash
+# git format-patch -1 <COMMIT-ID>
+git format-patch -1 HEAD~0
 ```
 
 ### 验证 patch
