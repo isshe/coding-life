@@ -1,3 +1,14 @@
+.PHONY: default
+default: help
+
+### help: 展示此帮助信息
+.PHONY: help
+help:
+	@echo Usage: make ...
+	@echo
+	@grep -E '^### [-A-Za-z0-9_]+:' Makefile | sed 's/###/   /'
+
+### all: c 程序的入口地址与 so 的入口地址对比
 all:
 	# 编译但不strip符号
 	gcc -o test_entry.out test_entry.c
