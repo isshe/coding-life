@@ -236,6 +236,10 @@ ngx_http_upstream_cache_send 用于把缓存作为响应发送回给客户端，
 
 这两个调用栈共同的入口是 `ngx_http_upstream_handler`，因此接下来看下这个函数。以及 ngx_http_file_cache_valid 和 ngx_http_file_cache_update 这两个关键的操作缓存的函数，我们后续也来跟一下。
 
+## 释放 cache 的流程
+
+TODO
+
 ## ngx_http_upstream_handler
 
 在代码中搜索了 ngx_http_upstream_handler 后，发现有必要介绍上游 handler 的设置节点以及串联起所有流程。
