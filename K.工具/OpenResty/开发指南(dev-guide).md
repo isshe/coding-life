@@ -5,6 +5,7 @@
 
 - 给 Nginx 打补丁
 - 开发第三方 Nginx 模块
+- 给 Nginx 打补丁并修改第三方模块
 
 ## 给 Nginx 打补丁
 
@@ -24,7 +25,7 @@ cd openresty-VERSION
 
 # 进行 Nginx 代码修改，编译测试
 cd openresty-VERSION/bundle/nginx-VERSION
-./configure && make
+./configure && make -j4
 ./sbin/nginx -p /PATH/TO/CONFIG
 ```
 
@@ -148,6 +149,19 @@ make update
 ```
 
 来更新程序。
+
+## 给 Nginx 打补丁并修改第三方模块
+
+```
+
+cd buildroot
+find . -name "*.o" | xargs rm
+find . -name "*.orig" | xargs rm
+cd buildroot/nginx-1.27.1
+git init
+git add .
+git commit -m "init version"
+```
 
 ## 更多
 
