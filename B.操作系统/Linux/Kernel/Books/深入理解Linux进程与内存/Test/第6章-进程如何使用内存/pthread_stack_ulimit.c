@@ -1,3 +1,4 @@
+#define _GNU_SOURCE
 #include <stdio.h>
 #include <pthread.h>
 #include <unistd.h>
@@ -47,6 +48,19 @@ void recursive_function(int depth) {
 }
 
 void* thread_function(void* arg) {
+    struct rlimit rl;
+    getrlimit(RLIMIT_STACK, &rl);
+    printf("子线程栈限制：%ld KB\n", rl.rlim_cur / 1024);
+
+    pthread_attr_t attr;
+    size_t stack_size;
+    void *stack_addr;
+
+    pthread_getattr_np(pthread_self(), &attr);
+    pthread_attr_getstack(&attr, &stack_addr, &stack_size);
+    printf("子线程实际栈大小：%zu KB\n", stack_size / 1024);
+    pthread_attr_destroy(&attr);
+
     setup_signal_handler();
     printf("线程开始测试栈溢出...\n");
     recursive_function(1);
@@ -56,7 +70,7 @@ void* thread_function(void* arg) {
 int main() {
     struct rlimit rl;
     getrlimit(RLIMIT_STACK, &rl);
-    printf("当前栈限制：%ld KB\n", rl.rlim_cur / 1024);
+    printf("主线程栈限制：%ld KB\n", rl.rlim_cur / 1024);
 
     pthread_t thread;
     pthread_create(&thread, NULL, thread_function, NULL);
