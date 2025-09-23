@@ -35,6 +35,7 @@ keep breathing...
 
 ## 下一步
 
+- [OpenResty 的实现思路（高优）](K.工具/OpenResty/使用与实现/000-core-tech/README.md##OpenResty的实现思路)
 - [进程录制/回放工具的使用与实现](J.调试/进程录制回放工具的使用与实现.md)
 - [OpenResty 中 SSL 证书设置及加载](K.工具/OpenResty/使用与实现/023-ssl/README.md)
 - [OpenResty 中 stream 模块的阶段解析](K.工具/OpenResty/使用与实现/001-3-stream-phase/README.md)

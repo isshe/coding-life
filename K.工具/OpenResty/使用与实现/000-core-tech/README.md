@@ -7,6 +7,13 @@ TODO: 补充以下相关的
 
 - lua 堆栈解读（或许应该放到 Luajit 那边去）
 
+## OpenResty 的实现思路
+
+TODO 更为宏观的描述 OpenResty 的实现。
+
+1. 如果现在没有 OpenResty，那么实现思路是怎样的？一步一步怎么做。
+2. 与 Luajit 是如何集成的？（尝试写个小模块集成？）
+
 ## Lua 接口/数据 (变量) 注入
 
 > 有些函数不需要 require 都能进行使用，这是因为 OpenResty 自动进行了相关工作。
