@@ -9,6 +9,9 @@
 - cgroup v1 和 v2 的目录结构差异？
 - 怎么判断是 v1 还是 v2？
 - 如何找到容器关联的 cgroup？
+- account_process_tick 统计 CPU 处理时间时，为何要区分用户时间和系统时间？为何一次调用只会累计一种时间？
+- struct cgroup 中的 rstat_cpu 是每个 CPU 都一个数组，还是每个 CPU 是数组中一个元素？
+- cpu.stat 的时间统计怎么理解？只有每次 cat/read 的时候，才将各个 CPU 的用时聚合一下吗？为什么我 cat 宿主机中容器对应的 cpu.stat，nr_periods 等都显示 0？容器还是运行。
 
 ## 总结
 
@@ -88,3 +91,17 @@ mount | grep cgroup
 ### 如何找到容器关联的 cgroup？
 
 容器内 `cat /proc/1/cgroup | grep cpu | head -n 1 | awk -F ':' '{print $3}'`，再拼接上 `/sys/fs/cgroup/cpu` 即可。例如 `/sys/fs/cgroup/cpu/docker/52d139d279791f77654ed9aeb1bbd30b643bbfc6e11757bbb3f381a37816975d`
+
+### account_process_tick 统计 CPU 处理时间时，为何要区分用户时间和系统时间？为何一次调用只会累计一种时间？
+
+TODO
+
+### struct cgroup 中的 rstat_cpu 是每个 CPU 都一个数组，还是每个 CPU 是数组中一个元素？
+
+TODO
+
+### cpu.stat 的时间统计怎么理解？只有每次 cat/read 的时候，才将各个 CPU 的用时聚合一下吗？为什么 cat 宿主机中容器对应的 cpu.stat，其中的 nr_periods 等都显示 0？容器还是运行。
+
+TODO
+
+应该是容器用的 cgroup v2，但是 cat 了 cgroup v1 的 cpu.stat。`nr_periods` 是 cgroup v1 中的内容；cgroup v1 中看到的应该是 `usage_usec` 等内容。
