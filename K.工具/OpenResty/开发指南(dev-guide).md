@@ -152,16 +152,37 @@ make update
 
 ## 给 Nginx 打补丁并修改第三方模块
 
-```
+在第三方模块中：
 
+1. 删掉 buildroot/nginx-1.27.1* 相关内容
+2. bash build.sh：执行当前脚本，会自动再下载 buildroot/nginx-1.27.1* 并打好 patch
+3. 添加 git 管理，方便后续生成 patch：git init && git add . && git commit -m "init version"
+4. 修改 buildroot/nginx-1.27.1* 进行开发
+5. 生成 patch git diff src/http/modules/ngx_http_proxy_module.c > proxy_pass_request_headers_and_body.patch
+
+
+```bash
+# 如果无需重新下载，则删除编译好的 .o 等文件
 cd buildroot
 find . -name "*.o" | xargs rm
 find . -name "*.orig" | xargs rm
 cd buildroot/nginx-1.27.1
+# 进行 git 管理
 git init
 git add .
 git commit -m "init version"
+# 进行后续开发
+# 生成 patch
 ```
+
+6. 更新 `openresty-devel-utils` 中的 `ngx-build` 将对应的 patch 打到 nginx 中：
+
+```bash
+shell("patch -p1 < $root/../lua-conf-nginx-module/patches/nginx-$version-lua_resty_nginx_conf_proxy_pass_headers_and_body.patch");
+```
+
+7. 更新 openresty 仓库 中的 `util/mirror-tarballs`，打 patch。
+
 
 ## 更多
 
