@@ -88,3 +88,5 @@ proxy_cache/
 # dmesg
 *.log
 
+# isshe
+funds.csv
