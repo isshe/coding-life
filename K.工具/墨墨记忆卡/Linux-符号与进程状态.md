@@ -4,6 +4,12 @@
 
 ### 退出与回收
 
+选择阻塞式 waitpid 还是 WNOHANG，主要看什么？
+---
+看调用线程能否停下来等待，而不是子进程数量。只需收集结果时，多个子进程也可循环 waitpid(-1, &status, 0)；还需处理其他工作时，可用 WNOHANG 配合通知或事件等待机制。父进程阻塞不会暂停子进程。
+
+===
+
 waitpid 的返回值与 status 分别表示什么？
 ---
 返回值报告等待调用的结果；status 编码子进程状态。取得状态后先用 WIFEXITED/WIFSIGNALED 判断结束类型，再用 WEXITSTATUS/WTERMSIG 取退出码或信号编号。
