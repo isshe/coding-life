@@ -156,6 +156,24 @@ Lk = Link，对应 sh_link；Inf = Information，对应 sh_info。含义取决�
 
 ===
 
+ELF section、PT_LOAD 和进程 maps 是一一对应的吗？
+---
+不是。Section 按内容组织文件；PT_LOAD 描述可加载范围，一个 LOAD 可覆盖多个 section。maps 显示运行时映射，边界按页组织，还可能因权限调整等原因分拆。readelf -S 查节表，-l 查程序头和节到段的对应。
+
+===
+
+PT_LOAD 的 FileSiz 与 MemSiz 有什么区别？如何支持 .bss？
+---
+FileSiz 是文件提供的字节数，MemSiz 是段内存映像的字节数。MemSiz 超出 FileSiz 的尾部由加载过程置零；.bss 的 NOBITS 类型不保存对应文件内容，但会占用运行时虚拟地址空间。内存初值为零不等于文件保存了同样数量的零字节。
+
+===
+
+文件映射的 maps Offset 是什么？如何换算映射内地址对应的文件位置？
+---
+Offset 是映射起点对应的文件偏移；Size = End - Start。对有文件内容对应的字节，文件偏移 = Offset +（运行时地址 - Start）。它不是 ELF 虚拟地址，也不同于重定位记录的 r_offset；私有映射被修改后的内容不一定等于磁盘原字节。
+
+===
+
 ELF 的 DT_NEEDED 是否列出了运行时加载的所有库及完整路径？
 ---
 不是。它声明当前对象的直接依赖，常见值是库名（如 libc.so.6），不等于最终加载路径；依赖库自己的依赖以及运行时额外加载的库不一定列在这里。
