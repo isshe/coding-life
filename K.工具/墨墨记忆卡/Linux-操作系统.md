@@ -389,7 +389,7 @@ Commit ID：6eb3c3d0a52dca337e327ae8868ca1f44a712e02
 | Section Headers            | <- 用于链接和调试
 +-------------------+
 ```
-通过 Program Headers（就是 segment）定位到各个 segment。
+Program Header 是描述记录，不是 segment 本身；其中 PT_LOAD 描述可加载段，其他类型还可提供解释器路径、动态链接等信息。
 
 ===
 
