@@ -220,6 +220,14 @@ ELF 的 DT_NEEDED 是否列出了运行时加载的所有库及完整路径？
 
 ===
 
+`.rela.dyn` 与 `.rela.plt` 怎么区分？是一个管数据、一个管函数吗？
+---
+不是，按是否与 PLT 关联区分。两者都用 RELA 格式，记录中有显式加数 `r_addend`。
+- `.rela.dyn`：一般动态重定位（dyn = Dynamic），如 `RELATIVE` 和 `GLOB_DAT`，也可能涉及函数地址。
+- `.rela.plt`：与过程链接表（PLT，Procedure Linkage Table）关联的动态重定位，如 x86-64 的 `JUMP_SLOT`。这里是重定位记录，不是 PLT 的指令。
+
+===
+
 动态函数调用中的 `.dynsym`、`.dynstr`、`.rela.plt`、`.plt`、`.got.plt` 各做什么？
 ---
 `.dynsym` 保存动态符号条目，`.dynstr` 保存符号名；`.rela.plt` 记录重定位位置、类型和目标符号；`.plt` 是调用中转桩代码；`.got.plt` 保存供 PLT 间接跳转使用的地址槽。常见 `R_X86_64_JUMP_SLOT` 重定位把一个 GOT 槽关联到动态符号。
